@@ -1,7 +1,6 @@
 export const ThemeConfig = {
   DefaultTheme: {
     primaryBackgroundColor: "rgb(248 113 113)",
-
     //text color
     primaryTextColor: "black",
     primaryFocusedColor: "white",
