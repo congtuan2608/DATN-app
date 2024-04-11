@@ -8,11 +8,13 @@ import { useScreenUtils } from "~hooks";
 
 const Tab = createBottomTabNavigator();
 export const BottomTabNavigator = () => {
-  const { dimensions } = useScreenUtils();
+  const { dimensions, safeAreaInsets } = useScreenUtils();
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={{ tabBarStyle: getResponesive(dimensions).tabBarStyle }}
+      screenOptions={{
+        tabBarStyle: getResponesive(safeAreaInsets, dimensions).tabBarStyle,
+      }}
     >
       {Object.entries(bottomTabScreens).map(([tabKey, tabInfo]) => (
         <Tab.Screen

@@ -1,20 +1,27 @@
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { SCREENS } from "../routes";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { OnboardingScreens, SignUpScreens, LoginScreens } from "~screens";
 import { useAuth, useTheme } from "~hooks";
 import { AsyncStorageKey } from "~configs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { AppLoading } from "~components";
+import { initAxiosConfigs } from "~configs/axios";
+import { StatusBar, Text, View } from "react-native";
 
 const InitScreen = "DrawerNavigator";
-const RootScreens = [];
-const Stack = createStackNavigator();
+const RootScreens = ["LocationReport", "CameraScreen"];
+const Stack = createNativeStackNavigator();
 export const RootStackNavigator = () => {
   const auth = useAuth();
   const { changeTheme } = useTheme();
   const [isNewUser, setIsNewUser] = React.useState(true);
+
+  React.useEffect(() => {
+    initAxiosConfigs({ auth });
+  }, []);
+
   React.useEffect(() => {
     async function init() {
       if (auth.appConfigs.firstInit === false) {
@@ -34,13 +41,13 @@ export const RootStackNavigator = () => {
           setIsNewUser(false);
         }
         if (access_token && refresh_token) {
-          setTimeout(async () => {
-            await auth.login({ access_token, refresh_token });
-          }, 1000);
+          // setTimeout(async () => {
+          await auth.login({ access_token, refresh_token });
+          // }, 1000);
         } else {
-          setTimeout(async () => {
-            await auth.logout();
-          }, 1000);
+          // setTimeout(async () => {
+          await auth.logout();
+          // }, 2000);
         }
       }
     }
@@ -50,7 +57,8 @@ export const RootStackNavigator = () => {
   const render = () => {
     if (auth.isInitializingApp) {
       // Init app...
-      return <AppLoading />;
+      // return <AppLoading />;
+      return <></>;
     } else if (auth.isLoggedIn) {
       return (
         <Stack.Navigator initialRouteName={InitScreen}>
@@ -64,14 +72,17 @@ export const RootStackNavigator = () => {
               key={screenPath}
               name={screenPath}
               component={SCREENS[screenPath].component}
-              options={{ headerShown: false }}
+              options={{
+                headerShown: false,
+                ...SCREENS[screenPath]?.options,
+              }}
             />
           ))}
         </Stack.Navigator>
       );
     } else {
       return (
-        <Stack.Navigator initialRouteName={isNewUser ? "Onboarding" : "Login"}>
+        <Stack.Navigator initialRouteName={true ? "Onboarding" : "Login"}>
           <Stack.Screen
             name="Onboarding"
             component={OnboardingScreens}

@@ -1,1 +1,1 @@
-export * from "./Main";
+export * as HomeScreens from "./screens";

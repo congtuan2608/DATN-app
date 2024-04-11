@@ -1,29 +1,39 @@
-import {
-  AccountScreens,
-  BlogScreens,
-  CampaignsScreens,
-  HistoryScreens,
-  HomeScreens,
-} from "../screens";
+import * as ScreenComponents from "../screens";
+import { BottomTabNavigator } from "./BottomTabNavigator";
 import { DrawerNavigator } from "./DrawerNavigator";
 
 export const SCREENS = {
   DrawerNavigator: {
     component: DrawerNavigator,
   },
+  BottomTabNavigator: {
+    component: BottomTabNavigator,
+  },
+  // home
   HomeScreens: {
-    component: HomeScreens,
+    component: ScreenComponents.HomeScreens.HomeScreen,
   },
+  LocationReport: {
+    component: ScreenComponents.HomeScreens.LocationReport,
+  },
+  CameraScreen: {
+    component: ScreenComponents.HomeScreens.CameraScreen,
+    options: { presentation: "fullScreenModal" },
+  },
+  // blog
   BlogScreens: {
-    component: BlogScreens,
+    component: ScreenComponents.BlogScreens,
   },
+  // campai
   CampaignsScreens: {
-    component: CampaignsScreens,
+    component: ScreenComponents.CampaignsScreens,
   },
+  // history
   HistoryScreens: {
-    component: HistoryScreens,
+    component: ScreenComponents.HistoryScreens,
   },
+  //account
   AccountScreens: {
-    component: AccountScreens,
+    component: ScreenComponents.AccountScreens,
   },
 };

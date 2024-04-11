@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { View } from "react-native-animatable";
 import * as Animatable from "react-native-animatable";
-import imgOnboarding_1 from "~assets/onboarding_1.png";
+import imgOnboarding_1 from "~assets/images/onboarding_1.png";
 import { useScreenUtils } from "~hooks";
 import { data } from "./data";
 import { OnboardingItem } from "./components";

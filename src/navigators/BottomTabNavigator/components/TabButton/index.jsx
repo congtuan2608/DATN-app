@@ -64,7 +64,7 @@ export const TabButton = (props) => {
             duration={300}
             style={{
               ...StyleSheet.absoluteFillObject,
-              backgroundColor: theme.primaryBackgroundColor,
+              backgroundColor: theme.primaryIconColor,
               borderRadius: 100,
             }}
           />
@@ -73,7 +73,7 @@ export const TabButton = (props) => {
             style={{
               color: focused
                 ? theme.primaryFocusedColor
-                : theme.primaryBackgroundColor,
+                : theme.primaryIconColor,
             }}
           />
         </View>
@@ -84,7 +84,7 @@ export const TabButton = (props) => {
             duration={300}
             className="text-[8px] text-center font-medium"
             style={{
-              color: theme.primaryBackgroundColor,
+              color: theme.primaryIconColor,
             }}
           >
             {props.item.label}

@@ -1,29 +1,69 @@
 {
   "expo": {
-    "name": "app",
-    "displayName": "app",
+    "name": "Go Green",
     "slug": "app",
+    "description": "App dọn rác",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon-app.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "image": "./assets/background-app.png",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lctuan.app"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon-app.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.lctuan.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "113e6ff0-cab9-4258-882b-d259a8c87f31"
+      }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          },
+          "ios": {
+            "infoPlist": {
+              "NSAppTransportSecurity": {
+                "NSAllowsArbitraryLoads": true,
+                "NSExceptionDomains": {
+                  "localhost": {
+                    "NSExceptionAllowsInsecureHTTPLoads": true,
+                    "NSIncludesSubdomains": true,
+                    "NSTemporaryExceptionMinimumTLSVersion": "TLSv1.1"
+                  },
+                  "127.0.0.1": {
+                    "NSExceptionAllowsInsecureHTTPLoads": true,
+                    "NSIncludesSubdomains": true,
+                    "NSTemporaryExceptionMinimumTLSVersion": "TLSv1.1"
+                  }
+                }
+              }
+            },
+            "supportsTablet": true,
+            "flipper": true
+          }
+        }
+      ]
+    ]
   }
 }

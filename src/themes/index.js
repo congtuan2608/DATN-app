@@ -1,22 +1,39 @@
 export const ThemeConfig = {
   DefaultTheme: {
-    primaryBackgroundColor: "rgb(248 113 113)",
+    //background color
+    primaryBackgroundColor: "white",
+
     //text color
     primaryTextColor: "black",
     primaryFocusedColor: "white",
     secondTextColor: "#FFFFFF",
     thirdTextColor: "#828282",
+    highLightColor: "#8278F0",
+
     //button color
     primaryButtonBackgroundColor: "#8278F0",
     primaryDisabledButtonColor: "#e5e5e5",
+
+    //icon color
+    primaryIconColor: "#8278F0",
   },
   DarkTheme: {
-    primaryBackgroundColor: "blue",
-    primaryTextColor: "black",
+    //background color
+    primaryBackgroundColor: "#282828",
+
+    //text color
+    primaryTextColor: "white",
     primaryFocusedColor: "white",
-    primarySecondTextColor: "#FFFFFF",
+    secondTextColor: "#FFFFFF",
+    thirdTextColor: "#828282",
+    highLightColor: "#8278F0",
+
+    //button color
     primaryButtonBackgroundColor: "#8278F0",
     primaryDisabledButtonColor: "#e5e5e5",
+
+    //icon color
+    primaryIconColor: "#8278F0",
   },
   GreenTheme: {
     primaryBackgroundColor: "green",
@@ -25,6 +42,7 @@ export const ThemeConfig = {
     primarySecondTextColor: "#FFFFFF",
     primaryButtonBackgroundColor: "red",
     primaryDisabledButtonColor: "#e5e5e5",
+    primaryIconColor: "green",
   },
 };
 

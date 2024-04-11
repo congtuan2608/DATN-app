@@ -8,6 +8,7 @@ import EntypoIcons from "react-native-vector-icons/Entypo";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import FontistoIcons from "react-native-vector-icons/Fontisto";
 const Icons = {
   Ionicons,
   MaterialIcons,
@@ -18,6 +19,7 @@ const Icons = {
   Feather: FeatherIcons,
   AntDesign: AntDesignIcons,
   Entypo: EntypoIcons,
+  Fontisto: FontistoIcons,
 };
 
 export const KCIcon = (props) => {
