@@ -61,7 +61,9 @@ export const OnboardingScreens = () => {
       >
         <View className="w-full py-4 px-4">
           <TouchableOpacity onPress={onStarted}>
-            <Text className="text-right font-semibold text-lg">Skip</Text>
+            <Text className="text-right font-semibold text-lg text-slate-800">
+              Skip
+            </Text>
           </TouchableOpacity>
         </View>
         <View className="relative flex-1 z-10 justify-center items-center">

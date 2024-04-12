@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Image,
   Platform,
   ScrollView,
   Text,
@@ -7,15 +8,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { KCButton, KCIcon } from "~components";
+import { KCButton, KCIcon, KCSVGAsset } from "~components";
 import { useAuth, useScreenUtils, useTheme } from "~hooks";
-import { getResponesive } from "~utils";
-import { defaultConfig, validate } from "../utils";
-import GoogleColor from "~assets/svg/google_color.svg";
-import FacebookColor from "~assets/svg/facebook_color.svg";
+import { defaultConfig, getResponesive, validateInput } from "~utils";
 import { useNavigation } from "@react-navigation/native";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { DatePickerModal } from "react-native-paper-dates";
+import SelectDropdown from "react-native-select-dropdown";
+import dayjs from "dayjs";
+import * as ImagePicker from "expo-image-picker";
+import { RestAPI } from "~apis";
 const validateField = {
+  avatar: {},
   firstName: {
     required: true,
     label: "Please enter your first name",
@@ -46,6 +49,20 @@ const validateField = {
   },
 };
 
+const genderValues = [
+  {
+    label: "Female",
+    value: "female",
+    icon: { name: "female", family: "MaterialIcons" },
+  },
+  {
+    label: "Male",
+    value: "male",
+    icon: { name: "male", family: "MaterialIcons" },
+  },
+  { label: "Other", value: "other" },
+];
+
 export const SignUpScreens = () => {
   const auth = useAuth();
   const { theme } = useTheme();
@@ -53,7 +70,9 @@ export const SignUpScreens = () => {
   const { safeAreaInsets, dimensions } = useScreenUtils();
   const [isHidePassword, setIsHidePassword] = React.useState(true);
   const [isShowSignUpFailed, setIsShowSignUpFailed] = React.useState(false);
-  const dateRef = React.useRef(null);
+  const [openDatePicker, setOpenDatePicker] = React.useState(false);
+  const genderRef = React.useRef(null);
+  const signUp = RestAPI.SignUp();
   const [formValidate, setFormValidate] = React.useState(() => {
     let newForm = {};
     Object.keys(validateField).map((key) => (newForm[key] = defaultConfig));
@@ -66,6 +85,7 @@ export const SignUpScreens = () => {
   });
 
   const onFocusInput = (key, props) => {
+    setIsShowSignUpFailed(false);
     setFormValidate((prev) => ({
       ...prev,
       [key]: defaultConfig,
@@ -74,15 +94,37 @@ export const SignUpScreens = () => {
   const onBlurInput = (key, props) => {
     setFormValidate((prev) => ({
       ...prev,
-      [key]: validate(props),
+      [key]: validateInput(props),
     }));
   };
-  const onSignUp = () => {
+
+  const onSelectAvatar = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true,
+    });
+    if (result.canceled) {
+      setFormValues((prev) => ({
+        ...prev,
+        avatar: undefined,
+      }));
+      return;
+    }
+    setFormValues((prev) => ({
+      ...prev,
+      avatar: result.assets[0],
+    }));
+  };
+
+  const onSignUp = async () => {
     const newValidate = {};
 
     Object.keys(formValidate).map(
       (key) =>
-        (newValidate[key] = validate({
+        (newValidate[key] = validateInput({
           ...validateField[key],
           input: formValues[key],
           formValues,
@@ -94,7 +136,13 @@ export const SignUpScreens = () => {
       Object.entries(newValidate).filter(([key, item]) => item.isError).length
     )
       return;
+    const res = await signUp.mutateAsync(formValues);
+    if (res?.data?.status !== 201) {
+      setIsShowSignUpFailed(true);
+    }
+    navigate.navigate("Login", res);
   };
+
   return (
     <View
       className="flex-1 relative"
@@ -113,11 +161,35 @@ export const SignUpScreens = () => {
           className="flex-1 flex-col items-center justify-between w-full px-4"
           style={{
             gap: 20,
-            marginTop: safeAreaInsets.top + 60,
+            marginTop: safeAreaInsets.top + 20,
             ...getResponesive(safeAreaInsets, dimensions).signUpStyle
               .spacingBottom,
           }}
         >
+          <View>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={onSelectAvatar}
+              className="relative"
+            >
+              <Image
+                source={{
+                  uri:
+                    formValues?.avatar?.uri ||
+                    "https://res.cloudinary.com/dudwjr0ux/image/upload/v1712904716/assets/user-avatar-2_hhfccz.jpg",
+                }}
+                className="w-28 h-28 rounded-full"
+                resizeMode="contain"
+              />
+              <KCIcon
+                className="absolute bottom-0 right-0"
+                name="file-image-plus-outline"
+                family="MaterialCommunityIcons"
+                size={30}
+                color={theme.primaryIconColor}
+              />
+            </TouchableOpacity>
+          </View>
           <View style={{ gap: 20 }}>
             <View className="justify-center items-center">
               <Text
@@ -186,7 +258,7 @@ export const SignUpScreens = () => {
                   onFocus={() =>
                     onFocusInput("lastName", {
                       ...validateField.lastName,
-                      input: formValues.firstName,
+                      input: formValues.lastName,
                     })
                   }
                   onBlur={() =>
@@ -306,71 +378,127 @@ export const SignUpScreens = () => {
             </View>
             <View className="flex flex-row" style={{ gap: 10 }}>
               <View className="relative flex-1">
-                <DateTimePicker
-                  mode="date"
-                  value={new Date()}
-                  style={{ flex: 1 }}
-                  // onChange={({ date }) => {
-                  //   setFormValues((prev) => ({ ...prev, dateOfBirth: date }));
-                  // }}
-                />
-
-                {/* <TouchableOpacity
-                  onPress={() => console.log(dateRef.current)}
+                <TouchableOpacity
+                  activeOpacity={0.6}
+                  onPress={() => setOpenDatePicker(true)}
                   className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
                 >
-
-                  <Text style={{ color: theme.thirdTextColor }}>
-                    {formValues.dateOfBirth ?? "Birth date"}
+                  <DatePickerModal
+                    locale="en"
+                    mode="single"
+                    visible={openDatePicker}
+                    onDismiss={() => setOpenDatePicker(false)}
+                    date={formValues?.dateOfBirth}
+                    onConfirm={(param) => {
+                      setOpenDatePicker(false);
+                      setFormValues((prev) => ({
+                        ...prev,
+                        dateOfBirth: param.date,
+                      }));
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: formValues?.dateOfBirth
+                        ? theme.primaryTextColor
+                        : theme.thirdTextColor,
+                    }}
+                  >
+                    {(formValues?.dateOfBirth &&
+                      dayjs(formValues?.dateOfBirth).format("DD/MM/YYYY")) ??
+                      "Birth date"}
                   </Text>
                   <View className="absolute top-0 bottom-0 right-0 items-center justify-center opacity-40 px-5">
                     <KCIcon name="date" family="Fontisto" size={23} />
                   </View>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
               </View>
-              <View className="relative">
-                <TextInput
-                  autoComplete="gender"
-                  className={`bg-gray-200 rounded-xl px-5 pr-14 ${
-                    Platform.OS === "ios" ? "py-5" : "py-4"
-                  }`}
-                  onFocus={() =>
-                    onFocusInput("gender", {
-                      ...validateField.gender,
-                      input: formValues.gender,
-                    })
-                  }
-                  onBlur={() =>
-                    onBlurInput("gender", {
-                      ...validateField.gender,
-                      input: formValues.gender,
-                    })
-                  }
-                  placeholder={"Gender"}
-                  value={formValues.gender}
-                  onChangeText={(value) =>
-                    setFormValues((prev) => ({ ...prev, gender: value }))
-                  }
-                  placeholderTextColor={theme.thirdTextColor}
+              <View>
+                <SelectDropdown
+                  ref={genderRef}
+                  data={genderValues}
+                  onSelect={(selectedItem, index) => {
+                    setFormValues((prev) => ({
+                      ...prev,
+                      gender: selectedItem?.value,
+                    }));
+                  }}
+                  renderButton={(selectedItem, isOpened) => {
+                    return (
+                      <View className="relative">
+                        <TouchableOpacity
+                          onPress={() => {
+                            genderRef.current?.openDropdown();
+                          }}
+                          activeOpacity={0.6}
+                          className={`bg-gray-200 rounded-xl px-5 pr-14 w-36 ${
+                            Platform.OS === "ios" ? "py-5" : "py-4"
+                          }`}
+                        >
+                          <Text
+                            style={{
+                              color: formValues?.gender
+                                ? theme.primaryTextColor
+                                : theme.thirdTextColor,
+                            }}
+                          >
+                            {selectedItem?.label || "Gender"}
+                          </Text>
+                          <View className="absolute top-0 bottom-0 right-0 items-center justify-center opacity-40 px-5">
+                            <KCIcon
+                              name="transgender-alt"
+                              family="Fontisto"
+                              size={25}
+                            />
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  }}
+                  renderItem={(item, index, isSelected) => {
+                    return (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          paddingVertical: 12,
+                          paddingHorizontal: 20,
+                          ...(isSelected && { backgroundColor: "#D2D9DF" }),
+                        }}
+                      >
+                        <Text className="flex-1 text-center">
+                          {item?.label}
+                        </Text>
+                        {item?.icon && (
+                          <KCIcon
+                            name={item.icon.name}
+                            family={item.icon.family}
+                            size={20}
+                          />
+                        )}
+                      </View>
+                    );
+                  }}
+                  showsVerticalScrollIndicator={false}
+                  dropdownStyle={{
+                    borderRadius: 8,
+                  }}
                 />
-                <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
-                  <KCIcon name="transgender-alt" family="Fontisto" size={23} />
-                </View>
+                {formValidate.gender?.isError && (
+                  <View className="px-4 mt-2 -mb-3">
+                    <Text
+                      className="text-xs"
+                      style={{ color: formValidate.gender?.errorColor }}
+                    >
+                      {formValidate.gender?.message}
+                    </Text>
+                  </View>
+                )}
               </View>
-              {formValidate.gender?.isError && (
-                <View className="px-4 mt-2 -mb-3">
-                  <Text
-                    className="text-xs"
-                    style={{ color: formValidate.gender?.errorColor }}
-                  >
-                    {formValidate.gender?.message}
-                  </Text>
-                </View>
-              )}
             </View>
-
             <View>
               <View className="relative">
                 <TextInput
@@ -475,19 +603,21 @@ export const SignUpScreens = () => {
                 </View>
               )}
             </View>
-            {/* {login.data?.status !== 200 && isShowSignUpFailed && (
-              <View className="-mb-3 -mt-1">
-                <Text
-                  className="text-xs text-center"
-                  style={{ color: form.password.errorColor }}
-                >
-                  {typeof login.data?.detail === "string" &&
-                  login.data?.detail.length < 200
-                    ? login.data?.detail
-                    : "Something went wrong"}
-                </Text>
-              </View>
-            )} */}
+            {!signUp.isPending &&
+              signUp.data?.status !== 201 &&
+              isShowSignUpFailed && (
+                <View className="-mb-3 -mt-1">
+                  <Text
+                    className="text-xs text-center"
+                    style={{ color: "red" }}
+                  >
+                    {typeof signUp.data?.detail === "string" &&
+                    signUp.data?.detail.length < 1000
+                      ? signUp.data?.detail
+                      : "Something went wrong"}
+                  </Text>
+                </View>
+              )}
 
             <View
               className="w-full flex-row justify-center items-center px-20"
@@ -509,7 +639,7 @@ export const SignUpScreens = () => {
                 className="flex-row justify-center items-center py-2 rounded-lg bg-gray-200"
                 style={{ gap: 10 }}
               >
-                <GoogleColor className="w-8 h-8" />
+                <KCSVGAsset name="Google_Color" className="w-8 h-8" />
                 <Text className="text-base font-medium">
                   Continue with google
                 </Text>
@@ -518,7 +648,7 @@ export const SignUpScreens = () => {
                 className="flex-row justify-center items-center py-2 rounded-lg bg-gray-200"
                 style={{ gap: 10 }}
               >
-                <FacebookColor />
+                <KCSVGAsset name="Facebook_Color" />
                 <Text className="text-base font-medium">
                   Continue with facebook
                 </Text>
@@ -535,7 +665,11 @@ export const SignUpScreens = () => {
           backgroundColor: theme.primaryBackgroundColor,
         }}
       >
-        <KCButton onPress={onSignUp} disable>
+        <KCButton
+          onPress={onSignUp}
+          disabled={signUp.isPending}
+          isLoading={signUp.isPending}
+        >
           Sign Up
         </KCButton>
         <View className="flex-row justify-center w-full py-2">

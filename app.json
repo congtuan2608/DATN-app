@@ -12,9 +12,7 @@
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lctuan.app"
@@ -63,7 +61,9 @@
             "flipper": true
           }
         }
-      ]
+      ],
+      "expo-localization",
+      "expo-image-picker"
     ]
   }
 }

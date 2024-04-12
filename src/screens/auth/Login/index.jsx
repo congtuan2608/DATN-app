@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   Image,
   Platform,
@@ -14,27 +14,32 @@ import { useScreenUtils } from "~hooks";
 import { KCButton, KCSVGAsset } from "~components";
 import { KCIcon } from "~components";
 import React from "react";
-import { getResponesive, validateEmail, validateLength } from "~utils";
-import GoogleColor from "~assets/svg/google_color.svg";
-import FacebookColor from "~assets/svg/facebook_color.svg";
+import { getResponesive, validateInput, defaultConfig } from "~utils";
 import { RestAPI } from "~apis";
-import { defaultConfig, validate } from "../utils";
 
 export const LoginScreens = () => {
   const auth = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigation();
+  const route = useRoute();
   const { safeAreaInsets, dimensions } = useScreenUtils();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isHidePassword, setIsHidePassword] = React.useState(true);
   const [isShowLoginFailed, setIsShowLoginFailed] = React.useState(false);
   const [isRememberMe, setIsRememberMe] = React.useState(false);
-
   const [validateForm, setValidateForm] = React.useState({
     email: defaultConfig,
     password: defaultConfig,
   });
+  const login = RestAPI.Login();
+
+  React.useEffect(() => {
+    if (route.params?.email) {
+      setEmail(route.params?.email);
+      setPassword("");
+    }
+  }, [route.params]);
 
   const validateField = {
     email: {
@@ -51,8 +56,6 @@ export const LoginScreens = () => {
     },
   };
 
-  const login = RestAPI.Login();
-
   const onFocusInput = (key, props) => {
     setIsShowLoginFailed(false);
     setValidateForm((prev) => ({
@@ -61,12 +64,12 @@ export const LoginScreens = () => {
     }));
   };
   const onBlurInput = (key, props) => {
-    setValidateForm((prev) => ({ ...prev, [key]: validate(props) }));
+    setValidateForm((prev) => ({ ...prev, [key]: validateInput(props) }));
   };
   const onLogin = async () => {
     const newValidate = {};
     Object.keys(validateForm).map(
-      (key) => (newValidate[key] = validate(validateField[key]))
+      (key) => (newValidate[key] = validateInput(validateField[key]))
     );
     setValidateForm(newValidate);
 
@@ -78,17 +81,17 @@ export const LoginScreens = () => {
     const res = await login.mutateAsync({ email, password });
 
     if (res?.status !== 200) setIsShowLoginFailed(true);
-    auth.login({
-      access_token: "res.accessToken",
-      refresh_token: "res.refreshToken",
-    });
+    // auth.login({
+    //   access_token: "res.accessToken",
+    //   refresh_token: "res.refreshToken",
+    // });
 
-    // if (res?.refreshToken && res?.accessToken) {
-    //   auth.login({
-    //     access_token: res.accessToken,
-    //     refresh_token: res.refreshToken,
-    //   });
-    // }
+    if (res?.refreshToken && res?.accessToken) {
+      auth.login({
+        access_token: res.accessToken,
+        refresh_token: res.refreshToken,
+      });
+    }
   };
   return (
     <View
@@ -209,19 +212,21 @@ export const LoginScreens = () => {
                 </View>
               )}
             </View>
-            {login.data?.status !== 200 && isShowLoginFailed && (
-              <View className="-mb-3 -mt-1">
-                <Text
-                  className="text-xs text-center"
-                  style={{ color: validateForm.password.errorColor }}
-                >
-                  {typeof login.data?.detail === "string" &&
-                  login.data?.detail.length < 200
-                    ? login.data?.detail
-                    : "Something went wrong"}
-                </Text>
-              </View>
-            )}
+            {!login.isPending &&
+              login.data?.status !== 200 &&
+              isShowLoginFailed && (
+                <View className="-mb-3 -mt-1">
+                  <Text
+                    className="text-xs text-center"
+                    style={{ color: validateForm.password.errorColor }}
+                  >
+                    {typeof login.data?.detail === "string" &&
+                    login.data?.detail.length < 200
+                      ? login.data?.detail
+                      : "Something went wrong"}
+                  </Text>
+                </View>
+              )}
             <View className="flex-row justify-between px-1">
               <TouchableOpacity
                 className="flex-row items-center px-2 py-1"
@@ -307,7 +312,13 @@ export const LoginScreens = () => {
           backgroundColor: theme.primaryBackgroundColor,
         }}
       >
-        <KCButton onPress={onLogin}>Login</KCButton>
+        <KCButton
+          onPress={onLogin}
+          disabled={login.isPending}
+          isLoading={login.isPending}
+        >
+          Login
+        </KCButton>
         <View className="flex-row justify-center w-full py-2">
           <Text style={{ color: theme.primaryTextColor }}>New Member? </Text>
           <TouchableOpacity onPress={() => navigate.navigate("SignUp")}>

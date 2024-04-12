@@ -46,6 +46,14 @@ export const getResponesive = (
           marginBottom: safeAreaInsets.bottom + 130,
         },
       },
+      signUpStyle: {
+        spacingBottom: {
+          marginBottom: safeAreaInsets.bottom,
+        },
+        spacingBottom: {
+          marginBottom: safeAreaInsets.bottom + 130,
+        },
+      },
       ...style,
     };
   }

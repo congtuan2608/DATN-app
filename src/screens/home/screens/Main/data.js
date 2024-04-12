@@ -1,27 +1,27 @@
 export const serviceList = [
   {
-    title: "Bản đồ",
+    title: "Map",
     image_url: require("~assets/images/map.png"),
   },
   {
-    title: "Chiến dịch",
+    title: "Campaign",
     image_url: require("~assets/images/campaign.png"),
   },
   {
-    title: "Ủng hộ",
+    title: "Donate",
     image_url: require("~assets/images/donate.png"),
   },
   {
-    title: "Báo cáo địa điểm mới",
+    title: "Report location",
     image_url: require("~assets/images/add_location2.png"),
-    navigate: "CameraScreen",
+    navigate: "LocationReport",
   },
   {
-    title: "Thống kê",
+    title: "Statistical",
     image_url: require("~assets/images/statistics.png"),
   },
   {
-    title: "Hướng dẫn về môi trường",
+    title: "Environmental guidance",
     image_url: require("~assets/images/instruct.png"),
   },
 ];

@@ -78,7 +78,7 @@ export const HomeScreen = () => {
           <View className="flex-1 bg-white px-3 py-4 rounded-t-3xl">
             <View>
               <TouchableOpacity className="flex-row justify-between items-center py-1">
-                <Text className="text-lg font-semibold">Dịch vụ</Text>
+                <Text className="text-lg font-semibold">Service</Text>
                 <KCIcon
                   family="MaterialIcons"
                   name="keyboard-arrow-right"

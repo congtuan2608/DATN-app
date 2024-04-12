@@ -7,7 +7,7 @@ export const ThemeConfig = {
     primaryTextColor: "black",
     primaryFocusedColor: "white",
     secondTextColor: "#FFFFFF",
-    thirdTextColor: "#828282",
+    thirdTextColor: "#919191",
     highLightColor: "#8278F0",
 
     //button color
@@ -25,7 +25,7 @@ export const ThemeConfig = {
     primaryTextColor: "white",
     primaryFocusedColor: "white",
     secondTextColor: "#FFFFFF",
-    thirdTextColor: "#828282",
+    thirdTextColor: "#919191",
     highLightColor: "#8278F0",
 
     //button color
