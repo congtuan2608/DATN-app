@@ -20,4 +20,8 @@ export const SYSTEM_STATE = {
     key: "AuthData",
     default: undefined,
   }),
+  Location: atom({
+    key: "Location",
+    default: undefined,
+  }),
 };

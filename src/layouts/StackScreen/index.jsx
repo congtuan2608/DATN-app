@@ -1,8 +1,9 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { useScreenUtils } from "~hooks";
+import { useScreenUtils, useTheme } from "~hooks";
 import { KCIcon } from "~components";
 import { useNavigation } from "@react-navigation/native";
 export const StackScreen = (props) => {
+  const { theme } = useTheme();
   const screenUtils = useScreenUtils();
   const navigate = useNavigation();
   const onGoBack = () => {
@@ -14,6 +15,7 @@ export const StackScreen = (props) => {
       className="flex-1 relative"
       style={{
         paddingTop: screenUtils.safeAreaInsets.top - 5,
+        backgroundColor: theme.secondBackgroundColor ?? undefined,
         ...props?.styleContainer,
       }}
     >
@@ -21,7 +23,7 @@ export const StackScreen = (props) => {
         <View>
           {props.header ?? (
             <View
-              className="flex flex-row justify-between items-center py-[3px] px-4 pl-0"
+              className="flex flex-row justify-between items-center pb-[6px] px-4 pl-0"
               style={{
                 borderBottomWidth: props.showBorderBottom ? 1 : 0,
                 borderBottomColor: "#e7e7e7",
@@ -35,6 +37,7 @@ export const StackScreen = (props) => {
                       name="chevron-small-left"
                       className="pt-[2px]"
                       size={30}
+                      color={theme.primaryTextColor}
                     />
                   </TouchableOpacity>
                 </View>
@@ -43,6 +46,7 @@ export const StackScreen = (props) => {
                     numberOfLines={1}
                     ellipsizeMode="tail"
                     className="text-base font-semibold"
+                    style={{ color: theme.primaryTextColor }}
                   >
                     {props.headerTitle}
                   </Text>

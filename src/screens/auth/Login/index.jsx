@@ -21,7 +21,7 @@ export const LoginScreens = () => {
   const auth = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigation();
-  const route = useRoute();
+  const navigateParams = useRoute();
   const { safeAreaInsets, dimensions } = useScreenUtils();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -35,11 +35,11 @@ export const LoginScreens = () => {
   const login = RestAPI.Login();
 
   React.useEffect(() => {
-    if (route.params?.email) {
-      setEmail(route.params?.email);
+    if (navigateParams.params?.email) {
+      setEmail(navigateParams.params?.email);
       setPassword("");
     }
-  }, [route.params]);
+  }, [navigateParams.params]);
 
   const validateField = {
     email: {
@@ -305,7 +305,7 @@ export const LoginScreens = () => {
         </View>
       </ScrollView>
       <View
-        className="w-full flex-col justify-center absolute bottom-0 pt-3 px-4"
+        className="w-full flex-col justify-center absolute bottom-0 pt-3 px-4 "
         style={{
           gap: 10,
           paddingBottom: safeAreaInsets.bottom,

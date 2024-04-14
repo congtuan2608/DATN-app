@@ -6,15 +6,22 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Image,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import React from "react";
 import { StackScreen } from "~layouts";
-import { useScreenUtils, useTheme } from "~hooks";
+import { useLocation, useScreenUtils, useTheme } from "~hooks";
 import { defaultConfig, getResponesive, validateInput } from "~utils";
 import { KCButton, KCIcon, KCSVGAsset } from "~components";
 import SelectDropdown from "react-native-select-dropdown";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
+import Checkbox from "expo-checkbox";
+
 const validateField = {
   address: {
     required: true,
@@ -67,6 +74,14 @@ export function LocationReport() {
   const severityRef = React.useRef(null);
   const statusRef = React.useRef(null);
   const scrollRef = React.useRef(null);
+  const [images, setImages] = React.useState([]);
+  const { location, getCurrentLocation } = useLocation();
+
+  const [formConfigs, setFormConfigs] = React.useState({
+    address: { readOnly: true, isLoading: false },
+    library: { isLoading: false, limit: 10 },
+  });
+
   const [formValidate, setFormValidate] = React.useState(() => {
     let newForm = {};
     Object.keys(validateField).map((key) => (newForm[key] = defaultConfig));
@@ -77,6 +92,51 @@ export function LocationReport() {
     Object.keys(validateField).map((key) => (newValues[key] = undefined));
     return newValues;
   });
+
+  React.useEffect(() => {
+    if (location) {
+      setFormValues((prev) => ({
+        ...prev,
+        address: `${location.latitude}, ${location.longitude}`,
+      }));
+      setFormConfigs((prev) => ({
+        ...prev,
+        address: { ...prev.address, isLoading: false },
+      }));
+    } else {
+      setFormConfigs((prev) => ({
+        ...prev,
+        address: { ...prev.address, isLoading: true },
+      }));
+    }
+  }, [location]);
+
+  //========================== function ================================
+  const onCheckBox = async (key, props) => {
+    setFormConfigs((prev) => {
+      if (prev[key]?.isLoading !== undefined)
+        return { ...prev, [key]: { ...prev[key], ...props, isLoading: true } };
+      return { ...prev, [key]: { ...prev[key], ...props } };
+    });
+    if (key === "address" && props?.readOnly) {
+      if (!location) {
+        await getCurrentLocation();
+      }
+      if (location || getLocation) {
+        setFormValues((prev) => ({
+          ...prev,
+          address: `${location.latitude}, ${location.longitude}`,
+        }));
+      }
+    }
+    setFormConfigs((prev) => {
+      if (prev[key]?.isLoading !== undefined)
+        return { ...prev, [key]: { ...prev[key], isLoading: false } };
+      return { ...prev, [key]: { ...prev[key], ...props } };
+    });
+  };
+
+  // ============================= handle input ==================================
   const onFocusInput = (key, props) => {
     setIsShowSubmitFailed(false);
     setFormValidate((prev) => ({
@@ -90,7 +150,60 @@ export function LocationReport() {
       [key]: validateInput(props),
     }));
   };
-  const onSubmit = async () => {};
+
+  //========================== handle select image/video from library ===========================
+  const onChooseFromLibrary = async () => {
+    const limit = formConfigs.library?.limit - images.length;
+    if (limit <= 0) {
+      Alert.alert("Oop!", "Do not choose more than 10", [
+        {
+          text: "OK",
+          style: "default",
+        },
+      ]);
+      return;
+    }
+    setFormConfigs((prev) => ({
+      ...prev,
+      library: { ...prev.library, isLoading: true },
+    }));
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsMultipleSelection: true,
+      selectionLimit: limit,
+      videoMaxDuration: 32,
+    });
+    setFormConfigs((prev) => ({
+      ...prev,
+      library: { ...prev.library, isLoading: false },
+    }));
+    console.log({ result });
+    if (result.canceled) return;
+    setImages((prev) => [...prev, ...result.assets]);
+  };
+  //
+  const onRemoveImage = (uri) => {
+    setImages((prev) => prev.filter((item) => item.uri !== uri));
+  };
+
+  // =========================== handle submit form ==============================
+  const onSubmit = async () => {
+    const newValidate = {};
+    Object.keys(formValidate).map(
+      (key) =>
+        (newValidate[key] = validateInput({
+          ...validateField[key],
+          input: formValues[key],
+          formValues,
+        }))
+    );
+    setFormValidate(newValidate);
+    if (
+      Object.entries(newValidate).filter(([key, item]) => item.isError).length
+    )
+      return;
+  };
+  //========================= element ===========================
   return (
     <StackScreen headerTitle="Report location">
       <View
@@ -99,7 +212,9 @@ export function LocationReport() {
       >
         <KeyboardAwareScrollView
           className="flex-1 w-full"
-          extraScrollHeight={50}
+          extraScrollHeight={20}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
         >
           <ScrollView
             ref={scrollRef}
@@ -116,8 +231,7 @@ export function LocationReport() {
               style={{
                 gap: 20,
                 marginTop: safeAreaInsets.top - 15,
-                ...getResponesive(safeAreaInsets, dimensions).signUpStyle
-                  .spacingBottom,
+                marginBottom: safeAreaInsets.bottom + 80,
               }}
             >
               <View style={{ gap: 20 }}>
@@ -126,20 +240,33 @@ export function LocationReport() {
                     className="text-2xl"
                     style={{ color: theme.primaryTextColor }}
                   >
-                    Let's Get Started
+                    Report
                   </Text>
                   <Text
                     className="text-base"
                     style={{ color: theme.primaryTextColor }}
                   >
-                    Create an account to Go Green to get all feature
+                    Please provide some information
                   </Text>
                 </View>
               </View>
               <View className="w-full flex-1" style={{ gap: 20 }}>
                 <View>
+                  <View className="flex-row justify-between items-center pb-3 px-2">
+                    <Text style={{ color: theme.primaryTextColor }}>
+                      Get current location
+                    </Text>
+                    <Checkbox
+                      value={formConfigs.address?.readOnly}
+                      onValueChange={(newValue) =>
+                        onCheckBox("address", { readOnly: newValue })
+                      }
+                      className="mr-3"
+                    />
+                  </View>
                   <View className="relative">
                     <TextInput
+                      readOnly={formConfigs.address.readOnly}
                       autoComplete="name-given"
                       className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                         Platform.OS === "ios" ? "py-5" : "py-4"
@@ -159,11 +286,18 @@ export function LocationReport() {
                       placeholderTextColor={theme.thirdTextColor}
                     />
                     <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
-                      <KCIcon
-                        name="map-marker-radius-outline"
-                        family="MaterialCommunityIcons"
-                        size={25}
-                      />
+                      {formConfigs.address?.isLoading ? (
+                        <ActivityIndicator
+                          size="small"
+                          color={theme.primaryIconColor}
+                        />
+                      ) : (
+                        <KCIcon
+                          name="map-marker-radius-outline"
+                          family="MaterialCommunityIcons"
+                          size={23}
+                        />
+                      )}
                     </View>
                   </View>
                   {formValidate.address?.isError && (
@@ -183,6 +317,7 @@ export function LocationReport() {
                     ref={contaminatedTypeRef}
                     data={contaminatedTypeList}
                     onSelect={(selectedItem, index) => {
+                      onFocusInput("contaminatedType");
                       setFormValues((prev) => ({
                         ...prev,
                         contaminatedType: selectedItem?.value,
@@ -268,6 +403,7 @@ export function LocationReport() {
                     ref={severityRef}
                     data={severityList}
                     onSelect={(selectedItem, index) => {
+                      onFocusInput("severity");
                       setFormValues((prev) => ({
                         ...prev,
                         severity: selectedItem?.value,
@@ -298,7 +434,7 @@ export function LocationReport() {
                               <KCIcon
                                 name="warning"
                                 family="AntDesign"
-                                size={23}
+                                size={22}
                               />
                             </View>
                           </TouchableOpacity>
@@ -351,6 +487,7 @@ export function LocationReport() {
                     ref={statusRef}
                     data={statusList}
                     onSelect={(selectedItem, index) => {
+                      onFocusInput("status");
                       setFormValues((prev) => ({
                         ...prev,
                         status: selectedItem?.value,
@@ -515,9 +652,91 @@ export function LocationReport() {
                     </View>
                   )}
                 </View>
-                <KCButton onPress={() => navigate.navigate("CameraScreen")}>
-                  Cammera
-                </KCButton>
+                <View className="pt-2">
+                  <Text
+                    className="font-medium"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Choose a photo from the gallery or take a photo:
+                  </Text>
+
+                  <View
+                    className="justify-center items-center flex-row flex-wrap mt-3"
+                    style={{ gap: 10 }}
+                  >
+                    {(images ?? []).map((item, idx) => (
+                      <View
+                        key={idx}
+                        className="w-20 h-20 rounded-lg border border-dashed items-center justify-center p-[1px] relative"
+                        style={{ borderColor: theme.primaryTextColor }}
+                      >
+                        <Image
+                          source={{
+                            uri:
+                              item.uri ||
+                              "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
+                          }}
+                          className="w-full h-full rounded-lg "
+                          resizeMode="cover"
+                        />
+                        <TouchableOpacity
+                          className="absolute -bottom-3 -right-3  rounded-full p-1"
+                          onPress={() => onRemoveImage(item.uri)}
+                        >
+                          <KCIcon
+                            name="delete-forever"
+                            family="MaterialCommunityIcons"
+                            size={25}
+                            color="red"
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                    {formConfigs.library.limit - images.length > 0 && (
+                      <>
+                        <TouchableOpacity
+                          disabled={formConfigs.library.isLoading}
+                          className="w-20 h-20 rounded-lg border border-dashed items-center justify-center p-[1px]"
+                          onPress={onChooseFromLibrary}
+                          style={{ borderColor: theme.primaryTextColor }}
+                        >
+                          {formConfigs.library.isLoading ? (
+                            <ActivityIndicator
+                              size="small"
+                              color={theme.primaryIconColor}
+                            />
+                          ) : (
+                            <KCIcon
+                              name="add-photo-alternate"
+                              family="MaterialIcons"
+                              className="ml-1"
+                              size={35}
+                              color={theme.primaryTextColor}
+                            />
+                          )}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          className="w-20 h-20 rounded-lg border border-dashed items-center justify-center p-[1px]"
+                          onPress={() =>
+                            navigate.navigate("CameraScreen", {
+                              currentLength: images.length,
+                              limit: formConfigs.library.limit,
+                              setImages,
+                            })
+                          }
+                          style={{ borderColor: theme.primaryTextColor }}
+                        >
+                          <KCIcon
+                            name="camera"
+                            family="Fontisto"
+                            size={25}
+                            color={theme.primaryTextColor}
+                          />
+                        </TouchableOpacity>
+                      </>
+                    )}
+                  </View>
+                </View>
                 {/* {!signUp.isPending &&
                 signUp.data?.status !== 201 &&
                 isShowSignUpFailed && (
@@ -539,11 +758,12 @@ export function LocationReport() {
         </KeyboardAwareScrollView>
 
         <View
-          className="w-full flex-col justify-center absolute bottom-0 bg-white pt-3 px-4"
+          className="w-full flex-col justify-center absolute bottom-0 pt-3 px-4 border-t "
           style={{
             gap: 10,
             paddingBottom: safeAreaInsets.bottom,
             backgroundColor: theme.primaryBackgroundColor,
+            borderColor: theme.primaryBorderColor,
           }}
         >
           <KCButton

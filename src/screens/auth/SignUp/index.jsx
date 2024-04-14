@@ -137,8 +137,10 @@ export const SignUpScreens = () => {
     )
       return;
     const res = await signUp.mutateAsync(formValues);
-    if (res?.data?.status !== 201) {
+    console.log(res);
+    if (res?.status !== 201) {
       setIsShowSignUpFailed(true);
+      return;
     }
     navigate.navigate("Login", res);
   };
@@ -179,7 +181,7 @@ export const SignUpScreens = () => {
                     "https://res.cloudinary.com/dudwjr0ux/image/upload/v1712904716/assets/user-avatar-2_hhfccz.jpg",
                 }}
                 className="w-28 h-28 rounded-full"
-                resizeMode="contain"
+                resizeMode="cover"
               />
               <KCIcon
                 className="absolute bottom-0 right-0"

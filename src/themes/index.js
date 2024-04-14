@@ -2,6 +2,7 @@ export const ThemeConfig = {
   DefaultTheme: {
     //background color
     primaryBackgroundColor: "white",
+    secondBackgroundColor: "#f1f1f1",
 
     //text color
     primaryTextColor: "black",
@@ -16,10 +17,14 @@ export const ThemeConfig = {
 
     //icon color
     primaryIconColor: "#8278F0",
+
+    //border
+    primaryBorderColor: "#e7e5e4",
   },
   DarkTheme: {
     //background color
     primaryBackgroundColor: "#282828",
+    secondBackgroundColor: "#333333",
 
     //text color
     primaryTextColor: "white",
@@ -34,6 +39,9 @@ export const ThemeConfig = {
 
     //icon color
     primaryIconColor: "#8278F0",
+
+    //border
+    primaryBorderColor: "#404040",
   },
   GreenTheme: {
     primaryBackgroundColor: "green",

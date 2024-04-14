@@ -13,6 +13,9 @@ export const SCREENS = {
   HomeScreens: {
     component: ScreenComponents.HomeScreens.HomeScreen,
   },
+  MapScreen: {
+    component: ScreenComponents.HomeScreens.MapScreen,
+  },
   LocationReport: {
     component: ScreenComponents.HomeScreens.LocationReport,
   },

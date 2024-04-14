@@ -2,6 +2,7 @@ export const serviceList = [
   {
     title: "Map",
     image_url: require("~assets/images/map.png"),
+    navigate: "MapScreen",
   },
   {
     title: "Campaign",

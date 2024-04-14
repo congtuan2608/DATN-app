@@ -1,16 +1,17 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
 import React from "react";
 import { StackScreen } from "~layouts";
 import { KCIcon } from "~components";
 import { Camera, CameraType } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { useScreenUtils } from "~hooks";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 export const CameraScreen = () => {
   const screenUtils = useScreenUtils();
+  const navigateParams = useRoute();
   const navigate = useNavigation();
   const [hasCameraPermission, setHasCameraPermission] = React.useState(null);
-  const [image, setImage] = React.useState(null);
+  const [imagePreview, setImagePreview] = React.useState(null);
   const [imageList, setImageList] = React.useState([]);
   const [type, setType] = React.useState(CameraType.back);
   const [flash, setFlash] = React.useState(Camera.Constants.FlashMode.off);
@@ -24,37 +25,59 @@ export const CameraScreen = () => {
     })();
   }, []);
   const takePicture = async () => {
+    if (
+      navigateParams.params?.limit &&
+      imageList.length + navigateParams.params?.currentLength >=
+        navigateParams.params?.limit
+    ) {
+      Alert.alert("Oop!", "Cannot take more than 10 photos", [
+        {
+          text: "OK",
+          style: "default",
+        },
+      ]);
+      return;
+    }
     if (cameraRef.current) {
       try {
         const data = await cameraRef.current.takePictureAsync();
-        setImage(data);
+        setImagePreview(data);
+        setImageList((prev) => [...prev, data]);
       } catch (error) {
         console.error(error);
       }
     }
   };
+  const reCapture = async () => {
+    setImagePreview(null);
+    setImageList((prev) => {
+      prev.pop();
+      return prev;
+    });
+  };
   const continueTakeImage = async () => {
     try {
       // await MediaLibrary.createAssetAsync(image.uri); // lưu ảnh vào thư viện
-      setImageList((prev) => [...prev, image]);
-      setImage(null);
+      // setImageList((prev) => [...prev, imagePreview]);
+      setImagePreview(null);
     } catch (error) {
       console.error(error);
     }
   };
   const handleSumitImage = async () => {
-    console.log(imageList);
-    const data = await fetch(
-      "https://865a-2405-4802-a544-ffc0-45d1-7f74-c118-6af.ngrok-free.app"
-    );
-    console.log(data);
+    if (navigateParams?.params?.setImages) {
+      navigateParams?.params.setImages((prev) => [...prev, ...imageList]);
+      navigate.goBack();
+    }
   };
 
   if (!hasCameraPermission) {
     return (
-      <View className="flex-1 justify-center items-start">
-        <Text>No access to camera</Text>
-      </View>
+      <StackScreen>
+        <View className="flex-1 justify-center items-start">
+          <Text className="text-center">No access to camera</Text>
+        </View>
+      </StackScreen>
     );
   }
   return (
@@ -139,28 +162,24 @@ export const CameraScreen = () => {
         </View>
       }
     >
-      {!image ? (
-        <Camera
-          type={type}
-          flashMode={flash}
-          ref={cameraRef}
-          className="flex-1"
-        />
-      ) : (
-        <Image source={image} resizeMode="cover" className="flex-1 w-full" />
-      )}
-
+      <Camera type={type} flashMode={flash} ref={cameraRef} className="flex-1">
+        {imagePreview && (
+          <Image
+            source={imagePreview}
+            resizeMode="cover"
+            className="flex-1 w-full z-10"
+          />
+        )}
+      </Camera>
       <View
         className="pt-2"
         style={{ marginBottom: screenUtils.safeAreaInsets.bottom - 5 }}
       >
-        {image ? (
+        {imagePreview ? (
           <View className="flex-row justify-around">
             <TouchableOpacity
               className="py-3 flex-row justify-center items-center"
-              onPress={() => {
-                setImage(null);
-              }}
+              onPress={reCapture}
               style={{
                 gap: 5,
               }}
@@ -171,7 +190,9 @@ export const CameraScreen = () => {
                 size={22}
                 color="white"
               />
-              <Text className="text-base font-medium text-white">Chụp lại</Text>
+              <Text className="text-base font-medium text-white">
+                Re capture
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="py-3 flex-row justify-center items-center"
@@ -181,9 +202,7 @@ export const CameraScreen = () => {
               }}
             >
               <KCIcon family="Ionicons" name="camera" size={22} color="white" />
-              <Text className="text-base font-medium text-white">
-                Chụp tiếp
-              </Text>
+              <Text className="text-base font-medium text-white">Continue</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -195,7 +214,9 @@ export const CameraScreen = () => {
             onPress={takePicture}
           >
             <KCIcon family="Ionicons" name="camera" size={25} color="white" />
-            <Text className="text-base font-medium text-white">Chụp ảnh</Text>
+            <Text className="text-base font-medium text-white">
+              Take a photo
+            </Text>
           </TouchableOpacity>
         )}
       </View>

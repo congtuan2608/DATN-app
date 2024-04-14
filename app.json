@@ -1,9 +1,9 @@
 {
   "expo": {
     "name": "Go Green",
-    "slug": "app",
+    "slug": "go-green",
     "description": "App dọn rác",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon-app.png",
     "userInterfaceStyle": "light",
@@ -15,21 +15,30 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.lctuan.app"
+      "bundleIdentifier": "com.lctuan.go-green",
+      "config": {
+        "googleMapsApiKey": "AIzaSyDnF0vmggyu_Gg7Q1Vhv45b8t_3vp1meOM"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon-app.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.lctuan.app"
+      "package": "com.lctuan.gogreen",
+      "versionCode": 3,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBxa95u7zKlOpGmuAGKxvDdhri3KDg3pjw"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "113e6ff0-cab9-4258-882b-d259a8c87f31"
+        "projectId": "92b16408-c49c-4ead-8b1e-2001b7a3c7fd"
       }
     },
     "plugins": [
@@ -63,7 +72,13 @@
         }
       ],
       "expo-localization",
-      "expo-image-picker"
+      "expo-image-picker",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
     ]
   }
 }

@@ -2,7 +2,7 @@ import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { SCREENS } from "../routes";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { OnboardingScreens, SignUpScreens, LoginScreens } from "~screens";
-import { useAuth, useTheme } from "~hooks";
+import { useAuth, useLocation, useTheme } from "~hooks";
 import { AsyncStorageKey } from "~configs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
@@ -11,15 +11,17 @@ import { initAxiosConfigs } from "~configs/axios";
 import { StatusBar, Text, View } from "react-native";
 
 const InitScreen = "DrawerNavigator";
-const RootScreens = ["LocationReport", "CameraScreen"];
+const RootScreens = ["MapScreen", "LocationReport", "CameraScreen"];
 const Stack = createNativeStackNavigator();
 export const RootStackNavigator = () => {
   const auth = useAuth();
   const { changeTheme } = useTheme();
+  const { getCurrentLocation } = useLocation();
   const [isNewUser, setIsNewUser] = React.useState(true);
 
   React.useEffect(() => {
     initAxiosConfigs({ auth });
+    getCurrentLocation();
   }, []);
 
   React.useEffect(() => {
