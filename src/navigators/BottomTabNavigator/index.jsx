@@ -4,16 +4,21 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { KCIcon } from "~components";
 import { TabButton } from "./components/TabButton";
 import { getResponesive } from "~utils";
-import { useScreenUtils } from "~hooks";
+import { useScreenUtils, useTheme } from "~hooks";
 
 const Tab = createBottomTabNavigator();
 export const BottomTabNavigator = () => {
+  const { theme } = useTheme();
   const { dimensions, safeAreaInsets } = useScreenUtils();
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
-        tabBarStyle: getResponesive(safeAreaInsets, dimensions).tabBarStyle,
+        tabBarStyle: {
+          ...getResponesive(safeAreaInsets, dimensions).tabBarStyle,
+          backgroundColor: theme.primaryBackgroundColor,
+          borderTopColor: theme.primaryBorderColor,
+        },
       }}
     >
       {Object.entries(bottomTabScreens).map(([tabKey, tabInfo]) => (

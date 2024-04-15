@@ -15,7 +15,7 @@ export const serviceList = [
   {
     title: "Report location",
     image_url: require("~assets/images/add_location2.png"),
-    navigate: "LocationReport",
+    navigate: "LocationReportScreen",
   },
   {
     title: "Statistical",
@@ -24,5 +24,6 @@ export const serviceList = [
   {
     title: "Environmental guidance",
     image_url: require("~assets/images/instruct.png"),
+    navigate: "EnvironmentalGuidanceScreen",
   },
 ];

@@ -56,8 +56,11 @@ export const TabButton = (props) => {
     >
       <Animatable.View ref={viewRef} duration={300}>
         <View
-          className="justify-center items-center w-12 h-12 border-4 border-white"
-          style={{ borderRadius: 100 }}
+          className="justify-center items-center w-12 h-12 border-4"
+          style={{
+            borderRadius: 100,
+            borderColor: theme.primaryBackgroundColor,
+          }}
         >
           <Animatable.View
             ref={circleRef}

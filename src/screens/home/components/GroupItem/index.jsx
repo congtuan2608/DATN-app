@@ -2,8 +2,10 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "~hooks";
 
 export function GroupItem(props) {
+  const { theme } = useTheme();
   const navigate = useNavigation();
 
   const onNavigate = () => {
@@ -26,6 +28,7 @@ export function GroupItem(props) {
           className="text-xs text-center"
           lineBreakMode="clip"
           numberOfLines={2}
+          style={{ color: theme.primaryTextColor }}
         >
           {props.title}
         </Text>

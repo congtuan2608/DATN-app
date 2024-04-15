@@ -65,7 +65,7 @@ const statusList = [
   { label: "Need intervention", value: "need-intervention" },
   { label: "No need intervention", value: "no-need-intervention" },
 ];
-export function LocationReport() {
+export function LocationReportScreen() {
   const { theme } = useTheme();
   const navigate = useNavigation();
   const { safeAreaInsets, dimensions } = useScreenUtils();

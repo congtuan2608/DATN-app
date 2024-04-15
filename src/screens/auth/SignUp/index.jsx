@@ -137,7 +137,6 @@ export const SignUpScreens = () => {
     )
       return;
     const res = await signUp.mutateAsync(formValues);
-    console.log(res);
     if (res?.status !== 201) {
       setIsShowSignUpFailed(true);
       return;

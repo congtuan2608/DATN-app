@@ -16,12 +16,15 @@ export const SCREENS = {
   MapScreen: {
     component: ScreenComponents.HomeScreens.MapScreen,
   },
-  LocationReport: {
-    component: ScreenComponents.HomeScreens.LocationReport,
+  LocationReportScreen: {
+    component: ScreenComponents.HomeScreens.LocationReportScreen,
   },
   CameraScreen: {
     component: ScreenComponents.HomeScreens.CameraScreen,
     options: { presentation: "fullScreenModal" },
+  },
+  EnvironmentalGuidanceScreen: {
+    component: ScreenComponents.HomeScreens.EnvironmentalGuidanceScreen,
   },
   // blog
   BlogScreens: {

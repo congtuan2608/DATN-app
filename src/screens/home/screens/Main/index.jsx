@@ -75,14 +75,23 @@ export const HomeScreen = () => {
               resizeMode="contain"
             />
           </Animated.View>
-          <View className="flex-1 bg-white px-3 py-4 rounded-t-3xl">
+          <View
+            className="flex-1 bg-white px-3 py-4 rounded-t-3xl"
+            style={{ backgroundColor: theme.primaryBackgroundColor }}
+          >
             <View>
               <TouchableOpacity className="flex-row justify-between items-center py-1">
-                <Text className="text-lg font-semibold">Service</Text>
+                <Text
+                  className="text-lg font-semibold"
+                  style={{ color: theme.primaryTextColor }}
+                >
+                  Service
+                </Text>
                 <KCIcon
                   family="MaterialIcons"
                   name="keyboard-arrow-right"
                   size={25}
+                  color={theme.primaryTextColor}
                 />
               </TouchableOpacity>
               <View className="pt-2 pb-4">
@@ -99,11 +108,17 @@ export const HomeScreen = () => {
             <View>
               <View>
                 <View className="flex-row justify-between items-center">
-                  <Text className="text-lg font-semibold">Đề xuất</Text>
+                  <Text
+                    className="text-lg font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Đề xuất
+                  </Text>
                   <KCIcon
                     family="MaterialIcons"
                     name="keyboard-arrow-right"
                     size={25}
+                    color={theme.primaryTextColor}
                   />
                 </View>
               </View>

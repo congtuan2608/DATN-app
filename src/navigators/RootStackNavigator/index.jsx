@@ -11,7 +11,12 @@ import { initAxiosConfigs } from "~configs/axios";
 import { StatusBar, Text, View } from "react-native";
 
 const InitScreen = "DrawerNavigator";
-const RootScreens = ["MapScreen", "LocationReport", "CameraScreen"];
+const RootScreens = [
+  "MapScreen",
+  "LocationReportScreen",
+  "CameraScreen",
+  "EnvironmentalGuidanceScreen",
+];
 const Stack = createNativeStackNavigator();
 export const RootStackNavigator = () => {
   const auth = useAuth();

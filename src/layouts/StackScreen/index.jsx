@@ -23,7 +23,7 @@ export const StackScreen = (props) => {
         <View>
           {props.header ?? (
             <View
-              className="flex flex-row justify-between items-center pb-[6px] px-4 pl-0"
+              className="flex flex-row justify-between items-center px-4 pl-0 pt-1 pb-2"
               style={{
                 borderBottomWidth: props.showBorderBottom ? 1 : 0,
                 borderBottomColor: "#e7e7e7",
