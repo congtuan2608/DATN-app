@@ -16,9 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lctuan.go-green",
-      "config": {
-        "googleMapsApiKey": "AIzaSyDnF0vmggyu_Gg7Q1Vhv45b8t_3vp1meOM"
-      }
+      "config": {}
     },
     "android": {
       "adaptiveIcon": {
@@ -28,9 +26,7 @@
       "package": "com.lctuan.gogreen",
       "versionCode": 3,
       "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyBxa95u7zKlOpGmuAGKxvDdhri3KDg3pjw"
-        }
+        "googleMaps": {}
       }
     },
     "web": {
