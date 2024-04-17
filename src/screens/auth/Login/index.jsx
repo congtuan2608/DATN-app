@@ -80,7 +80,6 @@ export const LoginScreens = () => {
 
     const res = await login.mutateAsync({ email, password });
 
-    if (res?.status !== 200) setIsShowLoginFailed(true);
     // auth.login({
     //   access_token: "res.accessToken",
     //   refresh_token: "res.refreshToken",
@@ -111,9 +110,9 @@ export const LoginScreens = () => {
           className="flex-1 flex-col items-center justify-between w-full px-4"
           style={{
             gap: 20,
-            marginTop: safeAreaInsets.top,
             ...getResponesive(safeAreaInsets, dimensions).loginStyle
               .spacingBottom,
+            ...getResponesive(safeAreaInsets, dimensions).loginStyle.spacingTop,
           }}
         >
           <View
@@ -212,21 +211,19 @@ export const LoginScreens = () => {
                 </View>
               )}
             </View>
-            {!login.isPending &&
-              login.data?.status !== 200 &&
-              isShowLoginFailed && (
-                <View className="-mb-3 -mt-1">
-                  <Text
-                    className="text-xs text-center"
-                    style={{ color: validateForm.password.errorColor }}
-                  >
-                    {typeof login.data?.detail === "string" &&
-                    login.data?.detail.length < 200
-                      ? login.data?.detail
-                      : "Something went wrong"}
-                  </Text>
-                </View>
-              )}
+            {!login.isPending && login.error && (
+              <View className="-mb-3 -mt-1">
+                <Text
+                  className="text-xs text-center"
+                  style={{ color: validateForm.password.errorColor }}
+                >
+                  {typeof login.error?.data === "string" &&
+                  login.error?.data.length < 200
+                    ? login.error?.data
+                    : "Something went wrong"}
+                </Text>
+              </View>
+            )}
             <View className="flex-row justify-between px-1">
               <TouchableOpacity
                 className="flex-row items-center px-2 py-1"
@@ -308,7 +305,8 @@ export const LoginScreens = () => {
         className="w-full flex-col justify-center absolute bottom-0 pt-3 px-4 "
         style={{
           gap: 10,
-          paddingBottom: safeAreaInsets.bottom,
+          paddingBottom:
+            safeAreaInsets.bottom + (Platform.OS === "ios" ? 0 : 10),
           backgroundColor: theme.primaryBackgroundColor,
         }}
       >

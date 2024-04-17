@@ -16,8 +16,5 @@ export function SignUp() {
         },
       ],
     }),
-    configs: {
-      errorReturn: true,
-    },
   });
 }

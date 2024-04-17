@@ -1,15 +1,28 @@
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import React from "react";
 import { useTheme } from "~hooks";
 
 export function KCFlatList(props) {
-  const { onPressItem, ...other } = props;
+  const { onPressItem, isLoading, ...other } = props;
   const { theme } = useTheme();
   const [isSelected, setIsSelected] = React.useState(0);
   const handleOnPress = async (item, index) => {
     setIsSelected(index);
     if (props?.onPressItem) props?.onPressItem(item);
   };
+  if (isLoading) {
+    return (
+      <View className="justify-center items-center" {...other}>
+        <ActivityIndicator size="large" color={theme.primaryIconColor} />
+      </View>
+    );
+  }
   return (
     <View className="py-2">
       <FlatList

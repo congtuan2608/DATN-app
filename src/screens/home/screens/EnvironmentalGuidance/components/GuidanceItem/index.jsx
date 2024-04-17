@@ -2,9 +2,25 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import img from "~assets/images/2.png";
 import { useTheme } from "~hooks";
+import Dayjs from "dayjs";
+import { AVATAR_URL } from "~constants";
 
-export function GuidanceItem() {
+export function GuidanceItem(props) {
+  const { data, ...other } = props;
   const { theme } = useTheme();
+
+  const assets = React.useMemo(() => {
+    let images = [],
+      videos = [];
+
+    if (data?.assets && data.assets.length === 0) return { images, videos };
+
+    data.assets.map((item) => {
+      if (item.media_type === "image") images.push(item);
+      else videos.push(item);
+    });
+    return { images, videos };
+  }, []);
   return (
     <View
       className="rounded-xl px-2 py-3"
@@ -19,8 +35,8 @@ export function GuidanceItem() {
           style={{ borderColor: theme.primaryTextColor }}
         >
           <Image
-            source={img}
-            className="w-14 h-14 rounded-full"
+            source={{ uri: data?.author?.avatar ?? AVATAR_URL }}
+            className="w-12 h-12 rounded-full"
             resizeMode="cover"
           />
         </View>
@@ -29,31 +45,34 @@ export function GuidanceItem() {
             className="font-semibold"
             style={{ color: theme.primaryTextColor }}
           >
-            Cong Tuan
+            {data?.author?.fullName ?? "<Unknown>"}
           </Text>
           <Text
             className="italic font-light text-xs"
             style={{ color: theme.primaryTextColor }}
           >
-            12:46 20/04/2024
+            {Dayjs(data.createdAt).format("hh:mm DD/MM/YYYY")}
           </Text>
         </View>
       </View>
       <View className="" style={{ gap: 10 }}>
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem
-          consequuntur laboriosam velit totam at, ex deserunt blanditiis ab
-          quasi hic laudantium sequi minus repudiandae! Deleniti error animi ad
-          optio consequatur! Lorem ipsum dolor sit amet consectetur adipisicing
-          elit. Rem consequuntur laboriosam velit totam at, ex deserunt
-          blanditiis ab quasi hic laudantium sequi minus repudiandae! Deleniti
-          error animi ad optio consequatur!
+        <Text
+          className="text-sm px-2"
+          style={{ color: theme.primaryTextColor }}
+        >
+          {data?.descriptsion ?? "<No data>"}
         </Text>
-        <View className="flex-row flex-wrap justify-evenly items-center">
-          <Image source={img} className="w-28 h-28 rounded-lg" />
-          <Image source={img} className="w-28 h-28 rounded-lg" />
-          <Image source={img} className="w-28 h-28 rounded-lg" />
-        </View>
+        {assets && (
+          <View className="flex-row flex-wrap justify-evenly items-center">
+            {assets?.images.map((item) => (
+              <Image
+                key={item._id}
+                source={{ uri: item.url ?? "" }}
+                className="w-28 h-28 rounded-lg"
+              />
+            ))}
+          </View>
+        )}
       </View>
       <View
         className="flex-row border-t pt-3"

@@ -74,7 +74,7 @@ export const CameraScreen = () => {
   if (!hasCameraPermission) {
     return (
       <StackScreen>
-        <View className="flex-1 justify-center items-start">
+        <View className="flex-1 justify-center items-center">
           <Text className="text-center">No access to camera</Text>
         </View>
       </StackScreen>

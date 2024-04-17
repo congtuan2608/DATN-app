@@ -4,4 +4,11 @@ export const APIPaths = {
   Login: `${ROOT_BE_URL}/v1/auth/login`,
   SignUp: `${ROOT_BE_URL}/v1/auth/sign-up`,
   GetUserProfile: `${ROOT_BE_URL}/v1/auth`,
+
+  // recycling
+  //type
+  RecyclingType: `${ROOT_BE_URL}/v1/recycling/recycling-type`,
+
+  //guide
+  RecyclingGuide: `${ROOT_BE_URL}/v1/recycling/recycling-guide`,
 };

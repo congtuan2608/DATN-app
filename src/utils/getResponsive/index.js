@@ -13,19 +13,25 @@ export const getResponesive = (
     return {
       ...defaultValue,
       loginStyle: {
-        spacingBottom: {
-          marginBottom: safeAreaInsets.bottom,
+        spacingTop: {
+          marginTop: safeAreaInsets.top,
         },
         spacingBottom: {
           marginBottom: safeAreaInsets.bottom + 130,
         },
       },
       signUpStyle: {
-        spacingBottom: {
-          marginBottom: safeAreaInsets.bottom,
+        spacingTop: {
+          marginTop: safeAreaInsets.top,
         },
         spacingBottom: {
           marginBottom: safeAreaInsets.bottom + 130,
+        },
+      },
+      locationReportStyle: {
+        spacingTopBottom: {
+          marginTop: safeAreaInsets.top - 30,
+          marginBottom: safeAreaInsets.bottom + 80,
         },
       },
       homeStyle: {
@@ -42,16 +48,25 @@ export const getResponesive = (
         height: 60,
       },
       loginStyle: {
+        spacingTop: {
+          marginTop: safeAreaInsets.top + 20,
+        },
         spacingBottom: {
           marginBottom: safeAreaInsets.bottom + 130,
         },
       },
       signUpStyle: {
-        spacingBottom: {
-          marginBottom: safeAreaInsets.bottom,
+        spacingTop: {
+          marginTop: safeAreaInsets.top + 10,
         },
         spacingBottom: {
           marginBottom: safeAreaInsets.bottom + 130,
+        },
+      },
+      locationReportStyle: {
+        spacingTopBottom: {
+          marginTop: safeAreaInsets.top + 20,
+          marginBottom: safeAreaInsets.bottom + 100,
         },
       },
       ...style,

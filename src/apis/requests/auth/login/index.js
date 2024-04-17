@@ -16,8 +16,5 @@ export function Login() {
         },
       ],
     }),
-    configs: {
-      errorReturn: true,
-    },
   });
 }

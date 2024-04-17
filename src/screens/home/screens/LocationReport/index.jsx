@@ -230,8 +230,8 @@ export function LocationReportScreen() {
               className="flex-1 flex-col items-center justify-between w-full px-4"
               style={{
                 gap: 20,
-                marginTop: safeAreaInsets.top - 15,
-                marginBottom: safeAreaInsets.bottom + 80,
+                ...getResponesive(safeAreaInsets, dimensions)
+                  .locationReportStyle.spacingTopBottom,
               }}
             >
               <View style={{ gap: 20 }}>
@@ -761,7 +761,8 @@ export function LocationReportScreen() {
           className="w-full flex-col justify-center absolute bottom-0 pt-3 px-4 border-t "
           style={{
             gap: 10,
-            paddingBottom: safeAreaInsets.bottom,
+            paddingBottom: getResponesive(safeAreaInsets, dimensions)
+              .locationReportStyle.spacingTopBottom.marginTop,
             backgroundColor: theme.primaryBackgroundColor,
             borderColor: theme.primaryBorderColor,
           }}

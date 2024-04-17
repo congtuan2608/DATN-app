@@ -53,8 +53,16 @@ export function MapScreen() {
       <View className="flex-1 relative">
         <MapView
           className="flex-1"
+          toolbarEnabled
+          mapType="standard"
+          loadingEnabled
           provider={PROVIDER_GOOGLE}
           onPress={onMapPress}
+          showsMyLocationButton={true}
+          showsUserLocation={true}
+          followsUserLocation={true}
+          mapPadding={{ bottom: 100 }}
+          userLocationCalloutEnabled={true}
           initialRegion={{
             latitude: location?.latitude,
             longitude: location?.longitude,
@@ -62,19 +70,11 @@ export function MapScreen() {
             longitudeDelta: 0.02,
           }}
         >
-          <Marker
-            coordinate={{
-              latitude: location?.latitude,
-              longitude: location?.longitude,
-            }}
-            title="your location"
-            image={currentLocation}
-          />
-
           {fakeData.map((item, idx) => {
             return (
               <Marker
                 key={idx}
+                onPress={(e) => console.log(item)}
                 coordinate={{
                   latitude: item?.latitude,
                   longitude: item?.longitude,

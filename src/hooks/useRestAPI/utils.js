@@ -7,7 +7,7 @@ const returnType = (data) => {
   return false;
 };
 
-export async function getAxiosRequestFn(request, configs) {
+export async function getAxiosRequestFn(request, otherConfigs) {
   try {
     const response = await axios[request.method](...request.configs);
 
@@ -16,15 +16,23 @@ export async function getAxiosRequestFn(request, configs) {
     if (returnType(response.data))
       return { ...defaultResults, details: response.data };
 
-    if (Array.isArray(response.data))
-      return { ...defaultResults, results: response.data };
-
-    return { ...defaultResults, ...response.data };
-  } catch (error) {
-    if (configs?.errorReturn) {
-      console.error(error);
-      return { status: error.status, detail: error.data };
+    if (Array.isArray(response.data)) {
+      if (otherConfigs?.returnStatus) {
+        return { ...defaultResults, results: response.data };
+      }
+      return response.data;
     }
+
+    if (otherConfigs?.returnStatus) {
+      return { ...defaultResults, ...response.data };
+    }
+    return response.data;
+    //
+  } catch (error) {
+    // if (otherConfigs?.returnStatus) {
+    //   console.error(error);
+    //   return { status: error.status, detail: error.data };
+    // }
 
     throw error;
   }

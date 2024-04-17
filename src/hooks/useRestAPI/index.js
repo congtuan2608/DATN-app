@@ -7,7 +7,7 @@ export function useRestAPIQuery(props) {
     (requestParams) => {
       return getAxiosRequestFn(
         props.request(requestParams ?? {}),
-        props?.configs ?? {}
+        props?.otherConfigs ?? {}
       );
     },
     [props.request]
@@ -30,7 +30,7 @@ export function useRestAPIMutation(props) {
     (requestParams) => {
       return getAxiosRequestFn(
         props.request(requestParams ?? {}),
-        props?.configs ?? {}
+        props?.otherConfigs ?? {}
       );
     },
     [props.request]

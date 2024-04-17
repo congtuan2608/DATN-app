@@ -17,6 +17,7 @@ import SelectDropdown from "react-native-select-dropdown";
 import dayjs from "dayjs";
 import * as ImagePicker from "expo-image-picker";
 import { RestAPI } from "~apis";
+import { AVATAR_URL } from "~constants";
 const validateField = {
   avatar: {},
   firstName: {
@@ -69,7 +70,6 @@ export const SignUpScreens = () => {
   const navigate = useNavigation();
   const { safeAreaInsets, dimensions } = useScreenUtils();
   const [isHidePassword, setIsHidePassword] = React.useState(true);
-  const [isShowSignUpFailed, setIsShowSignUpFailed] = React.useState(false);
   const [openDatePicker, setOpenDatePicker] = React.useState(false);
   const genderRef = React.useRef(null);
   const signUp = RestAPI.SignUp();
@@ -85,7 +85,6 @@ export const SignUpScreens = () => {
   });
 
   const onFocusInput = (key, props) => {
-    setIsShowSignUpFailed(false);
     setFormValidate((prev) => ({
       ...prev,
       [key]: defaultConfig,
@@ -137,11 +136,9 @@ export const SignUpScreens = () => {
     )
       return;
     const res = await signUp.mutateAsync(formValues);
-    if (res?.status !== 201) {
-      setIsShowSignUpFailed(true);
-      return;
+    if (res) {
+      navigate.navigate("Login", res);
     }
-    navigate.navigate("Login", res);
   };
 
   return (
@@ -175,9 +172,7 @@ export const SignUpScreens = () => {
             >
               <Image
                 source={{
-                  uri:
-                    formValues?.avatar?.uri ||
-                    "https://res.cloudinary.com/dudwjr0ux/image/upload/v1712904716/assets/user-avatar-2_hhfccz.jpg",
+                  uri: formValues?.avatar?.uri || AVATAR_URL,
                 }}
                 className="w-28 h-28 rounded-full"
                 resizeMode="cover"
@@ -604,21 +599,16 @@ export const SignUpScreens = () => {
                 </View>
               )}
             </View>
-            {!signUp.isPending &&
-              signUp.data?.status !== 201 &&
-              isShowSignUpFailed && (
-                <View className="-mb-3 -mt-1">
-                  <Text
-                    className="text-xs text-center"
-                    style={{ color: "red" }}
-                  >
-                    {typeof signUp.data?.detail === "string" &&
-                    signUp.data?.detail.length < 1000
-                      ? signUp.data?.detail
-                      : "Something went wrong"}
-                  </Text>
-                </View>
-              )}
+            {!signUp.isPending && signUp.error?.data && (
+              <View className="-mb-3 -mt-1">
+                <Text className="text-xs text-center" style={{ color: "red" }}>
+                  {typeof signUp.error?.data === "string" &&
+                  signUp.error?.data.length < 1000
+                    ? signUp.error?.data
+                    : "Something went wrong"}
+                </Text>
+              </View>
+            )}
 
             <View
               className="w-full flex-row justify-center items-center px-20"
@@ -662,7 +652,8 @@ export const SignUpScreens = () => {
         className="w-full flex-col justify-center absolute bottom-0 bg-white pt-3 px-4"
         style={{
           gap: 10,
-          paddingBottom: safeAreaInsets.bottom,
+          paddingBottom:
+            safeAreaInsets.bottom + (Platform.OS === "ios" ? 0 : 10),
           backgroundColor: theme.primaryBackgroundColor,
         }}
       >
