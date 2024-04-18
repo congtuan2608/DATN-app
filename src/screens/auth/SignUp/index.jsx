@@ -10,7 +10,12 @@ import {
 } from "react-native";
 import { KCButton, KCIcon, KCSVGAsset } from "~components";
 import { useAuth, useScreenUtils, useTheme } from "~hooks";
-import { defaultConfig, getResponesive, validateInput } from "~utils";
+import {
+  checkFormSubmit,
+  defaultConfig,
+  getResponesive,
+  validateInput,
+} from "~utils";
 import { useNavigation } from "@react-navigation/native";
 import { DatePickerModal } from "react-native-paper-dates";
 import SelectDropdown from "react-native-select-dropdown";
@@ -119,22 +124,16 @@ export const SignUpScreens = () => {
   };
 
   const onSignUp = async () => {
-    const newValidate = {};
+    const { newValidate, hasBeenEntered } = checkFormSubmit({
+      formValidate,
+      validateField,
+      formValues,
+    });
 
-    Object.keys(formValidate).map(
-      (key) =>
-        (newValidate[key] = validateInput({
-          ...validateField[key],
-          input: formValues[key],
-          formValues,
-        }))
-    );
     setFormValidate(newValidate);
 
-    if (
-      Object.entries(newValidate).filter(([key, item]) => item.isError).length
-    )
-      return;
+    if (!hasBeenEntered) return;
+
     const res = await signUp.mutateAsync(formValues);
     if (res) {
       navigate.navigate("Login", res);

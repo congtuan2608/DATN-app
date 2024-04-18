@@ -19,7 +19,7 @@ export const KCButton = (props) => {
         >
           {props?.isLoading ? (
             <View className="py-[2px]">
-              <ActivityIndicator size="small" color={theme.primaryIconColor} />
+              <ActivityIndicator size="small" color={theme.primaryTextColor} />
             </View>
           ) : (
             <Text

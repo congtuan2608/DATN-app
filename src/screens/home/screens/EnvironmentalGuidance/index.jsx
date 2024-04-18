@@ -99,6 +99,12 @@ export function EnvironmentalGuidanceScreen() {
       </View>
     );
   };
+  const renderTextFlatList = (item) => {
+    if (item?.recyclingGuides.length === 0) {
+      return `${item.recyclingName}`;
+    }
+    return `${item.recyclingName} (${item?.recyclingGuides.length})`;
+  };
   return (
     <StackScreen
       headerTitle="Environmental guidance"
@@ -109,10 +115,10 @@ export function EnvironmentalGuidanceScreen() {
           data={RecyclingTypes.getRecyclingType?.data ?? []}
           onPressItem={onPressItem}
           isLoading={RecyclingTypes.getRecyclingType.isFetching}
-          label={"recyclingName"}
+          renderText={renderTextFlatList}
         />
         <KCContainer
-          className="mt-2"
+          className="pt-2"
           isLoading={
             RecyclingGuide.getRecyclingGuide.isPending ||
             RecyclingTypes.getRecyclingType.isFetching

@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { APIPaths } from "~apis/path";
 
-export function GetRecyclingGuide() {
+export function PostRecyclingGuide() {
   const mutationResult = useMutation({
     mutationFn: (params) => {
       const formData = new FormData();

@@ -11,4 +11,10 @@ export const APIPaths = {
 
   //guide
   RecyclingGuide: `${ROOT_BE_URL}/v1/recycling/recycling-guide`,
+
+  //contaminated type
+  ContaminatedType: `${ROOT_BE_URL}/v1/polluted/contaminated-type`,
+
+  //contaminated location
+  ContaminatedLocation: `${ROOT_BE_URL}/v1/polluted/contaminated-location`,
 };

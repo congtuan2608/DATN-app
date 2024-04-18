@@ -3,6 +3,8 @@ import { SYSTEM_STATE } from "~states";
 import { AsyncStorageKey } from "~configs";
 import { useRecoilState } from "recoil";
 import React from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { RestAPI } from "~apis";
 
 export const useAuth = () => {
   const [authData, setAuthData] = useRecoilState(SYSTEM_STATE.AuthData);
@@ -10,6 +12,8 @@ export const useAuth = () => {
   const [userProfile, setUserProfile] = useRecoilState(
     SYSTEM_STATE.UserProfile
   );
+  const getUserProfile = RestAPI.GetUserProfile();
+  const queryClient = useQueryClient();
 
   const login = React.useCallback(async (authData) => {
     await AsyncStorage.setItem(
@@ -31,7 +35,7 @@ export const useAuth = () => {
     await AsyncStorage.removeItem(AsyncStorageKey.REFRESH_TOKEN);
 
     // await AsyncStorage.removeItem(AsyncStorageKey.NEW_USER);
-    // queryClient.removeQueries({ queryKey: ['GetUserProfile'] })
+    queryClient.removeQueries({ queryKey: ["GetUserProfile"] });
     setAuthData(undefined);
     setAppConfigs((prev) => ({ ...prev, firstInit: true }));
     // GoogleSignin.signOut()
@@ -46,14 +50,17 @@ export const useAuth = () => {
     [authData, isInitializingApp]
   );
 
-  //   React.useEffect(() => {
-  //     if (getUserProfile.data) {
-  //       setUserProfile(getUserProfile.data)
-  //     }
-  //   }, [getUserProfile.data])
   const refetchUserProfile = React.useCallback(async () => {
-    // await getUserProfile.refetch()
+    await getUserProfile.refetch();
   }, []);
+
+  React.useEffect(() => {
+    if (getUserProfile.data) {
+      setUserProfile(getUserProfile.data);
+    }
+  }, [getUserProfile.data]);
+
+  const isUserProfileLoading = getUserProfile.isLoading;
 
   return {
     login,
@@ -62,5 +69,7 @@ export const useAuth = () => {
     isLoggedIn,
     refetchUserProfile,
     appConfigs,
+    userProfile,
+    isUserProfileLoading,
   };
 };

@@ -12,8 +12,13 @@ import {
 } from "react-native";
 import React from "react";
 import { StackScreen } from "~layouts";
-import { useLocation, useScreenUtils, useTheme } from "~hooks";
-import { defaultConfig, getResponesive, validateInput } from "~utils";
+import { useAuth, useLocation, useScreenUtils, useTheme } from "~hooks";
+import {
+  checkFormSubmit,
+  defaultConfig,
+  getResponesive,
+  validateInput,
+} from "~utils";
 import { KCButton, KCIcon, KCSVGAsset } from "~components";
 import SelectDropdown from "react-native-select-dropdown";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -21,6 +26,7 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import Checkbox from "expo-checkbox";
+import { RestAPI } from "~apis";
 
 const validateField = {
   address: {
@@ -48,6 +54,7 @@ const validateField = {
   populationDensity: {},
   assets: {},
   isAnonymous: {},
+  location: {},
 };
 const contaminatedTypeList = [
   { label: "Kim loại", value: "metal" },
@@ -66,20 +73,26 @@ const statusList = [
   { label: "No need intervention", value: "no-need-intervention" },
 ];
 export function LocationReportScreen() {
-  const { theme } = useTheme();
-  const navigate = useNavigation();
+  const { location, getCurrentLocation, reverseGeocodeAsync, geocodeAsync } =
+    useLocation();
   const { safeAreaInsets, dimensions } = useScreenUtils();
+  const navigate = useNavigation();
+  const { theme } = useTheme();
+  const auth = useAuth();
+  const ContaminatedType = RestAPI.GetPollutedType();
+  const CreateReportLocation = RestAPI.CreateReportLocation();
   const [isShowSubmitFailed, setIsShowSubmitFailed] = React.useState(false);
   const contaminatedTypeRef = React.useRef(null);
   const severityRef = React.useRef(null);
   const statusRef = React.useRef(null);
   const scrollRef = React.useRef(null);
   const [images, setImages] = React.useState([]);
-  const { location, getCurrentLocation } = useLocation();
+  const [reverseGeo, setReverseGeo] = React.useState(undefined);
 
   const [formConfigs, setFormConfigs] = React.useState({
-    address: { readOnly: true, isLoading: false },
+    address: { readOnly: true, isLoading: true },
     library: { isLoading: false, limit: 10 },
+    submit: { isLoading: false },
   });
 
   const [formValidate, setFormValidate] = React.useState(() => {
@@ -94,22 +107,32 @@ export function LocationReportScreen() {
   });
 
   React.useEffect(() => {
-    if (location) {
-      setFormValues((prev) => ({
-        ...prev,
-        address: `${location.latitude}, ${location.longitude}`,
-      }));
-      setFormConfigs((prev) => ({
-        ...prev,
-        address: { ...prev.address, isLoading: false },
-      }));
-    } else {
+    if (!formConfigs.address.readOnly) return;
+    (async () => {
       setFormConfigs((prev) => ({
         ...prev,
         address: { ...prev.address, isLoading: true },
       }));
-    }
-  }, [location]);
+      const getLocation = await getCurrentLocation();
+      const reverse = await reverseGeocodeAsync(getLocation);
+      setReverseGeo(reverse?.formattedAddress);
+      if (getLocation) {
+        setFormValues((prev) => ({
+          ...prev,
+          // address: `${getLocation.latitude}, ${getLocation.longitude}`,
+          address: reverse?.formattedAddress,
+          location: {
+            latitude: getLocation.latitude,
+            longitude: getLocation.longitude,
+          },
+        }));
+      }
+      setFormConfigs((prev) => ({
+        ...prev,
+        address: { ...prev.address, isLoading: false },
+      }));
+    })();
+  }, [formConfigs.address.readOnly]);
 
   //========================== function ================================
   const onCheckBox = async (key, props) => {
@@ -119,13 +142,11 @@ export function LocationReportScreen() {
       return { ...prev, [key]: { ...prev[key], ...props } };
     });
     if (key === "address" && props?.readOnly) {
-      if (!location) {
-        await getCurrentLocation();
-      }
-      if (location || getLocation) {
+      if (location) {
         setFormValues((prev) => ({
           ...prev,
-          address: `${location.latitude}, ${location.longitude}`,
+          // address: `${location.latitude}, ${location.longitude}`,
+          address: reverseGeo,
         }));
       }
     }
@@ -168,7 +189,7 @@ export function LocationReportScreen() {
       library: { ...prev.library, isLoading: true },
     }));
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
       selectionLimit: limit,
       videoMaxDuration: 32,
@@ -177,31 +198,71 @@ export function LocationReportScreen() {
       ...prev,
       library: { ...prev.library, isLoading: false },
     }));
-    console.log({ result });
+
     if (result.canceled) return;
     setImages((prev) => [...prev, ...result.assets]);
+    setFormValues((prev) => ({
+      ...prev,
+      assets: [...(prev.assets ?? []), ...result.assets],
+    }));
   };
   //
   const onRemoveImage = (uri) => {
     setImages((prev) => prev.filter((item) => item.uri !== uri));
+    setFormValues((prev) => ({
+      ...prev,
+      assets: (prev.assets ?? []).filter((item) => item.uri !== uri),
+    }));
   };
 
   // =========================== handle submit form ==============================
+  const resetForm = () => {
+    setFormValues((prev) => {
+      let newValues = {};
+      Object.keys(validateField).map((key) => (newValues[key] = undefined));
+      return newValues;
+    });
+    setFormConfigs((prev) => ({
+      ...prev,
+      address: { ...prev.address, readOnly: false },
+    }));
+  };
   const onSubmit = async () => {
-    const newValidate = {};
-    Object.keys(formValidate).map(
-      (key) =>
-        (newValidate[key] = validateInput({
-          ...validateField[key],
-          input: formValues[key],
-          formValues,
-        }))
-    );
-    setFormValidate(newValidate);
-    if (
-      Object.entries(newValidate).filter(([key, item]) => item.isError).length
-    )
-      return;
+    try {
+      setFormConfigs((prev) => ({
+        ...prev,
+        submit: { ...prev.submit, isLoading: true },
+      }));
+      const { newValidate, hasBeenEntered } = checkFormSubmit({
+        formValidate,
+        validateField,
+        formValues,
+      });
+
+      setFormValidate(newValidate);
+      if (!hasBeenEntered) return;
+
+      if (!formConfigs.address.readOnly) {
+        const addressCoord = await geocodeAsync(formValues.address);
+        setFormValues((prev) => ({
+          ...prev,
+          location: {
+            longitude: addressCoord?.longitude,
+            latitude: addressCoord?.latitude,
+          },
+        }));
+      }
+      await CreateReportLocation.mutateAsync({
+        ...formValues,
+        user_id: auth.userProfile?._id,
+      });
+      resetForm();
+    } finally {
+      setFormConfigs((prev) => ({
+        ...prev,
+        submit: { ...prev.submit, isLoading: false },
+      }));
+    }
   };
   //========================= element ===========================
   return (
@@ -315,12 +376,15 @@ export function LocationReportScreen() {
                 <View>
                   <SelectDropdown
                     ref={contaminatedTypeRef}
-                    data={contaminatedTypeList}
+                    data={ContaminatedType.data ?? []}
                     onSelect={(selectedItem, index) => {
                       onFocusInput("contaminatedType");
                       setFormValues((prev) => ({
                         ...prev,
-                        contaminatedType: selectedItem?.value,
+                        contaminatedType: [
+                          ...(prev.contaminatedType ?? []),
+                          selectedItem?._id,
+                        ],
                       }));
                     }}
                     renderButton={(selectedItem, isOpened) => {
@@ -342,7 +406,8 @@ export function LocationReportScreen() {
                                   : theme.thirdTextColor,
                               }}
                             >
-                              {selectedItem?.label || "Contaminated type"}
+                              {selectedItem?.contaminatedName ||
+                                "Contaminated type"}
                             </Text>
                             <View className="absolute top-0 bottom-0 right-0 items-center justify-center opacity-40 px-5">
                               <KCIcon
@@ -368,7 +433,7 @@ export function LocationReportScreen() {
                           }}
                         >
                           <Text className="flex-1 text-center">
-                            {item?.label}
+                            {item?.contaminatedName}
                           </Text>
                           {item?.icon && (
                             <KCIcon
@@ -737,21 +802,17 @@ export function LocationReportScreen() {
                     )}
                   </View>
                 </View>
-                {/* {!signUp.isPending &&
-                signUp.data?.status !== 201 &&
-                isShowSignUpFailed && (
-                  <View className="-mb-3 -mt-1">
-                    <Text
-                      className="text-xs text-center"
-                      style={{ color: "red" }}
-                    >
-                      {typeof signUp.data?.detail === "string" &&
-                      signUp.data?.detail.length < 1000
-                        ? signUp.data?.detail
-                        : "Something went wrong"}
-                    </Text>
-                  </View>
-                )} */}
+                {!CreateReportLocation.isPending &&
+                  CreateReportLocation.error && (
+                    <View className="-mb-3 -mt-1">
+                      <Text
+                        className="text-xs text-center"
+                        style={{ color: "red" }}
+                      >
+                        Something went wrong
+                      </Text>
+                    </View>
+                  )}
               </View>
             </View>
           </ScrollView>
@@ -770,7 +831,7 @@ export function LocationReportScreen() {
           <KCButton
             onPress={onSubmit}
             // disabled={signUp.isPending}
-            // isLoading={signUp.isPending}
+            isLoading={formConfigs.submit.isLoading}
           >
             Submit
           </KCButton>

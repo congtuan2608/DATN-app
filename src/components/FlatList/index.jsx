@@ -48,7 +48,7 @@ export function KCFlatList(props) {
                   }),
                 }}
               >
-                {item[props?.label ?? ""] || ""}
+                {props?.renderText(item) ?? ""}
               </Text>
             </View>
           </TouchableOpacity>

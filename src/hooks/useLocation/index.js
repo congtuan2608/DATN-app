@@ -5,6 +5,12 @@ import { useRecoilState } from "recoil";
 import React from "react";
 import * as Location from "expo-location";
 
+const formatted = ({ streetNumber, street, district, city, region }) => {
+  return `${streetNumber ?? ""} ${street ?? ""} ${district ?? ""} ${
+    city ?? ""
+  } ${region ?? ""}`;
+};
+
 export const useLocation = () => {
   const [location, setLocation] = useRecoilState(SYSTEM_STATE.Location);
 
@@ -20,8 +26,26 @@ export const useLocation = () => {
     return getLocation.coords;
   }, []);
 
+  const reverseGeocodeAsync = React.useCallback(async (props) => {
+    let getRreverseGeocode = await Location.reverseGeocodeAsync(props);
+    console.log(getRreverseGeocode[0]);
+    if (!getRreverseGeocode[0]?.formattedAddress) {
+      getRreverseGeocode[0].formattedAddress = formatted(
+        getRreverseGeocode[0]
+      ).trim();
+    }
+    return getRreverseGeocode[0];
+  }, []);
+
+  const geocodeAsync = React.useCallback(async (props) => {
+    let getGeocodeAsync = await Location.geocodeAsync(props);
+    return getGeocodeAsync[0];
+  }, []);
+
   return {
     location,
     getCurrentLocation,
+    reverseGeocodeAsync,
+    geocodeAsync,
   };
 };
