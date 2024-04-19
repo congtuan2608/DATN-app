@@ -19,7 +19,7 @@ import {
   getResponesive,
   validateInput,
 } from "~utils";
-import { KCButton, KCIcon, KCSVGAsset } from "~components";
+import { KCButton, KCIcon, KCModal, KCSVGAsset } from "~components";
 import SelectDropdown from "react-native-select-dropdown";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
@@ -81,7 +81,6 @@ export function LocationReportScreen() {
   const auth = useAuth();
   const ContaminatedType = RestAPI.GetPollutedType();
   const CreateReportLocation = RestAPI.CreateReportLocation();
-  const [isShowSubmitFailed, setIsShowSubmitFailed] = React.useState(false);
   const contaminatedTypeRef = React.useRef(null);
   const severityRef = React.useRef(null);
   const statusRef = React.useRef(null);
@@ -134,6 +133,13 @@ export function LocationReportScreen() {
     })();
   }, [formConfigs.address.readOnly]);
 
+  React.useEffect(() => {
+    setFormValues((prev) => ({
+      ...prev,
+      assets: images,
+    }));
+  }, [images]);
+
   //========================== function ================================
   const onCheckBox = async (key, props) => {
     setFormConfigs((prev) => {
@@ -159,7 +165,6 @@ export function LocationReportScreen() {
 
   // ============================= handle input ==================================
   const onFocusInput = (key, props) => {
-    setIsShowSubmitFailed(false);
     setFormValidate((prev) => ({
       ...prev,
       [key]: defaultConfig,
@@ -201,10 +206,6 @@ export function LocationReportScreen() {
 
     if (result.canceled) return;
     setImages((prev) => [...prev, ...result.assets]);
-    setFormValues((prev) => ({
-      ...prev,
-      assets: [...(prev.assets ?? []), ...result.assets],
-    }));
   };
   //
   const onRemoveImage = (uri) => {
@@ -226,6 +227,7 @@ export function LocationReportScreen() {
       ...prev,
       address: { ...prev.address, readOnly: false },
     }));
+    setImages([]);
   };
   const onSubmit = async () => {
     try {
@@ -242,19 +244,31 @@ export function LocationReportScreen() {
       setFormValidate(newValidate);
       if (!hasBeenEntered) return;
 
+      let newLocation;
       if (!formConfigs.address.readOnly) {
         const addressCoord = await geocodeAsync(formValues.address);
-        setFormValues((prev) => ({
-          ...prev,
-          location: {
-            longitude: addressCoord?.longitude,
-            latitude: addressCoord?.latitude,
-          },
-        }));
+
+        if (!addressCoord) {
+          setFormValidate((prev) => ({
+            ...prev,
+            address: {
+              ...prev.address,
+              isError: true,
+              message: "Please provide a valid address!",
+            },
+          }));
+          return;
+        }
+        newLocation = {
+          longitude: addressCoord?.longitude,
+          latitude: addressCoord?.latitude,
+        };
       }
+
       await CreateReportLocation.mutateAsync({
         ...formValues,
         user_id: auth.userProfile?._id,
+        ...(newLocation && { location: newLocation }),
       });
       resetForm();
     } finally {
@@ -264,9 +278,15 @@ export function LocationReportScreen() {
       }));
     }
   };
+
   //========================= element ===========================
   return (
     <StackScreen headerTitle="Report location">
+      <KCModal
+        title="Notification"
+        content="Thank you for reporting, do you want to report to another location?"
+        showModal={CreateReportLocation.isSuccess}
+      />
       <View
         className="flex-1 relative"
         style={{ backgroundColor: theme.primaryBackgroundColor }}

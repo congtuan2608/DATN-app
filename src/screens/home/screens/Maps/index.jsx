@@ -5,14 +5,19 @@ import {
   TextInput,
   ScrollView,
   Keyboard,
+  FlatList,
+  Image,
+  useWindowDimensions,
 } from "react-native";
 import React from "react";
 import { StackScreen } from "~layouts";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useLocation, useTheme } from "~hooks";
-import { KCIcon } from "~components";
+import { KCContainer, KCIcon } from "~components";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import currentLocation from "~assets/images/current-location.png";
+import { RestAPI } from "~apis";
+import dayjs from "dayjs";
 
 const fakeData = [
   {
@@ -30,28 +35,39 @@ const fakeData = [
 ];
 export function MapScreen() {
   const { theme } = useTheme();
+  const { width } = useWindowDimensions();
   const bottomSheetRef = React.useRef(null);
   const { location } = useLocation();
-
+  const ReportLocation = RestAPI.GetReportLocation();
   const initialSnapPoints = React.useMemo(() => ["15%", "50%", "90%"], []);
+  const [selectMarker, setSelectMarker] = React.useState(null);
+  const mapRef = React.useRef(null);
 
   const onFocusInput = () => {
     bottomSheetRef?.current?.snapToIndex(initialSnapPoints.length - 1);
   };
 
   const onMapPress = () => {
-    bottomSheetRef?.current?.snapToIndex(0);
+    if (bottomSheetRef?.current?.index === initialSnapPoints.length - 1)
+      bottomSheetRef?.current?.snapToIndex(0);
     Keyboard.dismiss();
+  };
+  const onMapMarker = (item) => {
+    bottomSheetRef?.current?.snapToIndex(1);
+    console.log(item);
+    setSelectMarker(item);
   };
 
   const handleSheetChanges = React.useCallback((index) => {
     console.log("handleSheetChanges", index);
+    bottomSheetRef.current = { ...bottomSheetRef.current, index: index };
   }, []);
 
   return (
     <StackScreen headerTitle="Map">
       <View className="flex-1 relative">
         <MapView
+          ref={mapRef}
           className="flex-1"
           toolbarEnabled
           mapType="standard"
@@ -66,20 +82,20 @@ export function MapScreen() {
           initialRegion={{
             latitude: location?.latitude,
             longitude: location?.longitude,
-            latitudeDelta: 0.02,
-            longitudeDelta: 0.02,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
           }}
         >
-          {fakeData.map((item, idx) => {
+          {(ReportLocation.data ?? []).map((item, idx) => {
             return (
               <Marker
                 key={idx}
-                onPress={(e) => console.log(item)}
+                onPress={(e) => onMapMarker(item)}
                 coordinate={{
-                  latitude: item?.latitude,
-                  longitude: item?.longitude,
+                  latitude: item?.location?.latitude,
+                  longitude: item?.location?.longitude,
                 }}
-                title="your location"
+                title={item.address}
               />
             );
           })}
@@ -115,7 +131,129 @@ export function MapScreen() {
                 />
               </View>
             </View>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}></ScrollView>
+            <KCContainer className="p-2" isEmpty={!selectMarker}>
+              <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <View className="justify-start" style={{ gap: 10 }}>
+                  <Text
+                    className="font-medium text-lg"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    {selectMarker?.address || "<unknown>"}
+                  </Text>
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    <Text
+                      className="font-semibold"
+                      style={{ color: theme.primaryTextColor }}
+                    >
+                      Coordinates:{" "}
+                    </Text>
+                    {`${selectMarker?.location.latitude}, ${selectMarker?.location.longitude}` ||
+                      "<unknown>"}
+                  </Text>
+
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    <Text
+                      className="font-semibold"
+                      style={{ color: theme.primaryTextColor }}
+                    >
+                      Contaminated type:{" "}
+                    </Text>
+                    {selectMarker?.contaminatedType
+                      .map((item) => item.contaminatedName)
+                      .join(", ")}
+                  </Text>
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    <Text
+                      className="font-semibold"
+                      style={{ color: theme.primaryTextColor }}
+                    >
+                      Severity:{" "}
+                    </Text>
+                    {selectMarker?.severity}
+                  </Text>
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    <Text
+                      className="font-semibold"
+                      style={{ color: theme.primaryTextColor }}
+                    >
+                      Status:{" "}
+                    </Text>
+                    {selectMarker?.status}
+                  </Text>
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    <Text
+                      className="font-semibold"
+                      style={{ color: theme.primaryTextColor }}
+                    >
+                      Population density:{" "}
+                    </Text>
+                    {selectMarker?.populationDensity}
+                  </Text>
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    <Text
+                      className="font-semibold"
+                      style={{ color: theme.primaryTextColor }}
+                    >
+                      Description:{" "}
+                    </Text>
+                    {selectMarker?.description}
+                  </Text>
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    <Text
+                      className="font-semibold"
+                      style={{ color: theme.primaryTextColor }}
+                    >
+                      Report by:{" "}
+                    </Text>
+                    {selectMarker?.isAnonymous ? (
+                      <Text
+                        className="font-extralight"
+                        style={{ color: theme.primaryTextColor }}
+                      >
+                        [anonymous]
+                      </Text>
+                    ) : (
+                      `${selectMarker?.reportedBy?.fullName}`
+                    )}
+                  </Text>
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    <Text
+                      className="font-semibold"
+                      style={{ color: theme.primaryTextColor }}
+                    >
+                      Time report:
+                    </Text>
+                    {dayjs(selectMarker?.createdAt).format(
+                      " hh:mm:ss DD/MM/YYYY"
+                    )}
+                  </Text>
+                </View>
+                <View className="flex-1 py-3">
+                  {selectMarker?.assets && (
+                    <FlatList
+                      // pagingEnabled
+                      data={selectMarker?.assets}
+                      horizontal
+                      showsVerticalScrollIndicator={false}
+                      showsHorizontalScrollIndicator={false}
+                      bounces={false}
+                      keyExtractor={(item) => item._id}
+                      renderItem={({ item }) => (
+                        <Image
+                          source={{ uri: item?.url }}
+                          style={{
+                            resizeMode: "contain",
+                            width: width - 32,
+                            // height: "70%",
+                          }}
+                        />
+                      )}
+                      ItemSeparatorComponent={() => <View className="w-4" />}
+                    />
+                  )}
+                </View>
+              </ScrollView>
+            </KCContainer>
           </BottomSheetView>
         </BottomSheet>
       </View>

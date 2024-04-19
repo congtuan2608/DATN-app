@@ -10,7 +10,7 @@ import {
 import { StackScreen } from "~layouts";
 import { useTheme, useAuth, useScreenUtils } from "~hooks";
 import { getResponesive } from "~utils";
-import { GroupItem } from "../../components";
+import { GroupItem, InterestedItem } from "../../components";
 import { serviceList } from "./data";
 import { KCIcon } from "~components";
 import React from "react";
@@ -32,7 +32,7 @@ export const HomeScreen = () => {
         {
           scale: scrollY.interpolate({
             inputRange: [-208, 5, 208],
-            outputRange: [2, 1, 1],
+            outputRange: [2, 1, 0.5],
           }),
         },
       ],
@@ -62,7 +62,7 @@ export const HomeScreen = () => {
       >
         <View className="flex-1">
           <Animated.View
-            className=""
+            className=" mb-3"
             style={{
               backgroundColor: "#dddddd",
               ...getResponesive(safeAreaInsets).homeStyle?.spacingTop,
@@ -130,6 +130,52 @@ export const HomeScreen = () => {
                   renderItem={({ item }) => <GroupItem {...item} />}
                   keyExtractor={(item, idx) => `HorizontalList_Item__${idx}`}
                   ItemSeparatorComponent={() => <View className="w-6" />}
+                />
+              </View>
+            </View>
+            <View>
+              <View>
+                <View className="flex-row justify-between items-center">
+                  <Text
+                    className="text-lg font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Maybe you are interested
+                  </Text>
+                </View>
+              </View>
+              <View className="pt-3 pb-4">
+                <FlatList
+                  style={{ paddingBottom: 12 }}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  data={serviceList}
+                  renderItem={({ item }) => <InterestedItem {...item} />}
+                  keyExtractor={(item, idx) => `HorizontalList_Item__${idx}`}
+                  ItemSeparatorComponent={() => <View className="w-4" />}
+                />
+              </View>
+            </View>
+            <View>
+              <View>
+                <View className="flex-row justify-between items-center">
+                  <Text
+                    className="text-lg font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Maybe you are interested
+                  </Text>
+                </View>
+              </View>
+              <View className="pt-3 pb-4">
+                <FlatList
+                  horizontal
+                  style={{ paddingBottom: 12 }}
+                  showsHorizontalScrollIndicator={false}
+                  data={serviceList}
+                  renderItem={({ item }) => <InterestedItem {...item} />}
+                  keyExtractor={(item, idx) => `HorizontalList_Item__${idx}`}
+                  ItemSeparatorComponent={() => <View className="w-4" />}
                 />
               </View>
             </View>

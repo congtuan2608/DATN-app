@@ -18,7 +18,7 @@ export function KCContainer(props) {
     return (
       <View className="flex-1 justify-center items-center mb-2" {...viewProps}>
         {!hideImage && <Image source={NO_DATA} className="w-20 h-20" />}
-        <Text>No data</Text>
+        <Text style={{ color: theme.primaryTextColor }}>No data</Text>
       </View>
     );
   } else {

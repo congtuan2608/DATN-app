@@ -41,6 +41,7 @@ export const CameraScreen = () => {
     if (cameraRef.current) {
       try {
         const data = await cameraRef.current.takePictureAsync();
+        console.log(data);
         setImagePreview(data);
         setImageList((prev) => [...prev, data]);
       } catch (error) {
