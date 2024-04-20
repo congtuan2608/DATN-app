@@ -1,12 +1,12 @@
 import { SCREENS } from "../routes";
 
 export const bottomTabScreens = {
-  Blog: {
-    label: "Blog",
-    component: SCREENS.BlogScreens.component,
+  Camera: {
+    label: "Detection",
+    component: SCREENS.CameraScreen.component,
     icon: (props) => ({
-      family: "MaterialCommunityIcons",
-      name: "post-outline",
+      family: "FontAwesome",
+      name: "camera",
       size: 25,
     }), // document-text-outline
   },

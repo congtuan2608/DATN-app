@@ -16,6 +16,7 @@ const RootScreens = [
   "LocationReportScreen",
   "CameraScreen",
   "EnvironmentalGuidanceScreen",
+  "CampaignsScreens",
 ];
 const Stack = createNativeStackNavigator();
 export const RootStackNavigator = () => {

@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
   useWindowDimensions,
+  TouchableOpacity,
 } from "react-native";
 import React from "react";
 import { StackScreen } from "~layouts";
@@ -18,6 +19,7 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import currentLocation from "~assets/images/current-location.png";
 import { RestAPI } from "~apis";
 import dayjs from "dayjs";
+import { useRoute } from "@react-navigation/native";
 
 const fakeData = [
   {
@@ -36,12 +38,14 @@ const fakeData = [
 export function MapScreen() {
   const { theme } = useTheme();
   const { width } = useWindowDimensions();
-  const bottomSheetRef = React.useRef(null);
+  const navigateParams = useRoute();
   const { location } = useLocation();
   const ReportLocation = RestAPI.GetReportLocation();
-  const initialSnapPoints = React.useMemo(() => ["15%", "50%", "90%"], []);
+  const bottomSheetRef = React.useRef(null);
   const [selectMarker, setSelectMarker] = React.useState(null);
   const mapRef = React.useRef(null);
+
+  const initialSnapPoints = React.useMemo(() => ["15%", "50%", "90%"], []);
 
   const onFocusInput = () => {
     bottomSheetRef?.current?.snapToIndex(initialSnapPoints.length - 1);
@@ -61,10 +65,35 @@ export function MapScreen() {
   const handleSheetChanges = React.useCallback((index) => {
     console.log("handleSheetChanges", index);
     bottomSheetRef.current = { ...bottomSheetRef.current, index: index };
+    if (index === 0) {
+      Keyboard.dismiss();
+    }
   }, []);
 
+  const currentMap = React.useMemo(() => {
+    if (navigateParams.params?.location)
+      return { ...navigateParams.params?.location };
+    else {
+      return { ...location };
+    }
+  }, [navigateParams.params?.location]);
+  const renderHeaderRight = () => {
+    return (
+      <View
+        className="flex-row justify-center items-center"
+        style={{ gap: 10 }}
+      >
+        <TouchableOpacity className="px-2">
+          <Image
+            source={require("~assets/images/info-icon.png")}
+            className="w-8 h-8"
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
   return (
-    <StackScreen headerTitle="Map">
+    <StackScreen headerTitle="Map" headerRight={renderHeaderRight()}>
       <View className="flex-1 relative">
         <MapView
           ref={mapRef}
@@ -77,13 +106,12 @@ export function MapScreen() {
           showsMyLocationButton={true}
           showsUserLocation={true}
           followsUserLocation={true}
-          mapPadding={{ bottom: 100 }}
+          mapPadding={{ bottom: 110 }}
           userLocationCalloutEnabled={true}
           initialRegion={{
-            latitude: location?.latitude,
-            longitude: location?.longitude,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
+            ...currentMap,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
           }}
         >
           {(ReportLocation.data ?? []).map((item, idx) => {
@@ -116,7 +144,9 @@ export function MapScreen() {
             <View className="relative">
               <TextInput
                 autoComplete="name-given"
-                className={`bg-gray-200 rounded-xl px-5 pr-14 py-5`}
+                className={`bg-gray-200 rounded-xl px-5 pr-16 ${
+                  Platform.OS === "ios" ? "py-5" : "py-4"
+                }`}
                 placeholder="Search on the map"
                 // value=""
                 // onChangeText={(value) => {}}
@@ -124,15 +154,18 @@ export function MapScreen() {
                 placeholderTextColor={theme.thirdTextColor}
               />
               <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
-                <KCIcon
-                  name="map-marker-radius-outline"
-                  family="MaterialCommunityIcons"
-                  size={23}
+                <Image
+                  source={require("~assets/images/search-map-icon.png")}
+                  className="h-9 w-9"
                 />
               </View>
             </View>
             <KCContainer className="p-2" isEmpty={!selectMarker}>
-              <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+              <ScrollView
+                contentContainerStyle={{ flexGrow: 1 }}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+              >
                 <View className="justify-start" style={{ gap: 10 }}>
                   <Text
                     className="font-medium text-lg"

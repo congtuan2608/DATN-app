@@ -5,56 +5,92 @@ import { ThemeConfig } from "~themes";
 export const KCButton = (props) => {
   const { styleContainer, ...other } = props;
   const { theme } = useTheme();
-  if (typeof props.children === "string") {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.7}
-        className="rounded-lg"
-        style={{
-          backgroundColor: props?.disabled
-            ? theme.primaryDisabledButtonColor
-            : theme.primaryButtonBackgroundColor,
-          paddingVertical: 12,
-          paddingHorizontal: 20,
-          ...(styleContainer ?? {}),
-        }}
-        {...other}
-      >
-        {props?.isLoading ? (
-          <View className="py-[2px]">
-            <ActivityIndicator size="small" color={theme.primaryTextColor} />
+  switch (props.variant) {
+    case "Filled": {
+      return (
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={{
+            backgroundColor: props?.disabled
+              ? theme.primaryDisabledButtonColor
+              : theme.primaryButtonBackgroundColor,
+            paddingVertical: 12,
+            paddingHorizontal: 20,
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: props?.disabled
+              ? theme.primaryDisabledButtonColor
+              : theme.primaryButtonBackgroundColor,
+            ...(styleContainer ?? {}),
+          }}
+          {...other}
+        >
+          <View>
+            {props?.isLoading ? (
+              <View className="py-[2px]">
+                <ActivityIndicator
+                  size="small"
+                  color={theme.primaryTextColor}
+                />
+              </View>
+            ) : (
+              typeof props.children === "string" && (
+                <Text
+                  style={{
+                    color: props?.disabled
+                      ? theme?.primaryTextColor
+                      : theme?.secondTextColor,
+                    textAlign: "center",
+                    fontWeight: "600",
+                    ...(props.textStyle ?? {}),
+                  }}
+                >
+                  {props.children}
+                </Text>
+              )
+            )}
+            {typeof props.children !== "string" && props.children}
           </View>
-        ) : (
-          <Text
-            className="text-center text-base font-medium"
-            style={{
-              color: props?.disabled
-                ? theme?.primaryTextColor
-                : theme?.secondTextColor,
-            }}
-          >
-            {props.children}
-          </Text>
-        )}
-      </TouchableOpacity>
-    );
-  } else {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.7}
-        className="rounded-lg"
-        style={{
-          backgroundColor: props?.disabled
-            ? theme.primaryDisabledButtonColor
-            : theme.primaryButtonBackgroundColor,
-          padding: 12,
-          paddingHorizontal: 20,
-          ...(styleContainer ?? {}),
-        }}
-        {...other}
-      >
-        {props.children}
-      </TouchableOpacity>
-    );
+        </TouchableOpacity>
+      );
+    }
+    case "Outline": {
+      return (
+        <TouchableOpacity
+          style={{
+            backgroundColor: "transparent",
+            paddingVertical: 12,
+            paddingHorizontal: 20,
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: props?.disabled
+              ? theme.primaryDisabledButtonColor
+              : theme.primaryButtonBackgroundColor,
+
+            ...(props.styleContainer ?? {}),
+          }}
+          {...other}
+        >
+          <View>
+            {typeof props.children === "string" && (
+              <Text
+                style={{
+                  color: theme.primaryButtonBackgroundColor,
+                  textAlign: "center",
+                  fontWeight: "600",
+                  ...(props.textStyle ?? {}),
+                }}
+              >
+                {props.children}
+              </Text>
+            )}
+            {typeof props.children !== "string" && props.children}
+          </View>
+        </TouchableOpacity>
+      );
+    }
+    default: {
+      return <Text>Error variant</Text>;
+    }
   }
 };

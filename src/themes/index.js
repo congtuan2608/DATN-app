@@ -1,8 +1,8 @@
 export const ThemeConfig = {
   DefaultTheme: {
     //background color
-    primaryBackgroundColor: "white",
-    secondBackgroundColor: "#f1f1f1",
+    primaryBackgroundColor: "#f1f1f1",
+    secondBackgroundColor: "white",
 
     //text color
     primaryTextColor: "black",
@@ -35,7 +35,7 @@ export const ThemeConfig = {
 
     //button color
     primaryButtonBackgroundColor: "#8278F0",
-    primaryDisabledButtonColor: "#e5e5e5",
+    primaryDisabledButtonColor: "#282828",
 
     //icon color
     primaryIconColor: "#8278F0",

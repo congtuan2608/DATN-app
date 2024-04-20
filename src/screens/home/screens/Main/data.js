@@ -7,6 +7,8 @@ export const serviceList = [
   {
     title: "Campaign",
     image_url: require("~assets/images/campaign.png"),
+    navigate: "CampaignsScreens",
+    params: { headerShown: true },
   },
   {
     title: "Donate",

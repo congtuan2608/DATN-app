@@ -16,7 +16,7 @@ export const BottomTabNavigator = () => {
       screenOptions={{
         tabBarStyle: {
           ...getResponesive(safeAreaInsets, dimensions).tabBarStyle,
-          backgroundColor: theme.primaryBackgroundColor,
+          backgroundColor: theme.secondBackgroundColor,
           borderTopColor: theme.primaryBorderColor,
         },
       }}

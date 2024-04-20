@@ -8,5 +8,7 @@ export function GetRecyclingType() {
       configs: [APIPaths.RecyclingType],
     }),
     queryKey: ["RecyclingType"],
+    cacheTime: 15 * 60 * 1000,
+    staleTime: 15 * 60 * 1000,
   });
 }

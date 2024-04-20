@@ -26,7 +26,7 @@ export const StackScreen = (props) => {
               className="flex flex-row justify-between items-center px-4 pl-0 py-2"
               style={{
                 borderBottomWidth: props.showBorderBottom ? 1 : 0,
-                borderBottomColor: "#e7e7e7",
+                borderBottomColor: theme.primaryBorderColor,
               }}
             >
               <View className="flex flex-1 flex-row items-center">

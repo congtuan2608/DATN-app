@@ -24,7 +24,7 @@ export function GuidanceItem(props) {
   return (
     <View
       className="rounded-xl px-2 py-3"
-      style={{ backgroundColor: theme.primaryBackgroundColor, gap: 5 }}
+      style={{ backgroundColor: theme.secondBackgroundColor, gap: 5 }}
     >
       <View
         className="flex-row items-center justify-center"
@@ -80,7 +80,7 @@ export function GuidanceItem(props) {
       >
         <TouchableOpacity
           className="flex-1 py-3 justify-center items-center rounded-lg"
-          style={{ backgroundColor: theme.secondBackgroundColor }}
+          style={{ backgroundColor: theme.primaryBackgroundColor }}
         >
           <Text className="text-xs" style={{ color: theme.primaryTextColor }}>
             Like (200)
@@ -88,7 +88,7 @@ export function GuidanceItem(props) {
         </TouchableOpacity>
         <TouchableOpacity
           className="flex-1 py-3 justify-center items-center rounded-lg"
-          style={{ backgroundColor: theme.secondBackgroundColor }}
+          style={{ backgroundColor: theme.primaryBackgroundColor }}
         >
           <Text className="text-xs" style={{ color: theme.primaryTextColor }}>
             Save (16)

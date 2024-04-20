@@ -88,11 +88,13 @@ export const OnboardingScreens = () => {
           />
           {currentIndex === data.length - 1 && (
             <View className="absolute bottom-0 w-full px-3">
-              <KCButton onPress={onStarted}>Get Started</KCButton>
+              <KCButton variant="Filled" onPress={onStarted}>
+                Get Started
+              </KCButton>
             </View>
           )}
         </View>
-        <View className="h-7 mt-10 flex-row">
+        <View className="mt-5 flex-row">
           {data.map((_, i) => {
             const inputRange = [(i - 1) * width, i * width, (i + 1) * width];
             const dotWidth = scrollX.interpolate({

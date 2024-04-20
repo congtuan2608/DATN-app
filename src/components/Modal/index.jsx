@@ -60,6 +60,7 @@ export function KCModal(props) {
           >
             {!hideButtonLeft && (
               <KCButton
+                variant="Outline"
                 onPress={onGoBack}
                 styleContainer={{ paddingVertical: 8 }}
               >
@@ -67,6 +68,7 @@ export function KCModal(props) {
               </KCButton>
             )}
             <KCButton
+              variant="Filled"
               onPress={onStayHere}
               styleContainer={{ paddingVertical: 8 }}
             >

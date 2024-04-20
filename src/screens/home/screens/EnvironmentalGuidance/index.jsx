@@ -110,7 +110,10 @@ export function EnvironmentalGuidanceScreen() {
       headerTitle="Environmental guidance"
       headerRight={renderHeaderRight()}
     >
-      <View className="flex-1 px-2">
+      <View
+        className="flex-1 px-2"
+        style={{ backgroundColor: theme.primaryBackgroundColor }}
+      >
         <KCFlatList
           data={RecyclingTypes.getRecyclingType?.data ?? []}
           onPressItem={onPressItem}

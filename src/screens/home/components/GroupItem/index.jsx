@@ -10,7 +10,7 @@ export function GroupItem(props) {
 
   const onNavigate = () => {
     if (!props.navigate) return;
-    navigate.navigate(props.navigate);
+    navigate.navigate(props.navigate, { ...(props.params ?? {}) });
   };
   return (
     <View className="w-16">

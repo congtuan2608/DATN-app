@@ -85,7 +85,7 @@ export const HomeScreen = () => {
                   className="text-lg font-semibold"
                   style={{ color: theme.primaryTextColor }}
                 >
-                  Service
+                  Services
                 </Text>
                 <KCIcon
                   family="MaterialIcons"
@@ -163,7 +163,7 @@ export const HomeScreen = () => {
                     className="text-lg font-semibold"
                     style={{ color: theme.primaryTextColor }}
                   >
-                    Maybe you are interested
+                    Some locations are contaminated
                   </Text>
                 </View>
               </View>

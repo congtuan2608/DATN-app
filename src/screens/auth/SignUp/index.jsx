@@ -657,6 +657,7 @@ export const SignUpScreens = () => {
         }}
       >
         <KCButton
+          variant="Filled"
           onPress={onSignUp}
           disabled={signUp.isPending}
           isLoading={signUp.isPending}

@@ -197,7 +197,6 @@ export function LocationReportScreen() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
       selectionLimit: limit,
-      videoMaxDuration: 32,
     });
     setFormConfigs((prev) => ({
       ...prev,
@@ -352,6 +351,10 @@ export function LocationReportScreen() {
                       className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                         Platform.OS === "ios" ? "py-5" : "py-4"
                       }`}
+                      style={{
+                        backgroundColor: theme.secondBackgroundColor,
+                        color: theme.primaryTextColor,
+                      }}
                       onFocus={(e) => onFocusInput("address")}
                       onBlur={() =>
                         onBlurInput("address", {
@@ -377,6 +380,7 @@ export function LocationReportScreen() {
                           name="map-marker-radius-outline"
                           family="MaterialCommunityIcons"
                           size={23}
+                          color={theme.primaryTextColor}
                         />
                       )}
                     </View>
@@ -414,6 +418,9 @@ export function LocationReportScreen() {
                             onPress={() => {
                               contaminatedTypeRef.current?.openDropdown();
                             }}
+                            style={{
+                              backgroundColor: theme.secondBackgroundColor,
+                            }}
                             activeOpacity={0.6}
                             className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                               Platform.OS === "ios" ? "py-5" : "py-4"
@@ -434,6 +441,7 @@ export function LocationReportScreen() {
                                 name="recycle"
                                 family="MaterialCommunityIcons"
                                 size={25}
+                                color={theme.primaryTextColor}
                               />
                             </View>
                           </TouchableOpacity>
@@ -501,6 +509,9 @@ export function LocationReportScreen() {
                             onPress={() => {
                               severityRef.current?.openDropdown();
                             }}
+                            style={{
+                              backgroundColor: theme.secondBackgroundColor,
+                            }}
                             activeOpacity={0.6}
                             className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                               Platform.OS === "ios" ? "py-5" : "py-4"
@@ -520,6 +531,7 @@ export function LocationReportScreen() {
                                 name="warning"
                                 family="AntDesign"
                                 size={22}
+                                color={theme.primaryTextColor}
                               />
                             </View>
                           </TouchableOpacity>
@@ -546,6 +558,7 @@ export function LocationReportScreen() {
                               name={item.icon.name}
                               family={item.icon.family}
                               size={20}
+                              color={theme.primaryTextColor}
                             />
                           )}
                         </View>
@@ -585,6 +598,9 @@ export function LocationReportScreen() {
                             onPress={() => {
                               statusRef.current?.openDropdown();
                             }}
+                            style={{
+                              backgroundColor: theme.secondBackgroundColor,
+                            }}
                             activeOpacity={0.6}
                             className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                               Platform.OS === "ios" ? "py-5" : "py-4"
@@ -604,6 +620,7 @@ export function LocationReportScreen() {
                                 name="bulb1"
                                 family="AntDesign"
                                 size={25}
+                                color={theme.primaryTextColor}
                               />
                             </View>
                           </TouchableOpacity>
@@ -664,6 +681,10 @@ export function LocationReportScreen() {
                           input: formValues.populationDensity,
                         })
                       }
+                      style={{
+                        backgroundColor: theme.secondBackgroundColor,
+                        color: theme.primaryTextColor,
+                      }}
                       placeholder={"Population density"}
                       value={formValues.populationDensity}
                       onChangeText={(value) =>
@@ -679,6 +700,7 @@ export function LocationReportScreen() {
                         name="people-group"
                         family="FontAwesome6"
                         size={23}
+                        color={theme.primaryTextColor}
                       />
                     </View>
                   </View>
@@ -712,6 +734,10 @@ export function LocationReportScreen() {
                           input: formValues.description,
                         })
                       }
+                      style={{
+                        backgroundColor: theme.secondBackgroundColor,
+                        color: theme.primaryTextColor,
+                      }}
                       placeholder={"Description"}
                       value={formValues.description}
                       onChangeText={(value) =>
@@ -723,7 +749,12 @@ export function LocationReportScreen() {
                       placeholderTextColor={theme.thirdTextColor}
                     />
                     <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
-                      <KCIcon name="form" family="AntDesign" size={23} />
+                      <KCIcon
+                        name="form"
+                        family="AntDesign"
+                        size={23}
+                        color={theme.primaryTextColor}
+                      />
                     </View>
                   </View>
                   {formValidate.description?.isError && (
@@ -849,6 +880,7 @@ export function LocationReportScreen() {
           }}
         >
           <KCButton
+            variant="Filled"
             onPress={onSubmit}
             // disabled={signUp.isPending}
             isLoading={formConfigs.submit.isLoading}

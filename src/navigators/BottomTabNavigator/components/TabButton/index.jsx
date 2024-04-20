@@ -59,7 +59,7 @@ export const TabButton = (props) => {
           className="justify-center items-center w-12 h-12 border-4"
           style={{
             borderRadius: 100,
-            borderColor: theme.primaryBackgroundColor,
+            borderColor: theme.secondBackgroundColor,
           }}
         >
           <Animatable.View
