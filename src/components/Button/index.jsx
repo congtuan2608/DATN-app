@@ -1,6 +1,5 @@
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "~hooks";
-import { ThemeConfig } from "~themes";
 
 export const KCButton = (props) => {
   const { styleContainer, ...other } = props;
@@ -14,7 +13,7 @@ export const KCButton = (props) => {
             backgroundColor: props?.disabled
               ? theme.primaryDisabledButtonColor
               : theme.primaryButtonBackgroundColor,
-            paddingVertical: 12,
+            paddingVertical: 15,
             paddingHorizontal: 20,
             borderRadius: 8,
             borderWidth: 1,
@@ -27,7 +26,7 @@ export const KCButton = (props) => {
         >
           <View>
             {props?.isLoading ? (
-              <View className="py-[2px]">
+              <View>
                 <ActivityIndicator
                   size="small"
                   color={theme.primaryTextColor}

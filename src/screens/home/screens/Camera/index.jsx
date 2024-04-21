@@ -1,11 +1,11 @@
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
-import React from "react";
-import { StackScreen } from "~layouts";
-import { KCIcon } from "~components";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Camera, CameraType } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
+import React from "react";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import { KCIcon } from "~components";
 import { useScreenUtils } from "~hooks";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { StackScreen } from "~layouts";
 export const CameraScreen = () => {
   const screenUtils = useScreenUtils();
   const navigateParams = useRoute();
@@ -174,7 +174,7 @@ export const CameraScreen = () => {
       </Camera>
       <View
         className="pt-2"
-        style={{ marginBottom: screenUtils.safeAreaInsets.bottom - 5 }}
+        style={{ marginBottom: (screenUtils.safeAreaInsets.bottom || 20) - 5 }}
       >
         {imagePreview ? (
           <View className="flex-row justify-around">

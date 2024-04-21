@@ -1,9 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SYSTEM_STATE } from "~states";
-import { AsyncStorageKey } from "~configs";
-import { useRecoilState } from "recoil";
-import React from "react";
 import * as Location from "expo-location";
+import React from "react";
+import { useRecoilState } from "recoil";
+import { SYSTEM_STATE } from "~states";
 
 const formatted = ({ streetNumber, street, district, city, region }) => {
   return `${streetNumber ?? ""} ${street ?? ""} ${district ?? ""} ${

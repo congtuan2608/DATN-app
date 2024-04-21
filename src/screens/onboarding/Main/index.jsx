@@ -1,21 +1,21 @@
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
 import {
   Animated,
   FlatList,
   Image,
+  Platform,
   Text,
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
-import { View } from "react-native-animatable";
 import * as Animatable from "react-native-animatable";
+import { View } from "react-native-animatable";
 import imgOnboarding_1 from "~assets/images/onboarding_1.png";
-import { useScreenUtils } from "~hooks";
-import { data } from "./data";
-import { OnboardingItem } from "./components";
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
 import { KCButton } from "~components";
-import { useTheme } from "~hooks/useTheme";
+import { useScreenUtils } from "~hooks";
+import { OnboardingItem } from "./components";
+import { data } from "./data";
 
 const animate1 = {
   0: { translateX: 200, translateY: -500, rotate: "0deg", scale: 0.8 },
@@ -108,7 +108,7 @@ export const OnboardingScreens = () => {
               extrapolate: "clamp",
             });
             return (
-              <View key={i} className="">
+              <View key={i} className={`${Platform.OS === "ios" ? "" : "h-8"}`}>
                 <Animated.View
                   className="rounded-md bg-slate-700 mx-2"
                   style={{ width: dotWidth, height: 10, opacity }}

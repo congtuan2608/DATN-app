@@ -1,4 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
+import React from "react";
 import {
   Image,
   Platform,
@@ -8,77 +9,44 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAuth, useTheme } from "~hooks";
-import login_1 from "~assets/images/login_1.png";
-import { useScreenUtils } from "~hooks";
-import { KCButton, KCSVGAsset } from "~components";
-import { KCIcon } from "~components";
-import React from "react";
-import { getResponesive, validateInput, defaultConfig } from "~utils";
 import { RestAPI } from "~apis";
+import login_1 from "~assets/images/login_1.png";
+import { KCButton, KCIcon, KCSVGAsset } from "~components";
+import { useAuth, useScreenUtils, useTheme } from "~hooks";
+import { useForm } from "~hooks/useForm";
+import { getResponesive } from "~utils";
 
+const initialValues = { email: "", password: "" };
+const validateSchema = {
+  email: { required: true, label: "Please enter your email", type: "email" },
+  password: { required: true, min: 6, label: "Please enter your password" },
+};
 export const LoginScreens = () => {
   const auth = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigation();
   const navigateParams = useRoute();
   const { safeAreaInsets, dimensions } = useScreenUtils();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+
   const [isHidePassword, setIsHidePassword] = React.useState(true);
   const [isShowLoginFailed, setIsShowLoginFailed] = React.useState(false);
   const [isRememberMe, setIsRememberMe] = React.useState(false);
-  const [validateForm, setValidateForm] = React.useState({
-    email: defaultConfig,
-    password: defaultConfig,
-  });
+  const form = useForm({ initialValues, validateSchema });
   const login = RestAPI.Login();
 
   React.useEffect(() => {
     if (navigateParams.params?.email) {
       setEmail(navigateParams.params?.email);
-      setPassword("");
+      form.handleChange("password", "");
     }
   }, [navigateParams.params]);
 
-  const validateField = {
-    email: {
-      input: email,
-      required: true,
-      label: "Please enter your email",
-      type: "email",
-    },
-    password: {
-      input: password,
-      required: true,
-      min: 6,
-      label: "Please enter your password",
-    },
-  };
-
-  const onFocusInput = (key, props) => {
-    setIsShowLoginFailed(false);
-    setValidateForm((prev) => ({
-      ...prev,
-      [key]: defaultConfig,
-    }));
-  };
-  const onBlurInput = (key, props) => {
-    setValidateForm((prev) => ({ ...prev, [key]: validateInput(props) }));
-  };
   const onLogin = async () => {
-    const newValidate = {};
-    Object.keys(validateForm).map(
-      (key) => (newValidate[key] = validateInput(validateField[key]))
-    );
-    setValidateForm(newValidate);
+    const formValues = form.handleSubmit();
 
-    if (
-      Object.entries(newValidate).filter(([key, item]) => item.isError).length
-    )
-      return;
+    if (!formValues.isSuccess) return;
 
-    const res = await login.mutateAsync({ email, password });
+    const res = await login.mutateAsync(formValues.values);
 
     // auth.login({
     //   access_token: "res.accessToken",
@@ -144,11 +112,11 @@ export const LoginScreens = () => {
                   className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
-                  onFocus={() => onFocusInput("email", validateField.email)}
-                  onBlur={() => onBlurInput("email", validateField.email)}
+                  onFocus={() => form.handleFocus("email")}
+                  onBlur={() => form.handleBlur("email")}
                   placeholder={"Email"}
-                  value={email}
-                  onChangeText={setEmail}
+                  value={form.values.email}
+                  onChangeText={(value) => form.handleChange("email", value)}
                   placeholderTextColor={theme.thirdTextColor}
                 />
                 <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
@@ -159,13 +127,10 @@ export const LoginScreens = () => {
                   />
                 </View>
               </View>
-              {validateForm.email?.isError && (
+              {form.errors.email && (
                 <View className="px-4 mt-2 -mb-3">
-                  <Text
-                    className="text-xs"
-                    style={{ color: validateForm.email?.errorColor }}
-                  >
-                    {validateForm.email?.message}
+                  <Text className="text-xs" style={{ color: "red" }}>
+                    {form.errors.email?.message}
                   </Text>
                 </View>
               )}
@@ -177,12 +142,10 @@ export const LoginScreens = () => {
                   className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
-                  value={password}
-                  onFocus={() =>
-                    onFocusInput("password", validateField.password)
-                  }
-                  onBlur={() => onBlurInput("password", validateField.password)}
-                  onChangeText={setPassword}
+                  value={form.values.password}
+                  onFocus={() => form.handleFocus("password")}
+                  onBlur={() => form.handleBlur("password")}
+                  onChangeText={(value) => form.handleChange("password", value)}
                   placeholder={"Password"}
                   placeholderTextColor={theme.thirdTextColor}
                   secureTextEntry={isHidePassword}
@@ -200,23 +163,17 @@ export const LoginScreens = () => {
                   />
                 </TouchableOpacity>
               </View>
-              {validateForm.password?.isError && (
+              {form.errors.password && (
                 <View className="px-4 mt-2 -mb-3">
-                  <Text
-                    className="text-xs"
-                    style={{ color: validateForm.password?.errorColor }}
-                  >
-                    {validateForm.password?.message}
+                  <Text className="text-xs" style={{ color: "red" }}>
+                    {form.errors.password?.message}
                   </Text>
                 </View>
               )}
             </View>
             {!login.isPending && login.error && (
               <View className="-mb-3 -mt-1">
-                <Text
-                  className="text-xs text-center"
-                  style={{ color: validateForm.password.errorColor }}
-                >
+                <Text className="text-xs text-center" style={{ color: "red" }}>
                   {typeof login.error?.data === "string" &&
                   login.error?.data.length < 200
                     ? login.error?.data

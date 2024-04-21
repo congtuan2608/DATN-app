@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { APIPaths } from "~apis/path";
 import { HTTPMethod, useRestAPIMutation } from "~hooks/useRestAPI";
 
@@ -29,6 +28,7 @@ export function CreateReportLocation() {
       (params?.contaminatedType ?? []).map((typeId) => {
         return formData.append("contaminatedType", typeId);
       });
+
       (params?.assets ?? []).map((asset) => {
         formData.append("assets", {
           uri: asset.uri,

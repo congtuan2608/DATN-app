@@ -4,7 +4,6 @@ export const validateEmail = (email) => {
 };
 export const defaultConfig = {
   isError: false,
-  errorColor: "red",
   message: "",
 };
 
@@ -72,6 +71,15 @@ export const validateInput = ({
       };
     }
   }
+  if (input && type === "array") {
+    if (input.length === 0) {
+      return {
+        ...defaultConfig,
+        isError: true,
+        message: label || "Please select at least one option",
+      };
+    }
+  }
 
   if (input && type === "email") {
     if (!validateEmail(input)) {
@@ -90,30 +98,5 @@ export const validateInput = ({
         message: config?.label || "Confirm does not match",
       };
   }
-  return defaultConfig;
-};
-
-export const checkFormSubmit = ({
-  formValidate,
-  validateField,
-  formValues,
-}) => {
-  const newValidate = {};
-  let hasBeenEntered = false;
-  Object.keys(formValidate).map(
-    (key) =>
-      (newValidate[key] = validateInput({
-        ...validateField[key],
-        input: formValues[key],
-        formValues,
-      }))
-  );
-  if (
-    Object.entries(newValidate).filter(([key, item]) => item.isError).length
-  ) {
-    hasBeenEntered = false;
-  } else {
-    hasBeenEntered = true;
-  }
-  return { newValidate, hasBeenEntered };
+  return null;
 };

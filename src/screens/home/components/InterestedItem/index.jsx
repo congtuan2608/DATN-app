@@ -1,6 +1,10 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
-import { useWindowDimensions } from "react-native";
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { EXAMPLE_IMG } from "~constants";
 import { useTheme } from "~hooks";
 

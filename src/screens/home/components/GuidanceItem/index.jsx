@@ -1,37 +1,25 @@
 import Dayjs from "dayjs";
-import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { AVATAR_URL } from "~constants";
 import { useTheme } from "~hooks";
 
-const NUMBER_OF_LINES = 6;
 export function GuidanceItem(props) {
-  const { data, ...other } = props;
   const { theme } = useTheme();
-  const [textShown, setTextShown] = React.useState(false);
-  const [lengthMore, setLengthMore] = React.useState(false);
-
-  const onTextLayout = React.useCallback((e) => {
-    setLengthMore(e.nativeEvent.lines?.length >= NUMBER_OF_LINES);
-  }, []);
-
-  const assets = React.useMemo(() => {
-    let images = [],
-      videos = [];
-
-    if (data?.assets && data.assets.length === 0) return { images, videos };
-
-    data.assets.map((item) => {
-      if (item.media_type === "image") images.push(item);
-      else videos.push(item);
-    });
-    return { images, videos };
-  }, []);
-
+  const { width } = useWindowDimensions();
   return (
-    <View
-      className="rounded-xl px-2 py-3"
+    <TouchableOpacity
+      activeOpacity={0.9}
+      className="rounded-xl px-2 py-3 border-[#00000030] shadow-sm"
       style={{ backgroundColor: theme.secondBackgroundColor, gap: 5 }}
+      onPress={() => {
+        console.log("hello");
+      }}
     >
       <View
         className="flex-row items-center justify-center"
@@ -42,7 +30,7 @@ export function GuidanceItem(props) {
           style={{ borderColor: theme.primaryTextColor }}
         >
           <Image
-            source={{ uri: data?.author?.avatar ?? AVATAR_URL }}
+            source={{ uri: props?.author?.avatar ?? AVATAR_URL }}
             className="w-12 h-12 rounded-full"
             resizeMode="cover"
           />
@@ -52,52 +40,38 @@ export function GuidanceItem(props) {
             className="font-semibold"
             style={{ color: theme.primaryTextColor }}
           >
-            {data?.author?.fullName ?? "<Unknown>"}
+            {props?.author?.fullName ?? "<Unknown>"}
           </Text>
           <Text
             className="italic font-light text-xs"
             style={{ color: theme.primaryTextColor }}
           >
-            {Dayjs(data.createdAt).format("A hh:mm DD/MM/YYYY")}
+            {props?.createdAt &&
+              Dayjs(props.createdAt).format("A hh:mm DD/MM/YYYY")}
           </Text>
         </View>
       </View>
-      <View className="px-2 pb-3" style={{ gap: 5 }}>
+      <View className="p-2" style={{ gap: 5, width: width / 1.7 }}>
         <Text
+          numberOfLines={1}
           className="font-semibold text-base"
           style={{ color: theme.primaryTextColor }}
         >
-          {data?.title ?? ""}
+          {props?.title ?? ""}
         </Text>
         <Text
-          onTextLayout={onTextLayout}
-          className="text-sm text-clip"
-          numberOfLines={textShown ? undefined : NUMBER_OF_LINES}
+          className="text-sm"
+          numberOfLines={2}
           style={{ color: theme.primaryTextColor }}
         >
-          {data?.descriptsion ?? "<No data>"}
+          {props?.descriptsion ?? "<No data>"}
         </Text>
-
-        {lengthMore ? (
-          <TouchableOpacity>
-            <Text
-              className="text-sm font-semibold italic mb-2 opacity-90"
-              onPress={() => setTextShown(!textShown)}
-              style={{ color: theme.highLightColor, lineHeight: 0 }}
-            >
-              {textShown ? "Read less..." : "Read more..."}
-            </Text>
-          </TouchableOpacity>
-        ) : null}
-        {assets && (
+        {props?.assets.length && (
           <View className="flex-row flex-wrap justify-evenly items-center">
-            {assets?.images.map((item) => (
-              <Image
-                key={item._id}
-                source={{ uri: item.url ?? "" }}
-                className="w-28 h-28 rounded-lg"
-              />
-            ))}
+            <Image
+              source={{ uri: props.assets[0]?.url ?? "" }}
+              className="w-full h-48 rounded-xl"
+            />
           </View>
         )}
       </View>
@@ -122,6 +96,6 @@ export function GuidanceItem(props) {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }

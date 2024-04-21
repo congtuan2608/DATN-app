@@ -1,18 +1,16 @@
-import {
-  View,
-  Text,
-  FlatList,
-  ScrollView,
-  RefreshControl,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
 import React from "react";
-import { StackScreen } from "~layouts";
-import { KCContainer, KCFlatList, KCIcon } from "~components";
-import { GuidanceItem } from "./components";
+import {
+  Alert,
+  RefreshControl,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { RestAPI } from "~apis";
+import { KCContainer, KCFlatList, KCIcon } from "~components";
 import { useTheme } from "~hooks";
+import { StackScreen } from "~layouts";
+import { GuidanceItem } from "./components";
 
 const fakeData = [
   {
@@ -88,14 +86,6 @@ export function EnvironmentalGuidanceScreen() {
             color={theme.primaryIconColor}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={onPressHeader}>
-          <KCIcon
-            family="MaterialIcons"
-            name="add-circle"
-            size={30}
-            color={theme.primaryIconColor}
-          />
-        </TouchableOpacity>
       </View>
     );
   };
@@ -115,6 +105,7 @@ export function EnvironmentalGuidanceScreen() {
         style={{ backgroundColor: theme.primaryBackgroundColor }}
       >
         <KCFlatList
+          initialNumToRender={5}
           data={RecyclingTypes.getRecyclingType?.data ?? []}
           onPressItem={onPressItem}
           isLoading={RecyclingTypes.getRecyclingType.isFetching}

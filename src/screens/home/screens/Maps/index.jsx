@@ -1,25 +1,24 @@
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { useRoute } from "@react-navigation/native";
+import dayjs from "dayjs";
+import React from "react";
 import {
-  View,
-  Text,
-  Platform,
-  TextInput,
-  ScrollView,
-  Keyboard,
   FlatList,
   Image,
-  useWindowDimensions,
+  Keyboard,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
   TouchableOpacity,
+  View,
+  useWindowDimensions,
 } from "react-native";
-import React from "react";
-import { StackScreen } from "~layouts";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { useLocation, useTheme } from "~hooks";
-import { KCContainer, KCIcon } from "~components";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import currentLocation from "~assets/images/current-location.png";
 import { RestAPI } from "~apis";
-import dayjs from "dayjs";
-import { useRoute } from "@react-navigation/native";
+import { KCContainer } from "~components";
+import { useLocation, useTheme } from "~hooks";
+import { StackScreen } from "~layouts";
 
 const fakeData = [
   {
@@ -257,7 +256,7 @@ export function MapScreen() {
                       Time report:
                     </Text>
                     {dayjs(selectMarker?.createdAt).format(
-                      " hh:mm:ss DD/MM/YYYY"
+                      " A hh:mm:ss DD/MM/YYYY"
                     )}
                   </Text>
                 </View>
@@ -265,6 +264,7 @@ export function MapScreen() {
                   {selectMarker?.assets && (
                     <FlatList
                       // pagingEnabled
+                      initialNumToRender={1}
                       data={selectMarker?.assets}
                       horizontal
                       showsVerticalScrollIndicator={false}
@@ -276,8 +276,8 @@ export function MapScreen() {
                           source={{ uri: item?.url }}
                           style={{
                             resizeMode: "contain",
-                            width: width - 32,
-                            // height: "70%",
+                            width: item?.width / 7 || width - 32,
+                            height: "70%",
                           }}
                         />
                       )}

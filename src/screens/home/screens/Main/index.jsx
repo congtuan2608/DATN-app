@@ -1,28 +1,32 @@
+import React from "react";
 import {
   Animated,
   FlatList,
   Image,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { StackScreen } from "~layouts";
-import { useTheme, useAuth, useScreenUtils } from "~hooks";
-import { getResponesive } from "~utils";
-import { GroupItem, InterestedItem } from "../../components";
-import { serviceList } from "./data";
+import { RestAPI } from "~apis";
 import { KCIcon } from "~components";
-import React from "react";
+import { useAuth, useScreenUtils, useTheme } from "~hooks";
+import { StackScreen } from "~layouts";
+import { getResponesive } from "~utils";
+import { GroupItem, GuidanceItem, InterestedItem } from "../../components";
+import { serviceList } from "./data";
 
 export const HomeScreen = () => {
   const { theme, changeTheme } = useTheme();
   const { safeAreaInsets, dimensions } = useScreenUtils();
   const scrollY = React.useRef(new Animated.Value(0)).current;
   const auth = useAuth();
+  const RecyclingGuide = RestAPI.RecyclingGuide();
 
   console.log("root:", process.env.EXPO_PUBLIC_ROOT_BE_URL);
 
+  React.useEffect(() => {
+    RecyclingGuide.getRecyclingGuide.mutate({});
+  }, []);
   const handleOnScroll = React.useMemo(
     () => ({
       transform: [
@@ -163,17 +167,18 @@ export const HomeScreen = () => {
                     className="text-lg font-semibold"
                     style={{ color: theme.primaryTextColor }}
                   >
-                    Some locations are contaminated
+                    Instructions for recycling waste
                   </Text>
                 </View>
               </View>
               <View className="pt-3 pb-4">
                 <FlatList
                   horizontal
+                  initialNumToRender={3}
                   style={{ paddingBottom: 12 }}
                   showsHorizontalScrollIndicator={false}
-                  data={serviceList}
-                  renderItem={({ item }) => <InterestedItem {...item} />}
+                  data={RecyclingGuide.getRecyclingGuide?.data ?? []}
+                  renderItem={({ item }) => <GuidanceItem {...item} />}
                   keyExtractor={(item, idx) => `HorizontalList_Item__${idx}`}
                   ItemSeparatorComponent={() => <View className="w-4" />}
                 />

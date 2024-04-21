@@ -1,23 +1,11 @@
-import React from "react";
-import { GetTheme } from "~utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SYSTEM_STATE } from "../../states";
+import React from "react";
 import { useRecoilState } from "recoil";
+import { GetTheme } from "~utils";
+import { SYSTEM_STATE } from "../../states";
 
 export const useTheme = () => {
   const [theme, setTheme] = useRecoilState(SYSTEM_STATE.ThemeData);
-
-  // React.useEffect(() => {
-  //   const getStorage = async () => {
-  //     const THEME = await AsyncStorage.getItem("THEME");
-  //     setTypeTheme(THEME);
-  //   };
-  //   getStorage();
-  // }, []);
-
-  // React.useEffect(() => {
-  //   setTheme(GetTheme(typeTheme));
-  // }, [typeTheme]);
 
   const changeTheme = React.useCallback(async (type) => {
     if (!type) await AsyncStorage.removeItem("THEME");

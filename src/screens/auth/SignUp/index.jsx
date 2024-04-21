@@ -1,3 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
+import dayjs from "dayjs";
+import * as ImagePicker from "expo-image-picker";
 import React from "react";
 import {
   Image,
@@ -8,22 +11,27 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { KCButton, KCIcon, KCSVGAsset } from "~components";
-import { useAuth, useScreenUtils, useTheme } from "~hooks";
-import {
-  checkFormSubmit,
-  defaultConfig,
-  getResponesive,
-  validateInput,
-} from "~utils";
-import { useNavigation } from "@react-navigation/native";
 import { DatePickerModal } from "react-native-paper-dates";
 import SelectDropdown from "react-native-select-dropdown";
-import dayjs from "dayjs";
-import * as ImagePicker from "expo-image-picker";
 import { RestAPI } from "~apis";
+import { KCButton, KCIcon, KCSVGAsset } from "~components";
 import { AVATAR_URL } from "~constants";
-const validateField = {
+import { useAuth, useScreenUtils, useTheme } from "~hooks";
+import { useForm } from "~hooks/useForm";
+import { getResponesive } from "~utils";
+
+const initialValues = {
+  avatar: undefined,
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  dateOfBirth: "",
+  gender: "",
+  password: "",
+  confirmPassword: "",
+};
+const validateSchema = {
   avatar: {},
   firstName: {
     required: true,
@@ -78,29 +86,14 @@ export const SignUpScreens = () => {
   const [openDatePicker, setOpenDatePicker] = React.useState(false);
   const genderRef = React.useRef(null);
   const signUp = RestAPI.SignUp();
-  const [formValidate, setFormValidate] = React.useState(() => {
-    let newForm = {};
-    Object.keys(validateField).map((key) => (newForm[key] = defaultConfig));
-    return newForm;
-  });
-  const [formValues, setFormValues] = React.useState(() => {
-    let newValues = {};
-    Object.keys(validateField).map((key) => (newValues[key] = undefined));
-    return newValues;
-  });
-
-  const onFocusInput = (key, props) => {
-    setFormValidate((prev) => ({
-      ...prev,
-      [key]: defaultConfig,
-    }));
-  };
-  const onBlurInput = (key, props) => {
-    setFormValidate((prev) => ({
-      ...prev,
-      [key]: validateInput(props),
-    }));
-  };
+  const {
+    values,
+    errors,
+    handleChange,
+    handleBlur,
+    handleFocus,
+    handleSubmit,
+  } = useForm({ initialValues, validateSchema });
 
   const onSelectAvatar = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -111,30 +104,18 @@ export const SignUpScreens = () => {
       base64: true,
     });
     if (result.canceled) {
-      setFormValues((prev) => ({
-        ...prev,
-        avatar: undefined,
-      }));
+      handleChange("avatar", undefined);
       return;
     }
-    setFormValues((prev) => ({
-      ...prev,
-      avatar: result.assets[0],
-    }));
+    handleChange("avatar", result.assets[0]);
   };
 
   const onSignUp = async () => {
-    const { newValidate, hasBeenEntered } = checkFormSubmit({
-      formValidate,
-      validateField,
-      formValues,
-    });
+    const formValues = handleSubmit();
 
-    setFormValidate(newValidate);
+    if (!formValues.isSuccess) return;
 
-    if (!hasBeenEntered) return;
-
-    const res = await signUp.mutateAsync(formValues);
+    const res = await signUp.mutateAsync(formValues.values);
     if (res) {
       navigate.navigate("Login", res);
     }
@@ -171,7 +152,7 @@ export const SignUpScreens = () => {
             >
               <Image
                 source={{
-                  uri: formValues?.avatar?.uri || AVATAR_URL,
+                  uri: values.avatar?.uri || AVATAR_URL,
                 }}
                 className="w-28 h-28 rounded-full"
                 resizeMode="cover"
@@ -209,36 +190,21 @@ export const SignUpScreens = () => {
                   className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
-                  onFocus={() =>
-                    onFocusInput("firstName", {
-                      ...validateField.firstName,
-                      input: formValues.firstName,
-                    })
-                  }
-                  onBlur={() =>
-                    onBlurInput("firstName", {
-                      ...validateField.firstName,
-                      input: formValues.firstName,
-                    })
-                  }
+                  onFocus={() => handleFocus("firstName")}
+                  onBlur={() => handleBlur("firstName")}
                   placeholder={"First name"}
-                  value={formValues.firstName}
-                  onChangeText={(value) =>
-                    setFormValues((prev) => ({ ...prev, firstName: value }))
-                  }
+                  value={values.firstName}
+                  onChangeText={(value) => handleChange("firstName", value)}
                   placeholderTextColor={theme.thirdTextColor}
                 />
                 <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
                   <KCIcon name="user-o" family="FontAwesome" size={23} />
                 </View>
               </View>
-              {formValidate.firstName?.isError && (
+              {errors?.firstName && (
                 <View className="px-4 mt-2 -mb-3">
-                  <Text
-                    className="text-xs"
-                    style={{ color: formValidate.firstName?.errorColor }}
-                  >
-                    {formValidate.firstName?.message}
+                  <Text className="text-xs" style={{ color: "red" }}>
+                    {errors.firstName?.message}
                   </Text>
                 </View>
               )}
@@ -250,36 +216,21 @@ export const SignUpScreens = () => {
                   className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
-                  onFocus={() =>
-                    onFocusInput("lastName", {
-                      ...validateField.lastName,
-                      input: formValues.lastName,
-                    })
-                  }
-                  onBlur={() =>
-                    onBlurInput("lastName", {
-                      ...validateField.lastName,
-                      input: formValues.lastName,
-                    })
-                  }
+                  onFocus={() => handleFocus("lastName")}
+                  onBlur={() => handleBlur("lastName")}
                   placeholder={"Last name"}
-                  value={formValues.lastName}
-                  onChangeText={(value) =>
-                    setFormValues((prev) => ({ ...prev, lastName: value }))
-                  }
+                  value={values.lastName}
+                  onChangeText={(value) => handleChange("lastName", value)}
                   placeholderTextColor={theme.thirdTextColor}
                 />
                 <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
                   <KCIcon name="user-o" family="FontAwesome" size={23} />
                 </View>
               </View>
-              {formValidate.lastName?.isError && (
+              {errors?.lastName && (
                 <View className="px-4 mt-2 -mb-3">
-                  <Text
-                    className="text-xs"
-                    style={{ color: formValidate.lastName?.errorColor }}
-                  >
-                    {formValidate.lastName?.message}
+                  <Text className="text-xs" style={{ color: "red" }}>
+                    {errors.lastName?.message}
                   </Text>
                 </View>
               )}
@@ -291,23 +242,11 @@ export const SignUpScreens = () => {
                   className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
-                  onFocus={() =>
-                    onFocusInput("email", {
-                      ...validateField.email,
-                      input: formValues.email,
-                    })
-                  }
-                  onBlur={() =>
-                    onBlurInput("email", {
-                      ...validateField.email,
-                      input: formValues.email,
-                    })
-                  }
+                  onFocus={() => handleFocus("email")}
+                  onBlur={() => handleBlur("email")}
                   placeholder={"Email"}
-                  value={formValues.email}
-                  onChangeText={(value) =>
-                    setFormValues((prev) => ({ ...prev, email: value }))
-                  }
+                  value={values.email}
+                  onChangeText={(value) => handleChange("email", value)}
                   placeholderTextColor={theme.thirdTextColor}
                 />
                 <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
@@ -318,13 +257,10 @@ export const SignUpScreens = () => {
                   />
                 </View>
               </View>
-              {formValidate.email?.isError && (
+              {errors?.email && (
                 <View className="px-4 mt-2 -mb-3">
-                  <Text
-                    className="text-xs"
-                    style={{ color: formValidate.email?.errorColor }}
-                  >
-                    {formValidate.email?.message}
+                  <Text className="text-xs" style={{ color: "red" }}>
+                    {errors.email?.message}
                   </Text>
                 </View>
               )}
@@ -337,36 +273,21 @@ export const SignUpScreens = () => {
                   className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
-                  onFocus={() =>
-                    onFocusInput("phone", {
-                      ...validateField.phone,
-                      input: formValues.phone,
-                    })
-                  }
-                  onBlur={() =>
-                    onBlurInput("phone", {
-                      ...validateField.phone,
-                      input: formValues.phone,
-                    })
-                  }
+                  onFocus={() => handleFocus("phone")}
+                  onBlur={() => handleBlur("phone")}
                   placeholder={"Phone number"}
-                  value={formValues.phone}
-                  onChangeText={(value) =>
-                    setFormValues((prev) => ({ ...prev, phone: value }))
-                  }
+                  value={values.phone}
+                  onChangeText={(value) => handleChange("phone", value)}
                   placeholderTextColor={theme.thirdTextColor}
                 />
                 <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
                   <KCIcon name="phone" family="Feather" size={23} />
                 </View>
               </View>
-              {formValidate.phone?.isError && (
+              {errors?.phone && (
                 <View className="px-4 mt-2 -mb-3">
-                  <Text
-                    className="text-xs"
-                    style={{ color: formValidate.phone?.errorColor }}
-                  >
-                    {formValidate.phone?.message}
+                  <Text className="text-xs" style={{ color: "red" }}>
+                    {errors.phone?.message}
                   </Text>
                 </View>
               )}
@@ -385,24 +306,21 @@ export const SignUpScreens = () => {
                     mode="single"
                     visible={openDatePicker}
                     onDismiss={() => setOpenDatePicker(false)}
-                    date={formValues?.dateOfBirth}
+                    date={values?.dateOfBirth}
                     onConfirm={(param) => {
                       setOpenDatePicker(false);
-                      setFormValues((prev) => ({
-                        ...prev,
-                        dateOfBirth: param.date,
-                      }));
+                      handleChange("dateOfBirth", param.date);
                     }}
                   />
                   <Text
                     style={{
-                      color: formValues?.dateOfBirth
+                      color: values?.dateOfBirth
                         ? theme.primaryTextColor
                         : theme.thirdTextColor,
                     }}
                   >
-                    {(formValues?.dateOfBirth &&
-                      dayjs(formValues?.dateOfBirth).format("DD/MM/YYYY")) ??
+                    {(values?.dateOfBirth &&
+                      dayjs(values.dateOfBirth).format("DD/MM/YYYY")) ||
                       "Birth date"}
                   </Text>
                   <View className="absolute top-0 bottom-0 right-0 items-center justify-center opacity-40 px-5">
@@ -415,10 +333,7 @@ export const SignUpScreens = () => {
                   ref={genderRef}
                   data={genderValues}
                   onSelect={(selectedItem, index) => {
-                    setFormValues((prev) => ({
-                      ...prev,
-                      gender: selectedItem?.value,
-                    }));
+                    handleChange("gender", selectedItem?.value);
                   }}
                   renderButton={(selectedItem, isOpened) => {
                     return (
@@ -434,7 +349,7 @@ export const SignUpScreens = () => {
                         >
                           <Text
                             style={{
-                              color: formValues?.gender
+                              color: values?.gender
                                 ? theme.primaryTextColor
                                 : theme.thirdTextColor,
                             }}
@@ -482,13 +397,10 @@ export const SignUpScreens = () => {
                     borderRadius: 8,
                   }}
                 />
-                {formValidate.gender?.isError && (
+                {errors?.gender && (
                   <View className="px-4 mt-2 -mb-3">
-                    <Text
-                      className="text-xs"
-                      style={{ color: formValidate.gender?.errorColor }}
-                    >
-                      {formValidate.gender?.message}
+                    <Text className="text-xs" style={{ color: "red" }}>
+                      {errors.gender?.message}
                     </Text>
                   </View>
                 )}
@@ -500,22 +412,10 @@ export const SignUpScreens = () => {
                   className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
-                  value={formValues.password}
-                  onFocus={() =>
-                    onFocusInput("password", {
-                      ...validateField.password,
-                      input: formValues.password,
-                    })
-                  }
-                  onBlur={() =>
-                    onBlurInput("password", {
-                      ...validateField.password,
-                      input: formValues.password,
-                    })
-                  }
-                  onChangeText={(value) =>
-                    setFormValues((prev) => ({ ...prev, password: value }))
-                  }
+                  value={values.password}
+                  onFocus={() => handleFocus("password")}
+                  onBlur={() => handleBlur("password")}
+                  onChangeText={(value) => handleChange("password", value)}
                   placeholder={"Password"}
                   placeholderTextColor={theme.thirdTextColor}
                   secureTextEntry={isHidePassword}
@@ -533,13 +433,10 @@ export const SignUpScreens = () => {
                   />
                 </TouchableOpacity>
               </View>
-              {formValidate?.password?.isError && (
+              {errors?.password && (
                 <View className="px-4 mt-2 -mb-3">
-                  <Text
-                    className="text-xs"
-                    style={{ color: formValidate.password?.errorColor }}
-                  >
-                    {formValidate?.password?.message}
+                  <Text className="text-xs" style={{ color: "red" }}>
+                    {errors.password?.message}
                   </Text>
                 </View>
               )}
@@ -550,25 +447,11 @@ export const SignUpScreens = () => {
                   className={`bg-gray-200 rounded-xl px-5 pr-14 ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
-                  value={formValues.confirmPassword}
-                  onFocus={() =>
-                    onFocusInput("confirmPassword", {
-                      ...validateField.confirmPassword,
-                      input: formValues.confirmPassword,
-                    })
-                  }
-                  onBlur={() =>
-                    onBlurInput("confirmPassword", {
-                      ...validateField.confirmPassword,
-                      input: formValues.confirmPassword,
-                      formValues,
-                    })
-                  }
+                  value={values.confirmPassword}
+                  onFocus={() => handleFocus("confirmPassword")}
+                  onBlur={() => handleBlur("confirmPassword")}
                   onChangeText={(value) =>
-                    setFormValues((prev) => ({
-                      ...prev,
-                      confirmPassword: value,
-                    }))
+                    handleChange("confirmPassword", value)
                   }
                   placeholder={"Confirm password"}
                   placeholderTextColor={theme.thirdTextColor}
@@ -587,13 +470,10 @@ export const SignUpScreens = () => {
                   />
                 </TouchableOpacity>
               </View>
-              {formValidate?.confirmPassword?.isError && (
+              {errors?.confirmPassword && (
                 <View className="px-4 mt-2 -mb-3">
-                  <Text
-                    className="text-xs"
-                    style={{ color: formValidate.confirmPassword?.errorColor }}
-                  >
-                    {formValidate?.confirmPassword?.message}
+                  <Text className="text-xs" style={{ color: "red" }}>
+                    {errors.confirmPassword?.message}
                   </Text>
                 </View>
               )}

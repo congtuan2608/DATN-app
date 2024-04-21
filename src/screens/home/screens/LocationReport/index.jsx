@@ -1,34 +1,29 @@
+import { useNavigation } from "@react-navigation/native";
+import Checkbox from "expo-checkbox";
+import * as ImagePicker from "expo-image-picker";
+import React from "react";
 import {
-  View,
-  Text,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
   ActivityIndicator,
   Alert,
+  Image,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import React from "react";
-import { StackScreen } from "~layouts";
-import { useAuth, useLocation, useScreenUtils, useTheme } from "~hooks";
-import {
-  checkFormSubmit,
-  defaultConfig,
-  getResponesive,
-  validateInput,
-} from "~utils";
-import { KCButton, KCIcon, KCModal, KCSVGAsset } from "~components";
-import SelectDropdown from "react-native-select-dropdown";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { useNavigation } from "@react-navigation/native";
-import * as ImagePicker from "expo-image-picker";
-import * as Location from "expo-location";
-import Checkbox from "expo-checkbox";
+import SelectDropdown from "react-native-select-dropdown";
 import { RestAPI } from "~apis";
+import { KCButton, KCIcon, KCModal } from "~components";
+import { useAuth, useLocation, useScreenUtils, useTheme } from "~hooks";
+import { useForm } from "~hooks/useForm";
+import { StackScreen } from "~layouts";
+import { getResponesive } from "~utils";
+import { severityList, statusList } from "./data";
 
-const validateField = {
+const validateSchema = {
   address: {
     required: true,
     min: 10,
@@ -42,6 +37,7 @@ const validateField = {
   contaminatedType: {
     required: true,
     label: "Please select contaminated type",
+    type: "array",
   },
   severity: {
     required: true,
@@ -54,24 +50,21 @@ const validateField = {
   populationDensity: {},
   assets: {},
   isAnonymous: {},
-  location: {},
+  location: {
+    type: "object",
+  },
 };
-const contaminatedTypeList = [
-  { label: "Kim loại", value: "metal" },
-  { label: "Nhựa", value: "plastic" },
-  { label: "Thuỷ tinh", value: "glass" },
-];
-const severityList = [
-  { label: "Mild", value: "mild" },
-  { label: "Moderate", value: "moderate" },
-  { label: "Severe", value: "severe" },
-];
-const statusList = [
-  { label: "Processed", value: "processed" },
-  { label: "Processing", value: "processing" },
-  { label: "Need intervention", value: "need-intervention" },
-  { label: "No need intervention", value: "no-need-intervention" },
-];
+const initialValues = {
+  address: "",
+  description: "",
+  contaminatedType: [],
+  severity: "",
+  status: "",
+  populationDensity: 0,
+  assets: [],
+  isAnonymous: false,
+  location: { latitude: 0, longitude: 0 },
+};
 export function LocationReportScreen() {
   const { location, getCurrentLocation, reverseGeocodeAsync, geocodeAsync } =
     useLocation();
@@ -94,16 +87,17 @@ export function LocationReportScreen() {
     submit: { isLoading: false },
   });
 
-  const [formValidate, setFormValidate] = React.useState(() => {
-    let newForm = {};
-    Object.keys(validateField).map((key) => (newForm[key] = defaultConfig));
-    return newForm;
-  });
-  const [formValues, setFormValues] = React.useState(() => {
-    let newValues = {};
-    Object.keys(validateField).map((key) => (newValues[key] = undefined));
-    return newValues;
-  });
+  const {
+    values,
+    errors,
+    setErrors,
+    handleBlur,
+    handleFocus,
+    handleChange,
+    handleSelect,
+    handleSubmit,
+    resetForm,
+  } = useForm({ initialValues, validateSchema });
 
   React.useEffect(() => {
     if (!formConfigs.address.readOnly) return;
@@ -116,15 +110,11 @@ export function LocationReportScreen() {
       const reverse = await reverseGeocodeAsync(getLocation);
       setReverseGeo(reverse?.formattedAddress);
       if (getLocation) {
-        setFormValues((prev) => ({
-          ...prev,
-          // address: `${getLocation.latitude}, ${getLocation.longitude}`,
-          address: reverse?.formattedAddress,
-          location: {
-            latitude: getLocation.latitude,
-            longitude: getLocation.longitude,
-          },
+        handleChange("location", () => ({
+          longitude: getLocation.longitude,
+          latitude: getLocation.latitude,
         }));
+        handleChange("address", () => reverse?.formattedAddress);
       }
       setFormConfigs((prev) => ({
         ...prev,
@@ -134,10 +124,7 @@ export function LocationReportScreen() {
   }, [formConfigs.address.readOnly]);
 
   React.useEffect(() => {
-    setFormValues((prev) => ({
-      ...prev,
-      assets: images,
-    }));
+    handleChange("assets", images);
   }, [images]);
 
   //========================== function ================================
@@ -149,32 +136,14 @@ export function LocationReportScreen() {
     });
     if (key === "address" && props?.readOnly) {
       if (location) {
-        setFormValues((prev) => ({
-          ...prev,
-          // address: `${location.latitude}, ${location.longitude}`,
-          address: reverseGeo,
-        }));
+        handleChange("address", reverseGeo || location?.formattedAddress);
       }
     }
     setFormConfigs((prev) => {
       if (prev[key]?.isLoading !== undefined)
-        return { ...prev, [key]: { ...prev[key], isLoading: false } };
+        return { ...prev, [key]: { ...prev[key], ...props, isLoading: false } };
       return { ...prev, [key]: { ...prev[key], ...props } };
     });
-  };
-
-  // ============================= handle input ==================================
-  const onFocusInput = (key, props) => {
-    setFormValidate((prev) => ({
-      ...prev,
-      [key]: defaultConfig,
-    }));
-  };
-  const onBlurInput = (key, props) => {
-    setFormValidate((prev) => ({
-      ...prev,
-      [key]: validateInput(props),
-    }));
   };
 
   //========================== handle select image/video from library ===========================
@@ -209,51 +178,27 @@ export function LocationReportScreen() {
   //
   const onRemoveImage = (uri) => {
     setImages((prev) => prev.filter((item) => item.uri !== uri));
-    setFormValues((prev) => ({
-      ...prev,
-      assets: (prev.assets ?? []).filter((item) => item.uri !== uri),
-    }));
+    handleChange(
+      "assets",
+      images.filter((item) => item.uri !== uri)
+    );
   };
 
   // =========================== handle submit form ==============================
-  const resetForm = () => {
-    setFormValues((prev) => {
-      let newValues = {};
-      Object.keys(validateField).map((key) => (newValues[key] = undefined));
-      return newValues;
-    });
-    setFormConfigs((prev) => ({
-      ...prev,
-      address: { ...prev.address, readOnly: false },
-    }));
-    setImages([]);
-  };
+
   const onSubmit = async () => {
     try {
-      setFormConfigs((prev) => ({
-        ...prev,
-        submit: { ...prev.submit, isLoading: true },
-      }));
-      const { newValidate, hasBeenEntered } = checkFormSubmit({
-        formValidate,
-        validateField,
-        formValues,
-      });
-
-      setFormValidate(newValidate);
-      if (!hasBeenEntered) return;
-
       let newLocation;
       if (!formConfigs.address.readOnly) {
-        const addressCoord = await geocodeAsync(formValues.address);
-
+        const addressCoord = await geocodeAsync(String(values.address));
+        console.log({ addressCoord });
         if (!addressCoord) {
-          setFormValidate((prev) => ({
+          setErrors((prev) => ({
             ...prev,
             address: {
               ...prev.address,
               isError: true,
-              message: "Please provide a valid address!",
+              message: "This location could not be found!",
             },
           }));
           return;
@@ -264,12 +209,24 @@ export function LocationReportScreen() {
         };
       }
 
+      const formValues = handleSubmit();
+      setFormConfigs((prev) => ({
+        ...prev,
+        submit: { ...prev.submit, isLoading: true },
+      }));
+
+      if (!formValues.isSuccess) return;
+
       await CreateReportLocation.mutateAsync({
-        ...formValues,
+        ...formValues.values,
         user_id: auth.userProfile?._id,
         ...(newLocation && { location: newLocation }),
       });
       resetForm();
+      setImages([]);
+      setFormConfigs((prev) => {
+        return { ...prev, address: { ...prev.address, readOnly: false } };
+      });
     } finally {
       setFormConfigs((prev) => ({
         ...prev,
@@ -292,7 +249,7 @@ export function LocationReportScreen() {
       >
         <KeyboardAwareScrollView
           className="flex-1 w-full"
-          extraScrollHeight={20}
+          extraScrollHeight={Platform.OS === "ios" ? 20 : 200}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
         >
@@ -348,25 +305,18 @@ export function LocationReportScreen() {
                     <TextInput
                       readOnly={formConfigs.address.readOnly}
                       autoComplete="name-given"
-                      className={`bg-gray-200 rounded-xl px-5 pr-14 ${
-                        Platform.OS === "ios" ? "py-5" : "py-4"
+                      className={`rounded-xl px-5 pr-14 ${
+                        Platform.OS === "ios" ? "py-5" : "py-3"
                       }`}
                       style={{
                         backgroundColor: theme.secondBackgroundColor,
                         color: theme.primaryTextColor,
                       }}
-                      onFocus={(e) => onFocusInput("address")}
-                      onBlur={() =>
-                        onBlurInput("address", {
-                          ...validateField.address,
-                          input: formValues.address,
-                        })
-                      }
+                      onFocus={() => handleFocus("address")}
+                      onBlur={() => handleBlur("address")}
                       placeholder={"Address"}
-                      value={formValues.address}
-                      onChangeText={(value) =>
-                        setFormValues((prev) => ({ ...prev, address: value }))
-                      }
+                      value={values.address}
+                      onChangeText={(value) => handleChange("address", value)}
                       placeholderTextColor={theme.thirdTextColor}
                     />
                     <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
@@ -385,13 +335,10 @@ export function LocationReportScreen() {
                       )}
                     </View>
                   </View>
-                  {formValidate.address?.isError && (
+                  {errors?.address && (
                     <View className="px-4 mt-2 -mb-3">
-                      <Text
-                        className="text-xs"
-                        style={{ color: formValidate.address?.errorColor }}
-                      >
-                        {formValidate.address?.message}
+                      <Text className="text-xs" style={{ color: "red" }}>
+                        {errors.address?.message}
                       </Text>
                     </View>
                   )}
@@ -402,14 +349,11 @@ export function LocationReportScreen() {
                     ref={contaminatedTypeRef}
                     data={ContaminatedType.data ?? []}
                     onSelect={(selectedItem, index) => {
-                      onFocusInput("contaminatedType");
-                      setFormValues((prev) => ({
+                      handleFocus("contaminatedType");
+                      handleSelect("contaminatedType", (prev) => [
                         ...prev,
-                        contaminatedType: [
-                          ...(prev.contaminatedType ?? []),
-                          selectedItem?._id,
-                        ],
-                      }));
+                        selectedItem._id,
+                      ]);
                     }}
                     renderButton={(selectedItem, isOpened) => {
                       return (
@@ -422,13 +366,13 @@ export function LocationReportScreen() {
                               backgroundColor: theme.secondBackgroundColor,
                             }}
                             activeOpacity={0.6}
-                            className={`bg-gray-200 rounded-xl px-5 pr-14 ${
+                            className={`rounded-xl px-5 pr-14 ${
                               Platform.OS === "ios" ? "py-5" : "py-4"
                             }`}
                           >
                             <Text
                               style={{
-                                color: formValues?.contaminatedType
+                                color: values?.contaminatedType.length
                                   ? theme.primaryTextColor
                                   : theme.thirdTextColor,
                               }}
@@ -478,15 +422,15 @@ export function LocationReportScreen() {
                       borderRadius: 8,
                     }}
                   />
-                  {formValidate.contaminatedType?.isError && (
+                  {errors?.contaminatedType && (
                     <View className="px-4 mt-2 -mb-3">
                       <Text
                         className="text-xs"
                         style={{
-                          color: formValidate.contaminatedType?.errorColor,
+                          color: "red",
                         }}
                       >
-                        {formValidate.contaminatedType?.message}
+                        {errors.contaminatedType?.message}
                       </Text>
                     </View>
                   )}
@@ -496,11 +440,8 @@ export function LocationReportScreen() {
                     ref={severityRef}
                     data={severityList}
                     onSelect={(selectedItem, index) => {
-                      onFocusInput("severity");
-                      setFormValues((prev) => ({
-                        ...prev,
-                        severity: selectedItem?.value,
-                      }));
+                      handleFocus("severity");
+                      handleSelect("severity", selectedItem.value);
                     }}
                     renderButton={(selectedItem, isOpened) => {
                       return (
@@ -513,13 +454,13 @@ export function LocationReportScreen() {
                               backgroundColor: theme.secondBackgroundColor,
                             }}
                             activeOpacity={0.6}
-                            className={`bg-gray-200 rounded-xl px-5 pr-14 ${
+                            className={`rounded-xl px-5 pr-14 ${
                               Platform.OS === "ios" ? "py-5" : "py-4"
                             }`}
                           >
                             <Text
                               style={{
-                                color: formValues?.severity
+                                color: values?.severity
                                   ? theme.primaryTextColor
                                   : theme.thirdTextColor,
                               }}
@@ -569,13 +510,10 @@ export function LocationReportScreen() {
                       borderRadius: 8,
                     }}
                   />
-                  {formValidate.severity?.isError && (
+                  {errors?.severity && (
                     <View className="px-4 mt-2 -mb-3">
-                      <Text
-                        className="text-xs"
-                        style={{ color: formValidate.severity?.errorColor }}
-                      >
-                        {formValidate.severity?.message}
+                      <Text className="text-xs" style={{ color: "red" }}>
+                        {errors.severity?.message}
                       </Text>
                     </View>
                   )}
@@ -585,11 +523,8 @@ export function LocationReportScreen() {
                     ref={statusRef}
                     data={statusList}
                     onSelect={(selectedItem, index) => {
-                      onFocusInput("status");
-                      setFormValues((prev) => ({
-                        ...prev,
-                        status: selectedItem?.value,
-                      }));
+                      handleFocus("status");
+                      handleSelect("status", selectedItem.value);
                     }}
                     renderButton={(selectedItem, isOpened) => {
                       return (
@@ -602,13 +537,13 @@ export function LocationReportScreen() {
                               backgroundColor: theme.secondBackgroundColor,
                             }}
                             activeOpacity={0.6}
-                            className={`bg-gray-200 rounded-xl px-5 pr-14 ${
+                            className={`rounded-xl px-5 pr-14 ${
                               Platform.OS === "ios" ? "py-5" : "py-4"
                             }`}
                           >
                             <Text
                               style={{
-                                color: formValues?.status
+                                color: values?.status
                                   ? theme.primaryTextColor
                                   : theme.thirdTextColor,
                               }}
@@ -657,13 +592,10 @@ export function LocationReportScreen() {
                       borderRadius: 8,
                     }}
                   />
-                  {formValidate.status?.isError && (
+                  {errors?.status && (
                     <View className="px-4 mt-2 -mb-3">
-                      <Text
-                        className="text-xs"
-                        style={{ color: formValidate.status?.errorColor }}
-                      >
-                        {formValidate.status?.message}
+                      <Text className="text-xs" style={{ color: "red" }}>
+                        {errors.status?.message}
                       </Text>
                     </View>
                   )}
@@ -671,27 +603,20 @@ export function LocationReportScreen() {
                 <View>
                   <View className="relative">
                     <TextInput
-                      className={`bg-gray-200 rounded-xl px-5 pr-14 ${
+                      keyboardType="numeric"
+                      className={`rounded-xl px-5 pr-14 ${
                         Platform.OS === "ios" ? "py-5" : "py-4"
                       }`}
-                      onFocus={(e) => onFocusInput("populationDensity")}
-                      onBlur={() =>
-                        onBlurInput("populationDensity", {
-                          ...validateField.populationDensity,
-                          input: formValues.populationDensity,
-                        })
-                      }
+                      onFocus={(e) => handleFocus("populationDensity")}
+                      onBlur={() => handleBlur("populationDensity")}
                       style={{
                         backgroundColor: theme.secondBackgroundColor,
                         color: theme.primaryTextColor,
                       }}
                       placeholder={"Population density"}
-                      value={formValues.populationDensity}
+                      value={values.populationDensity}
                       onChangeText={(value) =>
-                        setFormValues((prev) => ({
-                          ...prev,
-                          populationDensity: value,
-                        }))
+                        handleChange("populationDensity", value)
                       }
                       placeholderTextColor={theme.thirdTextColor}
                     />
@@ -704,15 +629,15 @@ export function LocationReportScreen() {
                       />
                     </View>
                   </View>
-                  {formValidate.populationDensity?.isError && (
+                  {errors?.populationDensity && (
                     <View className="px-4 mt-2 -mb-3">
                       <Text
                         className="text-xs"
                         style={{
-                          color: formValidate.populationDensity?.errorColor,
+                          color: "red",
                         }}
                       >
-                        {formValidate.populationDensity?.message}
+                        {errors.populationDensity?.message}
                       </Text>
                     </View>
                   )}
@@ -721,30 +646,22 @@ export function LocationReportScreen() {
                   <View className="relative">
                     <TextInput
                       autoComplete="name-family"
-                      className={`bg-gray-200 rounded-xl px-5 pr-14 ${
+                      className={`rounded-xl px-5 pr-14 ${
                         Platform.OS === "ios" ? "py-5" : "py-4"
                       }`}
-                      onFocus={(e) => onFocusInput("description")}
+                      onFocus={(e) => handleFocus("description")}
                       multiline={true}
-                      numberOfLines={4}
+                      numberOfLines={3}
                       maxLength={300}
-                      onBlur={() =>
-                        onBlurInput("description", {
-                          ...validateField.description,
-                          input: formValues.description,
-                        })
-                      }
+                      onBlur={() => handleBlur("description")}
                       style={{
                         backgroundColor: theme.secondBackgroundColor,
                         color: theme.primaryTextColor,
                       }}
                       placeholder={"Description"}
-                      value={formValues.description}
+                      value={values.description}
                       onChangeText={(value) =>
-                        setFormValues((prev) => ({
-                          ...prev,
-                          description: value,
-                        }))
+                        handleChange("description", value)
                       }
                       placeholderTextColor={theme.thirdTextColor}
                     />
@@ -757,13 +674,10 @@ export function LocationReportScreen() {
                       />
                     </View>
                   </View>
-                  {formValidate.description?.isError && (
+                  {errors?.description?.isError && (
                     <View className="px-4 mt-2 -mb-3">
-                      <Text
-                        className="text-xs"
-                        style={{ color: formValidate.description?.errorColor }}
-                      >
-                        {formValidate.description?.message}
+                      <Text className="text-xs" style={{ color: "red" }}>
+                        {errors.description?.message}
                       </Text>
                     </View>
                   )}
@@ -796,12 +710,12 @@ export function LocationReportScreen() {
                           resizeMode="cover"
                         />
                         <TouchableOpacity
-                          className="absolute -bottom-3 -right-3  rounded-full p-1"
+                          className="absolute -top-1 -left-1  rounded-full p-1"
                           onPress={() => onRemoveImage(item.uri)}
                         >
                           <KCIcon
-                            name="delete-forever"
-                            family="MaterialCommunityIcons"
+                            name="close"
+                            family="Ionicons"
                             size={25}
                             color="red"
                           />
