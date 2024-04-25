@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { KCButton } from "~components";
+import { useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { KCContainer } from "./../../../components/KCContainer/index";
-import { KCButton, KCIcon } from "~components";
-import { useTheme } from "~hooks";
 
 const arr = [1, 2, 3, 4, 5, 6];
 export const CampaignsScreens = () => {
@@ -29,15 +29,15 @@ export const CampaignsScreens = () => {
     >
       <KCContainer
         className="pt-2 px-2"
-        style={{ backgroundColor: theme.primaryBackgroundColor }}
+        style={{ backgroundColor: theme.primaryBackgroundColor, gap: 10 }}
       >
-        <View className="relative mb-2">
+        <View className="relative">
           <TextInput
             autoComplete="name-given"
-            className={` rounded-xl px-5 pr-16 ${
+            className={`shadow-sm rounded-xl px-5 pr-24 ${
               Platform.OS === "ios" ? "py-4" : "py-3"
             }`}
-            placeholder="Search on the map"
+            placeholder="Search on the campaigns"
             style={{
               backgroundColor: theme.secondBackgroundColor,
               color: theme.primaryTextColor,
@@ -46,12 +46,23 @@ export const CampaignsScreens = () => {
             // onChangeText={(value) => {}}
             placeholderTextColor={theme.thirdTextColor}
           />
-          <TouchableOpacity className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
-            <Image
-              source={require("~assets/images/search-icon.png")}
-              className="h-8 w-8"
-            />
-          </TouchableOpacity>
+          <View
+            className="absolute right-0 h-full flex-row items-center justify-center mr-3"
+            style={{ gap: 10 }}
+          >
+            <TouchableOpacity className="opacity-80">
+              <Image
+                source={require("~assets/images/add-campaigns-icon.png")}
+                className="h-8 w-8"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity className="opacity-80">
+              <Image
+                source={require("~assets/images/search-icon.png")}
+                className="h-8 w-8"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -60,7 +71,7 @@ export const CampaignsScreens = () => {
             flexGrow: 1,
             justifyContent: "center",
             alignItems: "center",
-            paddingBottom: 30,
+            paddingBottom: 10,
           }}
         >
           <View
@@ -70,7 +81,7 @@ export const CampaignsScreens = () => {
             {arr.map((item) => (
               <View
                 key={item}
-                className="justify-center rounded-lg px-2 py-3"
+                className="justify-center rounded-lg px-2 py-3 shadow-sm"
                 style={{
                   gap: 10,
                   backgroundColor: theme.secondBackgroundColor,

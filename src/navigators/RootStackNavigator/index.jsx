@@ -1,18 +1,18 @@
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import { SCREENS } from "../routes";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { OnboardingScreens, SignUpScreens, LoginScreens } from "~screens";
-import { useAuth, useLocation, useTheme } from "~hooks";
-import { AsyncStorageKey } from "~configs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import { AppLoading } from "~components";
+import { AsyncStorageKey } from "~configs";
 import { initAxiosConfigs } from "~configs/axios";
-import { StatusBar, Text, View } from "react-native";
+import { useAuth, useLocation, useTheme } from "~hooks";
+import { LoginScreens, OnboardingScreens, SignUpScreens } from "~screens";
+import { SCREENS } from "../routes";
 
 const InitScreen = "DrawerNavigator";
 const RootScreens = [
   "MapScreen",
+  "DetectScreens",
+  "DetectResultsScreen",
   "LocationReportScreen",
   "CameraScreen",
   "EnvironmentalGuidanceScreen",
@@ -23,7 +23,6 @@ export const RootStackNavigator = () => {
   const auth = useAuth();
   const { changeTheme } = useTheme();
   const { getCurrentLocation } = useLocation();
-  const [isNewUser, setIsNewUser] = React.useState(true);
 
   React.useEffect(() => {
     initAxiosConfigs({ auth });
@@ -44,10 +43,7 @@ export const RootStackNavigator = () => {
           AsyncStorageKey.REFRESH_TOKEN
         );
         //
-        const new_user = await AsyncStorage.getItem(AsyncStorageKey.NEW_USER);
-        if (new_user === "false") {
-          setIsNewUser(false);
-        }
+
         if (access_token && refresh_token) {
           // setTimeout(async () => {
           await auth.login({ access_token, refresh_token });

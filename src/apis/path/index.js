@@ -4,6 +4,7 @@ export const APIPaths = {
   Login: `${ROOT_BE_URL}/v1/auth/login`,
   SignUp: `${ROOT_BE_URL}/v1/auth/sign-up`,
   GetUserProfile: `${ROOT_BE_URL}/v1/auth`,
+  RefreshToken: `${ROOT_BE_URL}/v1/token/refresh`,
 
   // recycling
   //type
@@ -17,4 +18,8 @@ export const APIPaths = {
 
   //contaminated location
   ContaminatedLocation: `${ROOT_BE_URL}/v1/polluted/contaminated-location`,
+
+  // detect images
+  TensorflowDetectImages: `${ROOT_BE_URL}/v1/detect/tensorflow`,
+  GoogleVisionDetectImages: `${ROOT_BE_URL}/v1/detect/google-vision`,
 };

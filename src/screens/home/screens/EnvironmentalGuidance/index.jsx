@@ -112,7 +112,6 @@ export function EnvironmentalGuidanceScreen() {
           renderText={renderTextFlatList}
         />
         <KCContainer
-          className="pt-2"
           isLoading={
             RecyclingGuide.getRecyclingGuide.isPending ||
             RecyclingTypes.getRecyclingType.isFetching

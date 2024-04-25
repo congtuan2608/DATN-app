@@ -80,7 +80,7 @@ export const HomeScreen = () => {
             />
           </Animated.View>
           <View
-            className="flex-1 bg-white px-3 py-4 rounded-t-3xl"
+            className="flex-1 bg-white px-3 pt-4 rounded-t-3xl"
             style={{ backgroundColor: theme.primaryBackgroundColor }}
           >
             <View>
@@ -109,7 +109,7 @@ export const HomeScreen = () => {
                 />
               </View>
             </View>
-            <View>
+            {/* <View>
               <View>
                 <View className="flex-row justify-between items-center">
                   <Text
@@ -136,7 +136,7 @@ export const HomeScreen = () => {
                   ItemSeparatorComponent={() => <View className="w-6" />}
                 />
               </View>
-            </View>
+            </View> */}
             <View>
               <View>
                 <View className="flex-row justify-between items-center">
@@ -171,7 +171,7 @@ export const HomeScreen = () => {
                   </Text>
                 </View>
               </View>
-              <View className="pt-3 pb-4">
+              <View className="pt-3 pb-1">
                 <FlatList
                   horizontal
                   initialNumToRender={3}

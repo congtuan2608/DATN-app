@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SYSTEM_STATE } from "~states";
-import { AsyncStorageKey } from "~configs";
-import { useRecoilState } from "recoil";
-import React from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import React from "react";
+import { useRecoilState } from "recoil";
 import { RestAPI } from "~apis";
+import { AsyncStorageKey } from "~configs";
+import { SYSTEM_STATE } from "~states";
 
 export const useAuth = () => {
   const [authData, setAuthData] = useRecoilState(SYSTEM_STATE.AuthData);
@@ -24,8 +24,6 @@ export const useAuth = () => {
       AsyncStorageKey.REFRESH_TOKEN,
       authData.refresh_token
     );
-    await AsyncStorage.setItem(AsyncStorageKey.NEW_USER, "false");
-
     setAuthData(authData);
     setAppConfigs((prev) => ({ ...prev, firstInit: true }));
   }, []);
@@ -34,7 +32,6 @@ export const useAuth = () => {
     await AsyncStorage.removeItem(AsyncStorageKey.ACCESS_TOKEN);
     await AsyncStorage.removeItem(AsyncStorageKey.REFRESH_TOKEN);
 
-    // await AsyncStorage.removeItem(AsyncStorageKey.NEW_USER);
     queryClient.removeQueries({ queryKey: ["GetUserProfile"] });
     setAuthData(undefined);
     setAppConfigs((prev) => ({ ...prev, firstInit: true }));

@@ -30,7 +30,7 @@ export function GuidanceItem(props) {
 
   return (
     <View
-      className="rounded-xl px-2 py-3"
+      className="rounded-xl px-2 py-3 shadow-sm"
       style={{ backgroundColor: theme.secondBackgroundColor, gap: 5 }}
     >
       <View
@@ -83,7 +83,7 @@ export function GuidanceItem(props) {
             <Text
               className="text-sm font-semibold italic mb-2 opacity-90"
               onPress={() => setTextShown(!textShown)}
-              style={{ color: theme.highLightColor, lineHeight: 0 }}
+              style={{ color: theme.highLightColor }}
             >
               {textShown ? "Read less..." : "Read more..."}
             </Text>

@@ -48,11 +48,6 @@ export const LoginScreens = () => {
 
     const res = await login.mutateAsync(formValues.values);
 
-    // auth.login({
-    //   access_token: "res.accessToken",
-    //   refresh_token: "res.refreshToken",
-    // });
-
     if (res?.refreshToken && res?.accessToken) {
       auth.login({
         access_token: res.accessToken,
@@ -118,12 +113,19 @@ export const LoginScreens = () => {
                   value={form.values.email}
                   onChangeText={(value) => form.handleChange("email", value)}
                   placeholderTextColor={theme.thirdTextColor}
+                  style={{
+                    backgroundColor: theme.secondBackgroundColor,
+                    color: theme.primaryTextColor,
+                  }}
                 />
                 <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
                   <KCIcon
                     name="email-outline"
                     family="MaterialCommunityIcons"
                     size={25}
+                    style={{
+                      color: theme.primaryTextColor,
+                    }}
                   />
                 </View>
               </View>
@@ -149,6 +151,10 @@ export const LoginScreens = () => {
                   placeholder={"Password"}
                   placeholderTextColor={theme.thirdTextColor}
                   secureTextEntry={isHidePassword}
+                  style={{
+                    backgroundColor: theme.secondBackgroundColor,
+                    color: theme.primaryTextColor,
+                  }}
                 />
                 <TouchableOpacity
                   onPress={() => {
@@ -160,6 +166,9 @@ export const LoginScreens = () => {
                     name={isHidePassword ? "eye-off-outline" : "eye-outline"}
                     family="MaterialCommunityIcons"
                     size={25}
+                    style={{
+                      color: theme.primaryTextColor,
+                    }}
                   />
                 </TouchableOpacity>
               </View>
@@ -226,31 +235,55 @@ export const LoginScreens = () => {
                 gap: 20,
               }}
             >
-              <View className="border border-neutral-200 w-1/2" />
+              <View
+                className="border w-1/2"
+                style={{ borderColor: theme.primaryBorderColor }}
+              />
               <Text
                 className="text-base font-medium"
                 style={{ color: theme.primaryTextColor }}
               >
                 Or
               </Text>
-              <View className="border border-neutral-200 w-1/2" />
+              <View
+                className="border w-1/2"
+                style={{ borderColor: theme.primaryBorderColor }}
+              />
             </View>
             <View className="" style={{ gap: 15 }}>
               <TouchableOpacity
-                className="flex-row justify-center items-center py-2 rounded-lg bg-gray-200"
-                style={{ gap: 10 }}
+                className="flex-row justify-center items-center py-2 rounded-lg"
+                style={{
+                  backgroundColor: theme.secondBackgroundColor,
+                  color: theme.primaryTextColor,
+                  gap: 10,
+                }}
               >
                 <KCSVGAsset name="Google_Color" className="w-8 h-8" />
-                <Text className="text-base font-medium">
+                <Text
+                  className="text-base font-medium"
+                  style={{
+                    color: theme.primaryTextColor,
+                  }}
+                >
                   Continue with google
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className="flex-row justify-center items-center py-2 rounded-lg bg-gray-200"
-                style={{ gap: 10 }}
+                className="flex-row justify-center items-center py-2 rounded-lg"
+                style={{
+                  backgroundColor: theme.secondBackgroundColor,
+                  color: theme.primaryTextColor,
+                  gap: 10,
+                }}
               >
                 <KCSVGAsset name="Facebook_Color" />
-                <Text className="text-base font-medium">
+                <Text
+                  className="text-base font-medium"
+                  style={{
+                    color: theme.primaryTextColor,
+                  }}
+                >
                   Continue with facebook
                 </Text>
               </TouchableOpacity>
@@ -263,7 +296,7 @@ export const LoginScreens = () => {
         style={{
           gap: 10,
           paddingBottom:
-            safeAreaInsets.bottom + (Platform.OS === "ios" ? 0 : 10),
+            safeAreaInsets.bottom + (Platform.OS === "ios" ? -10 : 10),
           backgroundColor: theme.primaryBackgroundColor,
         }}
       >

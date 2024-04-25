@@ -1,19 +1,19 @@
 import { SCREENS } from "../routes";
 
 export const bottomTabScreens = {
-  Camera: {
+  Detection: {
     label: "Detection",
-    component: SCREENS.CameraScreen.component,
+    component: SCREENS.DetectScreens.component,
     icon: (props) => ({
-      family: "FontAwesome",
-      name: "camera",
+      family: "Ionicons",
+      name: "scan",
       size: 25,
-    }), // document-text-outline
+    }),
   },
   Campaigns: {
     label: "Campaigns",
     component: SCREENS.CampaignsScreens.component,
-    icon: (props) => ({ family: "Entypo", name: "slideshare", size: 25 }), // document-text-outline
+    icon: (props) => ({ family: "Entypo", name: "slideshare", size: 25 }),
   },
   Home: {
     label: "Home",

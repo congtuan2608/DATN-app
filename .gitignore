@@ -38,3 +38,5 @@ ios
 *.tsbuildinfo
 
 app.json
+
+eas.json

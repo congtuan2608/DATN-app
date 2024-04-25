@@ -1,10 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import queryString from "query-string";
+import { APIPaths } from "~apis/path";
 import { AsyncStorageKey } from "~configs/async-storage";
-import { useAuth } from "~hooks";
-
-const ROOT_BE_URL = process.env.EXPO_PUBLIC_ROOT_BE_URL;
 
 const uninterceptedAxiosInstance = axios.create();
 
@@ -84,7 +82,7 @@ export const initAxiosConfigs = (props) => {
     // Send an API request to get a new accessToken
     try {
       const response = await uninterceptedAxiosInstance.post(
-        `${ROOT_BE_URL}/v1/auth/refresh-token`,
+        APIPaths.RefreshToken,
         queryString.stringify({ refresh_token: refreshToken }),
         {
           headers: {

@@ -25,10 +25,11 @@ export function InterestedItem() {
           width: width - 100,
         }}
       />
-      <View className="w-full justify-start items-start p-2 pt-0 ">
+      <View className="w-full justify-start items-start p-3 pt-0 ">
         <Text
           className="text-left font-semibold"
-          style={{ color: theme.primaryTextColor }}
+          numberOfLines={1}
+          style={{ color: theme.primaryTextColor, width: width - 130 }}
         >
           Cloud Vision est un service
         </Text>
@@ -36,7 +37,7 @@ export function InterestedItem() {
           className="w-full text-left text-xs"
           numberOfLines={1}
           style={{
-            width: width - 120,
+            width: width - 130,
             color: theme.primaryTextColor,
           }}
         >

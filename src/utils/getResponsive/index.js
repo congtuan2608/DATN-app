@@ -30,8 +30,13 @@ export const getResponesive = (
       },
       locationReportStyle: {
         spacingTopBottom: {
-          marginTop: safeAreaInsets.top - 30,
+          marginTop: safeAreaInsets.top - 25,
           marginBottom: safeAreaInsets.bottom + 80,
+        },
+      },
+      detectImagesStyle: {
+        spacingTopBottom: {
+          marginTop: safeAreaInsets.top - 25,
         },
       },
       homeStyle: {
@@ -67,6 +72,11 @@ export const getResponesive = (
         spacingTopBottom: {
           marginTop: safeAreaInsets.top + 20,
           marginBottom: safeAreaInsets.bottom + 100,
+        },
+      },
+      detectImagesStyle: {
+        spacingTopBottom: {
+          marginTop: safeAreaInsets.top + 25,
         },
       },
       ...style,

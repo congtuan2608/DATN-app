@@ -1,11 +1,11 @@
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
 import React from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useTheme } from "~hooks";
 
 export function KCFlatList(props) {
@@ -34,6 +34,7 @@ export function KCFlatList(props) {
               className="rounded-lg border px-3 py-2"
               style={{
                 borderColor: theme.primaryButtonBackgroundColor,
+                backgroundColor: theme.secondBackgroundColor,
                 ...(index === isSelected && {
                   backgroundColor: theme.primaryButtonBackgroundColor,
                 }),

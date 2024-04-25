@@ -30,6 +30,13 @@ export const SCREENS = {
   BlogScreens: {
     component: ScreenComponents.BlogScreens,
   },
+  // detect
+  DetectScreens: {
+    component: ScreenComponents.DetectScreens,
+  },
+  DetectResultsScreen: {
+    component: ScreenComponents.DetectResultsScreen,
+  },
   // campai
   CampaignsScreens: {
     component: ScreenComponents.CampaignsScreens,
@@ -40,6 +47,6 @@ export const SCREENS = {
   },
   //account
   AccountScreens: {
-    component: ScreenComponents.AccountScreens,
+    component: ScreenComponents.AccountScreens.AccountScreens,
   },
 };

@@ -60,7 +60,7 @@ const initialValues = {
   contaminatedType: [],
   severity: "",
   status: "",
-  populationDensity: 0,
+  populationDensity: "",
   assets: [],
   isAnonymous: false,
   location: { latitude: 0, longitude: 0 },
@@ -77,7 +77,6 @@ export function LocationReportScreen() {
   const contaminatedTypeRef = React.useRef(null);
   const severityRef = React.useRef(null);
   const statusRef = React.useRef(null);
-  const scrollRef = React.useRef(null);
   const [images, setImages] = React.useState([]);
   const [reverseGeo, setReverseGeo] = React.useState(undefined);
 
@@ -249,12 +248,11 @@ export function LocationReportScreen() {
       >
         <KeyboardAwareScrollView
           className="flex-1 w-full"
-          extraScrollHeight={Platform.OS === "ios" ? 20 : 200}
+          extraScrollHeight={Platform.OS === "ios" ? 30 : 200}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
         >
           <ScrollView
-            ref={scrollRef}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{
@@ -614,7 +612,7 @@ export function LocationReportScreen() {
                         color: theme.primaryTextColor,
                       }}
                       placeholder={"Population density"}
-                      value={values.populationDensity}
+                      value={String(values.populationDensity)}
                       onChangeText={(value) =>
                         handleChange("populationDensity", value)
                       }
@@ -784,7 +782,7 @@ export function LocationReportScreen() {
         </KeyboardAwareScrollView>
 
         <View
-          className="w-full flex-col justify-center absolute bottom-0 pt-3 px-4 border-t "
+          className="w-full flex-col justify-center pt-3 px-4 border-t "
           style={{
             gap: 10,
             paddingBottom: getResponesive(safeAreaInsets, dimensions)

@@ -5,8 +5,14 @@ export const serviceList = [
     navigate: "MapScreen",
   },
   {
+    title: "Detect images",
+    image_url: require("~assets/images/detect-images-icon.png"),
+    navigate: "DetectScreens",
+    params: { headerShown: true },
+  },
+  {
     title: "Campaign",
-    image_url: require("~assets/images/campaign.png"),
+    image_url: require("~assets/images/campaign-icon.png"),
     navigate: "CampaignsScreens",
     params: { headerShown: true },
   },

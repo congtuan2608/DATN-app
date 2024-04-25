@@ -20,20 +20,6 @@ import { KCContainer } from "~components";
 import { useLocation, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 
-const fakeData = [
-  {
-    latitude: 10.6427058,
-    longitude: 107.2461546,
-  },
-  {
-    latitude: 10.6428682,
-    longitude: 107.2490135,
-  },
-  {
-    latitude: 10.6520164,
-    longitude: 107.2489084,
-  },
-];
 export function MapScreen() {
   const { theme } = useTheme();
   const { width } = useWindowDimensions();
@@ -105,7 +91,7 @@ export function MapScreen() {
           showsMyLocationButton={true}
           showsUserLocation={true}
           followsUserLocation={true}
-          mapPadding={{ bottom: 110 }}
+          mapPadding={{ bottom: 100 }}
           userLocationCalloutEnabled={true}
           initialRegion={{
             ...currentMap,
@@ -143,16 +129,20 @@ export function MapScreen() {
             <View className="relative">
               <TextInput
                 autoComplete="name-given"
-                className={`bg-gray-200 rounded-xl px-5 pr-16 ${
+                className={`shadow-sm rounded-xl px-5 pr-16 ${
                   Platform.OS === "ios" ? "py-5" : "py-4"
                 }`}
+                style={{
+                  backgroundColor: theme.secondBackgroundColor,
+                  color: theme.primaryTextColor,
+                }}
                 placeholder="Search on the map"
                 // value=""
                 // onChangeText={(value) => {}}
                 onFocus={onFocusInput}
                 placeholderTextColor={theme.thirdTextColor}
               />
-              <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
+              <View className="absolute right-0 items-center h-full justify-center opacity-80 px-5">
                 <Image
                   source={require("~assets/images/search-map-icon.png")}
                   className="h-9 w-9"

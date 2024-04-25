@@ -30,18 +30,21 @@ export const CameraScreen = () => {
       imageList.length + navigateParams.params?.currentLength >=
         navigateParams.params?.limit
     ) {
-      Alert.alert("Oop!", "Cannot take more than 10 photos", [
-        {
-          text: "OK",
-          style: "default",
-        },
-      ]);
+      Alert.alert(
+        "Oop!",
+        `Cannot take more than ${navigateParams.params?.limit} photos`,
+        [
+          {
+            text: "OK",
+            style: "default",
+          },
+        ]
+      );
       return;
     }
     if (cameraRef.current) {
       try {
         const data = await cameraRef.current.takePictureAsync();
-        console.log(data);
         setImagePreview(data);
         setImageList((prev) => [...prev, data]);
       } catch (error) {

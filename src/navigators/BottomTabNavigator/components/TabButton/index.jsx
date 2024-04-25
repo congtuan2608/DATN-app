@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-  Platform,
-} from "react-native";
+import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { KCIcon } from "~components";
 import { useTheme } from "~hooks";
@@ -56,7 +50,9 @@ export const TabButton = (props) => {
     >
       <Animatable.View ref={viewRef} duration={300}>
         <View
-          className="justify-center items-center w-12 h-12 border-4"
+          className={`justify-center items-center w-12 h-12 border-4 ${
+            focused && "shadow-sm"
+          }`}
           style={{
             borderRadius: 100,
             borderColor: theme.secondBackgroundColor,
