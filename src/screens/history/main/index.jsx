@@ -104,7 +104,6 @@ export const HistoryScreens = () => {
           </View>
         </View>
         <KCFlatList
-          initialNumToRender={5}
           data={data ?? []}
           // onPressItem={onPressItem}
           // isLoading={RecyclingTypes.getRecyclingType.isFetching}

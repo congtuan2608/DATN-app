@@ -7,6 +7,12 @@ import { SYSTEM_STATE } from "../../states";
 export const useTheme = () => {
   const [theme, setTheme] = useRecoilState(SYSTEM_STATE.ThemeData);
 
+  const initTheme = React.useCallback(async () => {
+    const theme = await AsyncStorage.getItem("THEME");
+    if (!theme) return;
+    setTheme(GetTheme(theme));
+  }, []);
+
   const changeTheme = React.useCallback(async (type) => {
     if (!type) await AsyncStorage.removeItem("THEME");
     else {
@@ -15,5 +21,5 @@ export const useTheme = () => {
     setTheme(GetTheme(type));
   }, []);
 
-  return { theme, changeTheme };
+  return { theme, initTheme, changeTheme };
 };

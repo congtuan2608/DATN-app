@@ -1,6 +1,6 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "~hooks";
-import { getImage } from "~screens/history/utils";
+import { getImageIcon } from "~screens/history/utils";
 
 export function HistoryItem(props) {
   const { theme } = useTheme();
@@ -14,7 +14,7 @@ export function HistoryItem(props) {
         >
           <View>
             <Image
-              source={getImage(props.activity.activityType)}
+              source={getImageIcon(props.activity.activityType)}
               className="h-8 w-8"
             />
           </View>
@@ -45,7 +45,7 @@ export function HistoryItem(props) {
         >
           <View>
             <Image
-              source={getImage(props.activity.activityType)}
+              source={getImageIcon(props.activity.activityType)}
               className="h-8 w-8"
             />
           </View>

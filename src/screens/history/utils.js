@@ -1,4 +1,4 @@
-export const getImage = (activityType) => {
+export const getImageIcon = (activityType) => {
   switch (activityType) {
     case "campaign": {
       return require("~assets/images/campaign-icon.png");

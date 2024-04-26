@@ -49,4 +49,7 @@ export const SCREENS = {
   AccountScreens: {
     component: ScreenComponents.AccountScreens.AccountScreens,
   },
+  SettingScreen: {
+    component: ScreenComponents.AccountScreens.SettingScreen,
+  },
 };

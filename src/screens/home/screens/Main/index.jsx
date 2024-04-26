@@ -12,7 +12,8 @@ import { KCIcon } from "~components";
 import { useAuth, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { getResponesive } from "~utils";
-import { GroupItem, GuidanceItem, InterestedItem } from "../../components";
+import { GuidanceItem, InterestedItem } from "../../components";
+import { ServiceGroups } from "./components";
 import { serviceList } from "./data";
 
 export const HomeScreen = () => {
@@ -22,11 +23,10 @@ export const HomeScreen = () => {
   const auth = useAuth();
   const RecyclingGuide = RestAPI.RecyclingGuide();
 
-  console.log("root:", process.env.EXPO_PUBLIC_ROOT_BE_URL);
-
   React.useEffect(() => {
     RecyclingGuide.getRecyclingGuide.mutate({});
   }, []);
+
   const handleOnScroll = React.useMemo(
     () => ({
       transform: [
@@ -84,29 +84,38 @@ export const HomeScreen = () => {
             style={{ backgroundColor: theme.primaryBackgroundColor }}
           >
             <View>
-              <TouchableOpacity className="flex-row justify-between items-center py-1">
+              <TouchableOpacity
+                className="flex-row justify-between items-center py-1"
+                disabled={serviceList.length < 8}
+                onPress={() => {
+                  console.log("will navigate to services");
+                }}
+              >
                 <Text
                   className="text-lg font-semibold"
                   style={{ color: theme.primaryTextColor }}
                 >
                   Services
                 </Text>
-                <KCIcon
-                  family="MaterialIcons"
-                  name="keyboard-arrow-right"
-                  size={25}
-                  color={theme.primaryTextColor}
-                />
+                {serviceList.length > 8 && (
+                  <KCIcon
+                    family="MaterialIcons"
+                    name="keyboard-arrow-right"
+                    size={25}
+                    color={theme.primaryTextColor}
+                  />
+                )}
               </TouchableOpacity>
               <View className="pt-2 pb-4">
-                <FlatList
+                <ServiceGroups data={serviceList} />
+                {/* <FlatList
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   data={serviceList}
                   renderItem={({ item }) => <GroupItem {...item} />}
                   keyExtractor={(item, idx) => `HorizontalList_Item__${idx}`}
                   ItemSeparatorComponent={() => <View className="w-6" />}
-                />
+                /> */}
               </View>
             </View>
             {/* <View>

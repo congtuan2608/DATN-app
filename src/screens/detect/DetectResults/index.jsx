@@ -84,10 +84,14 @@ export function DetectResultsScreen() {
           <View
             key={idx}
             className="py-5 px-3 rounded-xl"
-            style={{ backgroundColor: theme.secondBackgroundColor }}
+            style={{ backgroundColor: theme.secondBackgroundColor, gap: 5 }}
           >
-            <Text>Name: {item.name}</Text>
-            <Text>Exact ratio: {convertToPercent(item.score)}%</Text>
+            <Text style={{ color: theme.primaryTextColor }}>
+              Name: {item.name}
+            </Text>
+            <Text style={{ color: theme.primaryTextColor }}>
+              Accuracy: {convertToPercent(item.score)}%
+            </Text>
           </View>
         ));
       }
@@ -98,10 +102,14 @@ export function DetectResultsScreen() {
             <View
               key={idx}
               className="py-5 px-3 rounded-xl"
-              style={{ backgroundColor: theme.secondBackgroundColor }}
+              style={{ backgroundColor: theme.secondBackgroundColor, gap: 5 }}
             >
-              <Text>Name: {groupsItem.class}</Text>
-              <Text>Exact ratio: {convertToPercent(groupsItem.score)}%</Text>
+              <Text style={{ color: theme.primaryTextColor }}>
+                Name: {groupsItem.class}
+              </Text>
+              <Text style={{ color: theme.primaryTextColor }}>
+                Exact ratio: {convertToPercent(groupsItem.score)}%
+              </Text>
             </View>
           ))
         );
@@ -149,7 +157,7 @@ export function DetectResultsScreen() {
                   style={{ backgroundColor: theme.secondBackgroundColor }}
                 />
                 <TouchableOpacity
-                  className="absolute -top-1 -right-1 rounded-full p-1"
+                  className="absolute -top-1 -right-1 rounded-full p-2"
                   onPress={() => setImages([])}
                 >
                   <KCIcon
@@ -168,7 +176,10 @@ export function DetectResultsScreen() {
                 style={{ backgroundColor: theme.primaryBackgroundColor }}
               >
                 <View className="flex-1 w-full" style={{ gap: 5 }}>
-                  <Text className="text-base font-semibold py-3">
+                  <Text
+                    className="text-base font-semibold py-3"
+                    style={{ color: theme.primaryTextColor }}
+                  >
                     Result detect object
                   </Text>
                   {renderResults()}
@@ -198,7 +209,9 @@ export function DetectResultsScreen() {
                   />
                 )}
 
-                <Text>Choose photo from gallery</Text>
+                <Text style={{ color: theme.primaryTextColor }}>
+                  Choose photo from gallery
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className="justify-center items-center py-6 rounded-xl shadow-md"
@@ -209,7 +222,9 @@ export function DetectResultsScreen() {
                   source={require("~assets/images/camera-icon.png")}
                   className="w-8 h-8"
                 />
-                <Text>Take photos with your camera</Text>
+                <Text style={{ color: theme.primaryTextColor }}>
+                  Take photos with your camera
+                </Text>
               </TouchableOpacity>
             </View>
           )}

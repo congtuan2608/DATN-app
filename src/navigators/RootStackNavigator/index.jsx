@@ -17,11 +17,12 @@ const RootScreens = [
   "CameraScreen",
   "EnvironmentalGuidanceScreen",
   "CampaignsScreens",
+  "SettingScreen",
 ];
 const Stack = createNativeStackNavigator();
 export const RootStackNavigator = () => {
   const auth = useAuth();
-  const { changeTheme } = useTheme();
+  const { initTheme } = useTheme();
   const { getCurrentLocation } = useLocation();
 
   React.useEffect(() => {
@@ -32,9 +33,9 @@ export const RootStackNavigator = () => {
   React.useEffect(() => {
     async function init() {
       if (auth.appConfigs.firstInit === false) {
-        // get theme
-        const THEME = await AsyncStorage.getItem("THEME");
-        await changeTheme(THEME);
+        // get init theme
+        await initTheme();
+
         // get token
         const access_token = await AsyncStorage.getItem(
           AsyncStorageKey.ACCESS_TOKEN

@@ -1,5 +1,5 @@
-import { ThemeConfig } from "~themes";
+import { ThemeConfigs } from "~themes";
 
 export const GetTheme = (type = undefined) => {
-  return ThemeConfig[type] ?? ThemeConfig.DefaultTheme;
+  return ThemeConfigs[type] ?? ThemeConfigs.DefaultTheme;
 };

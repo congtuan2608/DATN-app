@@ -1,4 +1,4 @@
-export const ThemeConfig = {
+export const ThemeConfigs = {
   DefaultTheme: {
     //background color
     primaryBackgroundColor: "#f1f1f1",

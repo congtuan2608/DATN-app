@@ -1,4 +1,4 @@
-export const generateMenuGroups = ({ auth }) => {
+export const generateMenuGroups = ({ auth, navigate }) => {
   return [
     {
       groupTitle: "Personal",
@@ -26,7 +26,9 @@ export const generateMenuGroups = ({ auth }) => {
         {
           text: "Settings",
           image: require("~assets/images/setting-icon.png"),
-          onPress: async () => {},
+          onPress: async () => {
+            navigate.navigate("SettingScreen");
+          },
         },
       ],
     },

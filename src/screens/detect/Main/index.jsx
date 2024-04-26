@@ -67,7 +67,7 @@ export const DetectScreens = () => {
               className="font-semibold text-base"
               style={{ color: theme.primaryTextColor }}
             >
-              INTERFACE & ME
+              Detect images
             </Text>
           </View>
           <View className="justify-center items-center" style={{ gap: 10 }}>
@@ -75,16 +75,13 @@ export const DetectScreens = () => {
               className="font-semibold text-2xl"
               style={{ color: theme.primaryTextColor }}
             >
-              Know your interface!
+              AI Image Detection
             </Text>
             <Text
               className="text-center px-2 text-sm"
               style={{ color: theme.primaryTextColor }}
             >
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore,
-              earum delectus reiciendis suscipit numquam dolores reprehenderit
-              ea dolorum hic molestiae atque animi repellat ab doloribus quam
-              minima repellendus voluptatum mollitia?
+              Choose the type of detection you want to perform
             </Text>
           </View>
           <View className="flex-1 w-full px-4 mt-5" style={{ gap: 15 }}>

@@ -1,7 +1,5 @@
-import { View, Text, Image } from "react-native";
-import React from "react";
-import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "~hooks";
 
 export function GroupItem(props) {

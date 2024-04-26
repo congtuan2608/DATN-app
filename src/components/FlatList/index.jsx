@@ -26,6 +26,7 @@ export function KCFlatList(props) {
   return (
     <View className="py-2">
       <FlatList
+        initialNumToRender={other?.initialNumToRender || 5}
         horizontal
         showsHorizontalScrollIndicator={false}
         renderItem={({ item, index }) => (

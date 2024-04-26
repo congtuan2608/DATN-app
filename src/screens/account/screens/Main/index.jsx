@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { KCContainer } from "~components";
 import { AVATAR_URL } from "~constants";
@@ -6,6 +7,7 @@ import { StackScreen } from "~layouts";
 import { generateMenuGroups } from "./data";
 export const AccountScreens = () => {
   const { theme, changeTheme } = useTheme();
+  const navigate = useNavigation();
   const screenUtils = useScreenUtils();
   const auth = useAuth();
 
@@ -27,7 +29,7 @@ export const AccountScreens = () => {
             style={{ backgroundColor: theme.secondBackgroundColor, gap: 20 }}
           >
             <View
-              className="relative rounded-full border-[0.5px]"
+              className="relative rounded-full border-[0.5px] shadow-md"
               style={{
                 borderColor: theme.primaryBorderColor,
               }}
@@ -42,20 +44,33 @@ export const AccountScreens = () => {
             </View>
 
             <View className="flex-1">
-              <Text className="text-lg font-semibold">
+              <Text
+                className="text-lg font-semibold"
+                style={{
+                  color: theme.primaryTextColor,
+                }}
+              >
                 {auth.userProfile?.fullName ?? "<Unknown>"}
               </Text>
-              <Text style={{ color: theme.thirdTextColor }}>
+              <Text
+                className="text-base"
+                style={{ color: theme.thirdTextColor }}
+              >
                 {auth.userProfile?.email ?? "<Unknown>"}
               </Text>
             </View>
           </View>
           <View></View>
           <View>
-            {generateMenuGroups({ auth }).map((group, index) => (
+            {generateMenuGroups({ auth, navigate }).map((group, index) => (
               <View key={group.groupTitle}>
                 <View className="py-3 px-1">
-                  <Text className="text-base font-semibold">
+                  <Text
+                    className="text-base font-semibold"
+                    style={{
+                      color: theme.primaryTextColor,
+                    }}
+                  >
                     {group.groupTitle}
                   </Text>
                 </View>
@@ -95,20 +110,6 @@ export const AccountScreens = () => {
           </View>
         </ScrollView>
       </KCContainer>
-      {/* <Text>Hello Home</Text>
-      <TouchableOpacity onPress={() => changeTheme("DarkTheme")}>
-        <Text>Change theme</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => changeTheme()}>
-        <Text>Change theme default</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => changeTheme("GreenTheme")}>
-        <Text>Change theme green</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity className="mt-20" onPress={onLogout}>
-        <Text>logout</Text>
-      </TouchableOpacity> */}
     </StackScreen>
   );
 };
