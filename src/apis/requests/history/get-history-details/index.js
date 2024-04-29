@@ -1,11 +1,11 @@
 import { APIPaths } from "~apis/path";
 import { HTTPMethod, useRestAPIMutation } from "~hooks/useRestAPI";
 
-export function GetRecyclingGuide() {
+export function GetHistoryDetails() {
   return useRestAPIMutation({
     request: (params) => ({
       method: HTTPMethod.GET,
-      configs: [APIPaths.RecyclingGuide, { params }],
+      configs: [`${APIPaths.HistoryDetails}/${params.id}`],
     }),
   });
 }

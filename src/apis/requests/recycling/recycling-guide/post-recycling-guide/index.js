@@ -1,9 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
 import { APIPaths } from "~apis/path";
+import { HTTPMethod, useRestAPIMutation } from "~hooks/useRestAPI";
 
 export function PostRecyclingGuide() {
-  const mutationResult = useMutation({
-    mutationFn: (params) => {
+  return useRestAPIMutation({
+    request: (params) => {
       const formData = new FormData();
       formData.append("author", params.user_id);
       formData.append("title", params.title);
@@ -19,17 +19,19 @@ export function PostRecyclingGuide() {
         });
       });
 
-      return axios
-        .post(`${APIPaths.RecyclingGuide}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Accept: "application/json",
+      return {
+        method: HTTPMethod.POST,
+        configs: [
+          APIPaths.RecyclingGuide,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Accept: "application/json",
+            },
           },
-        })
-        .then((response) => response.data)
-        .catch((error) => error);
+        ],
+      };
     },
   });
-
-  return mutationResult;
 }
