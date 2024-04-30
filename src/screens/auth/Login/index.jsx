@@ -104,7 +104,7 @@ export const LoginScreens = () => {
               <View className="relative">
                 <TextInput
                   autoComplete="email"
-                  className={`bg-gray-200 rounded-xl px-5 pr-14 ${
+                  className={`shadow-sm rounded-xl px-5 pr-14 ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
                   onFocus={() => form.handleFocus("email")}
@@ -141,7 +141,7 @@ export const LoginScreens = () => {
               <View className="relative">
                 <TextInput
                   autoComplete="password"
-                  className={`bg-gray-200 rounded-xl px-5 pr-14 ${
+                  className={`rounded-xl px-5 pr-14 shadow-sm ${
                     Platform.OS === "ios" ? "py-5" : "py-4"
                   }`}
                   value={form.values.password}
@@ -190,8 +190,8 @@ export const LoginScreens = () => {
                 </Text>
               </View>
             )}
-            <View className="flex-row justify-between px-1">
-              <TouchableOpacity
+            <View className="flex-row justify-end px-1">
+              {/* <TouchableOpacity
                 className="flex-row items-center px-2 py-1"
                 style={{ gap: 10 }}
                 onPress={() => setIsRememberMe((pre) => !pre)}
@@ -219,7 +219,7 @@ export const LoginScreens = () => {
                 >
                   Remember me
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity className="px-2 py-1">
                 <Text
                   className="text-xs"
@@ -252,7 +252,7 @@ export const LoginScreens = () => {
             </View>
             <View className="" style={{ gap: 15 }}>
               <TouchableOpacity
-                className="flex-row justify-center items-center py-2 rounded-lg"
+                className="flex-row justify-center items-center py-2 rounded-lg shadow-sm"
                 style={{
                   backgroundColor: theme.secondBackgroundColor,
                   color: theme.primaryTextColor,
@@ -270,7 +270,7 @@ export const LoginScreens = () => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className="flex-row justify-center items-center py-2 rounded-lg"
+                className="flex-row justify-center items-center py-2 rounded-lg shadow-sm "
                 style={{
                   backgroundColor: theme.secondBackgroundColor,
                   color: theme.primaryTextColor,

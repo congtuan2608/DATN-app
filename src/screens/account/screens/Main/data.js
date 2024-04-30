@@ -16,12 +16,16 @@ export const generateMenuGroups = ({ auth, navigate }) => {
         {
           text: "Contact support",
           image: require("~assets/images/contact-support-icon.png"),
-          onPress: async () => {},
+          onPress: async () => {
+            navigate.navigate("ContactSupportScreens");
+          },
         },
         {
           text: "Terms of privacy policy",
           image: require("~assets/images/terms-policy-icon.png"),
-          onPress: async () => {},
+          onPress: async () => {
+            navigate.navigate("TermOfPrivacyPolicyScreens");
+          },
         },
         {
           text: "Settings",

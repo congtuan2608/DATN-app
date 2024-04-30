@@ -194,7 +194,7 @@ export const SignUpScreens = () => {
                 <View className="relative">
                   <TextInput
                     autoComplete="name-given"
-                    className={`rounded-xl px-5 pr-14 ${
+                    className={`rounded-xl px-5 pr-14 shadow-sm ${
                       Platform.OS === "ios" ? "py-5" : "py-4"
                     }`}
                     onFocus={() => handleFocus("firstName")}
@@ -231,7 +231,7 @@ export const SignUpScreens = () => {
                 <View className="relative">
                   <TextInput
                     autoComplete="name-family"
-                    className={`rounded-xl px-5 pr-14 ${
+                    className={`rounded-xl px-5 pr-14 shadow-sm ${
                       Platform.OS === "ios" ? "py-5" : "py-4"
                     }`}
                     onFocus={() => handleFocus("lastName")}
@@ -268,7 +268,7 @@ export const SignUpScreens = () => {
                 <View className="relative">
                   <TextInput
                     autoComplete="email"
-                    className={`rounded-xl px-5 pr-14 ${
+                    className={`rounded-xl px-5 pr-14 shadow-sm ${
                       Platform.OS === "ios" ? "py-5" : "py-4"
                     }`}
                     onFocus={() => handleFocus("email")}
@@ -306,7 +306,7 @@ export const SignUpScreens = () => {
                   <TextInput
                     autoComplete="tel-device"
                     keyboardType="phone-pad"
-                    className={`rounded-xl px-5 pr-14 ${
+                    className={`rounded-xl px-5 pr-14 shadow-sm ${
                       Platform.OS === "ios" ? "py-5" : "py-4"
                     }`}
                     onFocus={() => handleFocus("phone")}
@@ -344,7 +344,7 @@ export const SignUpScreens = () => {
                   <TouchableOpacity
                     activeOpacity={0.6}
                     onPress={() => setOpenDatePicker(true)}
-                    className={`rounded-xl px-5 pr-14 ${
+                    className={`rounded-xl px-5 pr-14 shadow-sm ${
                       Platform.OS === "ios" ? "py-5" : "py-4"
                     }`}
                     style={{
@@ -400,7 +400,7 @@ export const SignUpScreens = () => {
                               genderRef.current?.openDropdown();
                             }}
                             activeOpacity={0.6}
-                            className={`rounded-xl px-5 pr-14 w-36 ${
+                            className={`rounded-xl px-5 pr-14 w-36 shadow-sm ${
                               Platform.OS === "ios" ? "py-5" : "py-4"
                             }`}
                             style={{
@@ -472,7 +472,7 @@ export const SignUpScreens = () => {
               <View>
                 <View className="relative">
                   <TextInput
-                    className={`bg-gray-200 rounded-xl px-5 pr-14 ${
+                    className={`rounded-xl px-5 pr-14 shadow-sm ${
                       Platform.OS === "ios" ? "py-5" : "py-4"
                     }`}
                     value={values.password}
@@ -514,7 +514,7 @@ export const SignUpScreens = () => {
               <View>
                 <View className="relative">
                   <TextInput
-                    className={`bg-gray-200 rounded-xl px-5 pr-14 ${
+                    className={`shadow-sm rounded-xl px-5 pr-14 ${
                       Platform.OS === "ios" ? "py-5" : "py-4"
                     }`}
                     value={values.confirmPassword}
@@ -592,7 +592,7 @@ export const SignUpScreens = () => {
               </View>
               <View className="" style={{ gap: 15 }}>
                 <TouchableOpacity
-                  className="flex-row justify-center items-center py-2 rounded-lg bg-gray-200"
+                  className="flex-row justify-center items-center py-2 rounded-lg shadow-sm"
                   style={{
                     backgroundColor: theme.secondBackgroundColor,
                     gap: 10,
@@ -609,7 +609,7 @@ export const SignUpScreens = () => {
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  className="flex-row justify-center items-center py-2 rounded-lg bg-gray-200"
+                  className="flex-row justify-center items-center py-2 rounded-lg shadow-sm"
                   style={{
                     backgroundColor: theme.secondBackgroundColor,
                     gap: 10,

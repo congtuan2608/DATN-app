@@ -52,4 +52,10 @@ export const SCREENS = {
   SettingScreen: {
     component: ScreenComponents.AccountScreens.SettingScreen,
   },
+  ContactSupportScreens: {
+    component: ScreenComponents.AccountScreens.ContactSupportScreens,
+  },
+  TermOfPrivacyPolicyScreens: {
+    component: ScreenComponents.AccountScreens.TermOfPrivacyPolicyScreens,
+  },
 };

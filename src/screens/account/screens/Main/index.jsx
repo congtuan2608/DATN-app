@@ -25,7 +25,7 @@ export const AccountScreens = () => {
           showsVerticalScrollIndicator={false}
         >
           <View
-            className="w-full rounded-xl p-2 flex-row items-center justify-between"
+            className="w-full rounded-xl p-2 flex-row items-center justify-between shadow-sm"
             style={{ backgroundColor: theme.secondBackgroundColor, gap: 20 }}
           >
             <View
@@ -63,8 +63,8 @@ export const AccountScreens = () => {
           <View></View>
           <View>
             {generateMenuGroups({ auth, navigate }).map((group, index) => (
-              <View key={group.groupTitle}>
-                <View className="py-3 px-1">
+              <View key={group.groupTitle} className="shadow-sm">
+                <View className="py-3 px-1 ">
                   <Text
                     className="text-base font-semibold"
                     style={{

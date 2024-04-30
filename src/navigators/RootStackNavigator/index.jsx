@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
+import { View } from "react-native";
 import { AsyncStorageKey } from "~configs";
 import { initAxiosConfigs } from "~configs/axios";
 import { useAuth, useLocation, useTheme } from "~hooks";
@@ -18,11 +19,13 @@ const RootScreens = [
   "EnvironmentalGuidanceScreen",
   "CampaignsScreens",
   "SettingScreen",
+  "TermOfPrivacyPolicyScreens",
+  "ContactSupportScreens",
 ];
 const Stack = createNativeStackNavigator();
 export const RootStackNavigator = () => {
   const auth = useAuth();
-  const { initTheme } = useTheme();
+  const { theme, initTheme } = useTheme();
   const { getCurrentLocation } = useLocation();
 
   React.useEffect(() => {
@@ -63,7 +66,11 @@ export const RootStackNavigator = () => {
     if (auth.isInitializingApp) {
       // Init app...
       // return <AppLoading />;
-      return <></>;
+      return (
+        <View
+          style={{ flex: 1, backgroundColor: theme.primaryBackgroundColor }}
+        />
+      );
     } else if (auth.isLoggedIn) {
       return (
         <Stack.Navigator initialRouteName={InitScreen}>

@@ -1,6 +1,6 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import React from "react";
 import { getAxiosRequestFn } from "./utils";
-import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function useRestAPIQuery(props) {
   const axiosRequestFn = React.useCallback(
@@ -16,7 +16,7 @@ export function useRestAPIQuery(props) {
   const { request, ...reactQueryProps } = props;
 
   const restAPI = useQuery({
-    queryFn: (params) => axiosRequestFn(),
+    queryFn: (requestParams) => axiosRequestFn(requestParams ?? {}),
     cacheTime: 5 * 60 * 1000,
     staleTime: 5 * 60 * 1000,
     ...reactQueryProps,

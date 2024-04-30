@@ -1,7 +1,7 @@
 import { APIPaths } from "~apis/path";
 import { HTTPMethod, useRestAPIQuery } from "~hooks/useRestAPI";
 
-export const GetActivityHistory = async (token) => {
+export const GetActivityHistory = () => {
   return useRestAPIQuery({
     request: (params) => ({
       method: HTTPMethod.GET,

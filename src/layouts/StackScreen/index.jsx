@@ -1,7 +1,7 @@
-import { Text, TouchableOpacity, View } from "react-native";
-import { useScreenUtils, useTheme } from "~hooks";
-import { KCIcon } from "~components";
 import { useNavigation } from "@react-navigation/native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { KCIcon } from "~components";
+import { useScreenUtils, useTheme } from "~hooks";
 export const StackScreen = (props) => {
   const { theme } = useTheme();
   const screenUtils = useScreenUtils();
