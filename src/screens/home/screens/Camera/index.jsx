@@ -45,6 +45,7 @@ export const CameraScreen = () => {
     if (cameraRef.current) {
       try {
         const data = await cameraRef.current.takePictureAsync();
+        // await MediaLibrary.createAssetAsync(data?.uri);
         setImagePreview(data);
         setImageList((prev) => [...prev, data]);
       } catch (error) {

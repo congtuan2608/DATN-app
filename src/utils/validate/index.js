@@ -30,12 +30,14 @@ export const validateInput = ({
   label,
   config,
   formValues,
+  minValue,
+  maxValue,
 }) => {
   if (required && (!input || input === ""))
     return {
       ...defaultConfig,
       isError: true,
-      message: label || `Please enter your input`,
+      message: label || `This field is required`,
     };
 
   if (input && min && input.length < min) {
@@ -70,6 +72,20 @@ export const validateInput = ({
         message: "This field must be a number",
       };
     }
+    if (input < minValue) {
+      return {
+        ...defaultConfig,
+        isError: true,
+        message: `This field must be greater than ${minValue}`,
+      };
+    }
+    if (input > maxValue) {
+      return {
+        ...defaultConfig,
+        isError: true,
+        message: `This field must be less than ${maxValue}`,
+      };
+    }
   }
   if (input && type === "array") {
     if (input.length === 0) {
@@ -80,7 +96,15 @@ export const validateInput = ({
       };
     }
   }
-
+  if (input && type === "date") {
+    if (isNaN(new Date(input))) {
+      return {
+        ...defaultConfig,
+        isError: true,
+        message: label || " Please select a valid date",
+      };
+    }
+  }
   if (input && type === "email") {
     if (!validateEmail(input)) {
       return {

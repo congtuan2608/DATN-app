@@ -18,6 +18,7 @@ const RootScreens = [
   "CameraScreen",
   "EnvironmentalGuidanceScreen",
   "CampaignsScreens",
+  "EditCampaigns",
   "SettingScreen",
   "TermOfPrivacyPolicyScreens",
   "ContactSupportScreens",

@@ -13,7 +13,7 @@ import * as Animatable from "react-native-animatable";
 import { View } from "react-native-animatable";
 import imgOnboarding_1 from "~assets/images/onboarding_1.png";
 import { KCButton } from "~components";
-import { useScreenUtils } from "~hooks";
+import { useScreenUtils, useTheme } from "~hooks";
 import { OnboardingItem } from "./components";
 import { data } from "./data";
 
@@ -37,6 +37,7 @@ export const OnboardingScreens = () => {
   const navigate = useNavigation();
   const viewRef_1 = React.useRef();
   const viewRef_2 = React.useRef();
+  const { theme } = useTheme();
 
   React.useEffect(() => {
     viewRef_1.current.animate(animate1);
@@ -110,8 +111,13 @@ export const OnboardingScreens = () => {
             return (
               <View key={i} className={`${Platform.OS === "ios" ? "" : "h-8"}`}>
                 <Animated.View
-                  className="rounded-md bg-slate-700 mx-2"
-                  style={{ width: dotWidth, height: 10, opacity }}
+                  className="rounded-md mx-2"
+                  style={{
+                    width: dotWidth,
+                    height: 10,
+                    opacity,
+                    backgroundColor: theme.primaryButtonBackgroundColor,
+                  }}
                 />
               </View>
             );

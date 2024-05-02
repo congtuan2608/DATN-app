@@ -37,9 +37,12 @@ export const SCREENS = {
   DetectResultsScreen: {
     component: ScreenComponents.DetectResultsScreen,
   },
-  // campai
+  // campaigns
   CampaignsScreens: {
     component: ScreenComponents.CampaignsScreens,
+  },
+  EditCampaigns: {
+    component: ScreenComponents.EditCampaigns,
   },
   // history
   HistoryScreens: {

@@ -1,8 +1,8 @@
-import { View, Text, Modal } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
+import { Modal, Text, View } from "react-native";
 import { KCButton } from "~components";
 import { useTheme } from "~hooks";
-import { useNavigation } from "@react-navigation/native";
 
 export function KCModal(props) {
   const navigate = useNavigation();
@@ -12,6 +12,8 @@ export function KCModal(props) {
     titleButtonLeft,
     titleButtonRight,
     hideButtonLeft,
+    cbButtonLeft,
+    cbButtonRight,
     ...other
   } = props;
   const [showModal, setShowModal] = React.useState(false);
@@ -23,10 +25,12 @@ export function KCModal(props) {
 
   const onGoBack = async () => {
     setShowModal(!showModal);
+    cbButtonLeft && cbButtonLeft();
     navigate.goBack();
   };
   const onStayHere = () => {
     setShowModal(!showModal);
+    cbButtonRight && cbButtonRight();
   };
   return (
     <Modal

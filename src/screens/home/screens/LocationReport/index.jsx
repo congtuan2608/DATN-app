@@ -17,8 +17,14 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import SelectDropdown from "react-native-select-dropdown";
 import { RestAPI } from "~apis";
 import { KCButton, KCIcon, KCModal } from "~components";
-import { useAuth, useLocation, useScreenUtils, useTheme } from "~hooks";
-import { useForm } from "~hooks/useForm";
+import {
+  useAuth,
+  useForm,
+  useLocation,
+  useScreenUtils,
+  useTheme,
+} from "~hooks";
+
 import { StackScreen } from "~layouts";
 import { getResponesive } from "~utils";
 import { severityList, statusList } from "./data";
@@ -47,7 +53,7 @@ const validateSchema = {
     required: true,
     default: "need-intervention",
   },
-  populationDensity: {},
+  // populationDensity: {},
   assets: {},
   isAnonymous: {},
   location: {
@@ -60,9 +66,9 @@ const initialValues = {
   contaminatedType: [],
   severity: "",
   status: "",
-  populationDensity: "",
+  // populationDensity: "",
   assets: [],
-  isAnonymous: false,
+  isAnonymous: true,
   location: { latitude: 0, longitude: 0 },
 };
 export function LocationReportScreen() {
@@ -598,7 +604,7 @@ export function LocationReportScreen() {
                     </View>
                   )}
                 </View>
-                <View>
+                {/* <View>
                   <View className="relative">
                     <TextInput
                       keyboardType="numeric"
@@ -639,7 +645,7 @@ export function LocationReportScreen() {
                       </Text>
                     </View>
                   )}
-                </View>
+                </View> */}
                 <View>
                   <View className="relative">
                     <TextInput
@@ -679,6 +685,18 @@ export function LocationReportScreen() {
                       </Text>
                     </View>
                   )}
+                </View>
+                <View className="flex-row justify-between items-center pb-3 px-2">
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    Report anonymously
+                  </Text>
+                  <Checkbox
+                    value={values.isAnonymous}
+                    onValueChange={(newValue) =>
+                      handleChange("isAnonymous", newValue)
+                    }
+                    className="mr-3"
+                  />
                 </View>
                 <View className="pt-2">
                   <Text

@@ -17,8 +17,7 @@ import SelectDropdown from "react-native-select-dropdown";
 import { RestAPI } from "~apis";
 import { KCButton, KCIcon, KCSVGAsset } from "~components";
 import { AVATAR_URL } from "~constants";
-import { useAuth, useScreenUtils, useTheme } from "~hooks";
-import { useForm } from "~hooks/useForm";
+import { useAuth, useForm, useScreenUtils, useTheme } from "~hooks";
 import { getResponesive } from "~utils";
 
 const initialValues = {

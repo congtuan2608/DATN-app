@@ -1,4 +1,4 @@
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   Image,
   Platform,
@@ -11,12 +11,16 @@ import {
 import { KCButton } from "~components";
 import { useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
+
+import { NO_DATA } from "~constants";
+import { CampaignItem } from "../components";
 import { KCContainer } from "./../../../components/KCContainer/index";
 
-const arr = [1, 2, 3, 4, 5, 6];
+const arr = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
 export const CampaignsScreens = () => {
   const navigateParams = useRoute();
   const { theme } = useTheme();
+  const navigate = useNavigation();
   return (
     <StackScreen
       headerTitle="Campaigns"
@@ -50,7 +54,10 @@ export const CampaignsScreens = () => {
             className="absolute right-0 h-full flex-row items-center justify-center mr-3"
             style={{ gap: 10 }}
           >
-            <TouchableOpacity className="opacity-80">
+            <TouchableOpacity
+              className="opacity-80"
+              onPress={() => navigate.navigate("EditCampaigns")}
+            >
               <Image
                 source={require("~assets/images/add-campaigns-icon.png")}
                 className="h-8 w-8"
@@ -78,71 +85,28 @@ export const CampaignsScreens = () => {
             className="flex-1 justify-center items-center"
             style={{ gap: 15 }}
           >
-            {arr.map((item) => (
+            {arr.length !== 0 ? (
+              arr.map((item, idx) => <CampaignItem key={idx} {...item} />)
+            ) : (
               <View
-                key={item}
-                className="justify-center rounded-lg px-2 py-3 shadow-sm"
+                className="w-full rounded-lg shadow-sm justify-center items-center py-3 px-5"
                 style={{
-                  gap: 10,
                   backgroundColor: theme.secondBackgroundColor,
+                  gap: 10,
                 }}
               >
-                <View>
-                  <Text
-                    className="font-semibold text-lg"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Chiến dịch dọn dẹp rác ở Ngãi Giao
-                  </Text>
-                </View>
-                <View style={{ gap: 5 }}>
-                  <Text
-                    className="text-sm"
-                    numberOfLines={3}
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Fugit magni soluta voluptates blanditiis perspiciatis,
-                    cupiditate dolores dolorum asperiores natus nam, aspernatur
-                    alias cumque amet deserunt perferendis eaque, suscipit illo
-                    totam.
-                  </Text>
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    <Text className="font-medium">
-                      Participation deadline:{" "}
-                    </Text>
-                    20/03/2024 - 25/03/2024
-                  </Text>
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    <Text className="font-medium">
-                      Number of participants :{" "}
-                    </Text>
-                    23
-                  </Text>
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    <Text className="font-medium">Organizer: </Text>Cong Tuan
-                  </Text>
-                </View>
-                <View className="flex-row" style={{ gap: 10 }}>
-                  <KCButton
-                    variant="Filled"
-                    // disabled={true}
-                    styleContainer={{
-                      flex: 1,
-                      paddingVertical: 8,
-                    }}
-                  >
-                    Join
-                  </KCButton>
-                  <KCButton
-                    variant="Outline"
-                    styleContainer={{ flex: 1, paddingVertical: 8 }}
-                  >
-                    View details
-                  </KCButton>
-                </View>
+                <Image source={NO_DATA} className="w-10 h-10" />
+                <Text className="text-base font-medium mb-2">
+                  No campaigns were organized
+                </Text>
+                <KCButton
+                  variant="Outline"
+                  onPress={() => navigate.navigate("EditCampaigns")}
+                >
+                  Create a campaign now
+                </KCButton>
               </View>
-            ))}
+            )}
           </View>
         </ScrollView>
       </KCContainer>

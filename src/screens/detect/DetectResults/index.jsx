@@ -27,11 +27,10 @@ export function DetectResultsScreen() {
     upload: false,
     detect: false,
   });
-
+  console.log(images);
   React.useEffect(() => {
     (async () => {
       if (images.length === 0) return;
-      console.log(navigateParams.params?.type);
       switch (navigateParams.params?.type) {
         case "google-vision": {
           setLoading({ ...loading, detect: true });

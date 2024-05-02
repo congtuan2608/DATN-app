@@ -65,23 +65,31 @@ export const KCButton = (props) => {
             borderColor: props?.disabled
               ? theme.primaryDisabledButtonColor
               : theme.primaryButtonBackgroundColor,
-
             ...(props.styleContainer ?? {}),
           }}
           {...other}
         >
           <View>
-            {typeof props.children === "string" && (
-              <Text
-                style={{
-                  color: theme.primaryButtonBackgroundColor,
-                  textAlign: "center",
-                  fontWeight: "600",
-                  ...(props.textStyle ?? {}),
-                }}
-              >
-                {props.children}
-              </Text>
+            {props?.isLoading ? (
+              <View>
+                <ActivityIndicator
+                  size="small"
+                  color={theme.primaryButtonBackgroundColor}
+                />
+              </View>
+            ) : (
+              typeof props.children === "string" && (
+                <Text
+                  style={{
+                    color: theme.primaryButtonBackgroundColor,
+                    textAlign: "center",
+                    fontWeight: "600",
+                    ...(props.textStyle ?? {}),
+                  }}
+                >
+                  {props.children}
+                </Text>
+              )
             )}
             {typeof props.children !== "string" && props.children}
           </View>

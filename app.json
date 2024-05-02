@@ -3,7 +3,7 @@
     "name": "Go Green",
     "slug": "go-green",
     "description": "App dọn rác",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon-app.png",
     "userInterfaceStyle": "light",
@@ -12,12 +12,13 @@
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.lctuan.go-green"
+      "bundleIdentifier": "com.lctuan.go-green",
+      "config": {
+        "googleMapsApiKey": "AIzaSyDnF0vmggyu_Gg7Q1Vhv45b8t_3vp1meOM"
+      }
     },
     "android": {
       "package": "com.lctuan.gogreen",
@@ -25,13 +26,18 @@
         "foregroundImage": "./assets/icon-app.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 8,
+      "versionCode": 9,
       "softwareKeyboardLayoutMode": "pan",
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
-      ]
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBxa95u7zKlOpGmuAGKxvDdhri3KDg3pjw"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

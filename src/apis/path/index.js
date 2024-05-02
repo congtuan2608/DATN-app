@@ -23,6 +23,7 @@ export const APIPaths = {
 
   // campaign
   CreateCampaign: `${ROOT_BE_URL}/v1/canpaign/create`,
+  UpdateCampaign: `${ROOT_BE_URL}/v1/canpaign/update`,
   JoinCampaign: `${ROOT_BE_URL}/v1/canpaign/join-campaign`,
   LeaveCampaign: `${ROOT_BE_URL}/v1/canpaign/leave-campaign`,
 
