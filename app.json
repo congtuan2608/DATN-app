@@ -1,0 +1,84 @@
+{
+  "expo": {
+    "name": "Go Green",
+    "slug": "go-green",
+    "description": "App dọn rác",
+    "version": "1.0.2",
+    "orientation": "portrait",
+    "icon": "./assets/icon-app.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/background-app.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lctuan.go-green"
+    },
+    "android": {
+      "package": "com.lctuan.gogreen",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon-app.png",
+        "backgroundColor": "#ffffff"
+      },
+      "versionCode": 7,
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "92b16408-c49c-4ead-8b1e-2001b7a3c7fd"
+      }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          },
+          "ios": {
+            "infoPlist": {
+              "NSAppTransportSecurity": {
+                "NSAllowsArbitraryLoads": true,
+                "NSExceptionDomains": {
+                  "localhost": {
+                    "NSExceptionAllowsInsecureHTTPLoads": true
+                  },
+                  "127.0.0.1:8000": {
+                    "NSExceptionAllowsInsecureHTTPLoads": true
+                  }
+                }
+              }
+            },
+            "supportsTablet": true,
+            "flipper": true
+          }
+        }
+      ],
+      "expo-localization",
+      "expo-image-picker",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/92b16408-c49c-4ead-8b1e-2001b7a3c7fd"
+    }
+  }
+}

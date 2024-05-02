@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
-import { KCLinking } from "~components/Linking";
+import { KCLinking } from "~components";
 import { useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { generateContent } from "./data";

@@ -37,6 +37,4 @@ ios
 # typescript
 *.tsbuildinfo
 
-app.json
-
-eas.json
+.env
