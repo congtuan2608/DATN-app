@@ -36,5 +36,3 @@ ios
 
 # typescript
 *.tsbuildinfo
-
-.env
