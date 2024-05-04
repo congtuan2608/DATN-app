@@ -28,7 +28,8 @@
             ]
           }
         ]
-      }
+      },
+      "buildNumber": "4"
     },
     "android": {
       "package": "com.lctuan.gogreen",
@@ -36,7 +37,7 @@
         "foregroundImage": "./assets/icon-app.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 9,
+      "versionCode": 10,
       "softwareKeyboardLayoutMode": "pan",
       "permissions": [
         "android.permission.RECORD_AUDIO",
@@ -92,7 +93,6 @@
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ],
-      "@react-native-firebase/app",
       "@react-native-google-signin/google-signin"
     ],
     "runtimeVersion": {
