@@ -3,7 +3,7 @@
     "name": "Go Green",
     "slug": "go-green",
     "description": "App dọn rác",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon-app.png",
     "userInterfaceStyle": "light",
