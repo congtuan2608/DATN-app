@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "626778919414",
+    "project_id": "go-green-c4de6",
+    "storage_bucket": "go-green-c4de6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626778919414:android:1c52ae20003a91854077d7",
+        "android_client_info": {
+          "package_name": "com.lctuan.gogreen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "626778919414-vbcaqpj3qsg7mc2ag424p1nnkg5h4qp4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKvf1Mv88xFtSz5ohdMI-glXueyZPq_RY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "626778919414-vbcaqpj3qsg7mc2ag424p1nnkg5h4qp4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "626778919414-97q2vhani6falekcg02a9dkjaf55kchl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.lctuan.go-green"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

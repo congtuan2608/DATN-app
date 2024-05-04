@@ -1,4 +1,6 @@
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useNavigation, useRoute } from "@react-navigation/native";
+// import * as AuthSession from "expo-auth-session";
 import React from "react";
 import {
   Image,
@@ -15,28 +17,34 @@ import { KCButton, KCIcon, KCSVGAsset } from "~components";
 import { useAuth, useScreenUtils, useTheme } from "~hooks";
 import { useForm } from "~hooks/useForm";
 import { getResponesive } from "~utils";
-
 const initialValues = { email: "", password: "" };
 const validateSchema = {
   email: { required: true, label: "Please enter your email", type: "email" },
   password: { required: true, min: 6, label: "Please enter your password" },
 };
+GoogleSignin.configure({
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB,
+  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_IOS,
+});
+// WebBrowser.maybeCompleteAuthSession();
 export const LoginScreens = () => {
   const auth = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigation();
   const navigateParams = useRoute();
   const { safeAreaInsets, dimensions } = useScreenUtils();
-
   const [isHidePassword, setIsHidePassword] = React.useState(true);
-  const [isShowLoginFailed, setIsShowLoginFailed] = React.useState(false);
-  const [isRememberMe, setIsRememberMe] = React.useState(false);
   const form = useForm({ initialValues, validateSchema });
   const login = RestAPI.Login();
-
+  // const [request, response, promptAsync] = Google.useAuthRequest({
+  //   iosClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_IOS,
+  //   androidClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_ANDROID,
+  //   webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB,
+  //   // expoClientId: process.env.EXPO_PUBLIC_EXPO,
+  // });
   React.useEffect(() => {
     if (navigateParams.params?.email) {
-      setEmail(navigateParams.params?.email);
+      form.handleChange("email", navigateParams.params?.email);
       form.handleChange("password", "");
     }
   }, [navigateParams.params]);
@@ -53,6 +61,32 @@ export const LoginScreens = () => {
         access_token: res.accessToken,
         refresh_token: res.refreshToken,
       });
+    }
+  };
+  // ================== Google Login ==================
+
+  const handleLoginWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log({ userInfo });
+      // const res = await RestAPI.GoogleLogin({
+      //   idToken: userInfo.idToken,
+      // }).mutateAsync();
+      // if (res?.refreshToken && res?.accessToken) {
+      //   auth.login({
+      //     access_token: res.accessToken,
+      //     refresh_token: res.refreshToken,
+      //   });
+      // }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const handleLoginWithFacebook = async () => {
+    try {
+    } catch (error) {
+      console.error(error);
     }
   };
   return (
@@ -191,35 +225,6 @@ export const LoginScreens = () => {
               </View>
             )}
             <View className="flex-row justify-end px-1">
-              {/* <TouchableOpacity
-                className="flex-row items-center px-2 py-1"
-                style={{ gap: 10 }}
-                onPress={() => setIsRememberMe((pre) => !pre)}
-              >
-                <View
-                  className="w-3 h-3 rounded-sm border-[1px]"
-                  style={{
-                    backgroundColor: isRememberMe
-                      ? theme?.highLightColor
-                      : theme.primaryBackgroundColor,
-                  }}
-                >
-                  {isRememberMe && (
-                    <KCIcon
-                      name="check"
-                      family="FontAwesome5"
-                      size={10}
-                      color="white"
-                    />
-                  )}
-                </View>
-                <Text
-                  className="text-xs"
-                  style={{ color: theme.primaryTextColor }}
-                >
-                  Remember me
-                </Text>
-              </TouchableOpacity> */}
               <TouchableOpacity className="px-2 py-1">
                 <Text
                   className="text-xs"
@@ -258,6 +263,7 @@ export const LoginScreens = () => {
                   color: theme.primaryTextColor,
                   gap: 10,
                 }}
+                onPress={handleLoginWithGoogle}
               >
                 <KCSVGAsset name="Google_Color" className="w-8 h-8" />
                 <Text

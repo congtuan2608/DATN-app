@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "~hooks";
 
 export function GroupItem(props) {
@@ -7,7 +7,12 @@ export function GroupItem(props) {
   const navigate = useNavigation();
 
   const onNavigate = () => {
-    if (!props.navigate) return;
+    if (!props.navigate) {
+      Alert.alert("Notification", "This feature coming soon", [
+        { title: "Ok" },
+      ]);
+      return;
+    }
     navigate.navigate(props.navigate, { ...(props.params ?? {}) });
   };
   return (

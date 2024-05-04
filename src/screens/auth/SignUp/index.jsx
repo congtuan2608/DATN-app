@@ -27,7 +27,7 @@ const initialValues = {
   email: "",
   phone: "",
   dateOfBirth: "",
-  gender: "",
+  gender: undefined,
   password: "",
   confirmPassword: "",
 };

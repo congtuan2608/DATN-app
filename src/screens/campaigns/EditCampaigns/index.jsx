@@ -42,10 +42,11 @@ const validateSchema = {
   },
   ref: {},
 };
+
 const initialValues = {
   title: "",
   description: "",
-  startDate: dayjs(),
+  startDate: new Date(),
   endDate: "",
   limit: 30,
   ref: undefined,
@@ -61,6 +62,7 @@ export function EditCampaigns() {
     startDate: false,
     endDate: false,
   });
+  console.log(form.values);
   const handleSubmit = () => {
     if (navigateParams.params?.id) {
       // Update campaign
@@ -72,6 +74,7 @@ export function EditCampaigns() {
       console.log("CreateCampaign: ", res);
     }
   };
+
   console.log(form.values);
   return (
     <StackScreen
@@ -112,7 +115,7 @@ export function EditCampaigns() {
               <View>
                 <View className="relative">
                   <TextInput
-                    className={`rounded-xl px-5 pr-14 ${
+                    className={`rounded-xl px-5 pr-14 shadow-sm ${
                       Platform.OS === "ios" ? "py-5" : "py-3"
                     }`}
                     style={{
@@ -148,7 +151,7 @@ export function EditCampaigns() {
                 <View className="relative">
                   <TextInput
                     inputMode="numeric"
-                    className={`rounded-xl px-5 pr-14 ${
+                    className={`rounded-xl px-5 pr-14 shadow-sm ${
                       Platform.OS === "ios" ? "py-5" : "py-3"
                     }`}
                     style={{
@@ -299,7 +302,7 @@ export function EditCampaigns() {
               <View>
                 <View className="relative">
                   <TextInput
-                    className={`rounded-xl px-5 pr-14 ${
+                    className={`rounded-xl px-5 pr-14 shadow-sm ${
                       Platform.OS === "ios" ? "py-5" : "py-3"
                     }`}
                     style={{

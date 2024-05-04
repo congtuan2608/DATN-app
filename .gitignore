@@ -37,3 +37,8 @@ ios
 
 # typescript
 *.tsbuildinfo
+
+# google-services.json
+# GoogleService-Info.plist
+credentials.json
+firebaseConfig.js

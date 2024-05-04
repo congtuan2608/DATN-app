@@ -18,6 +18,15 @@
       "bundleIdentifier": "com.lctuan.go-green",
       "config": {
         "googleMapsApiKey": "AIzaSyDnF0vmggyu_Gg7Q1Vhv45b8t_3vp1meOM"
+      },
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.238091618534-p40rbdcdpkd2f3591jrb2tfiff7gsacf"
+            ]
+          }
+        ]
       }
     },
     "android": {
@@ -80,13 +89,16 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
-      ]
+      ],
+      "@react-native-firebase/app",
+      "@react-native-google-signin/google-signin"
     ],
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
       "url": "https://u.expo.dev/92b16408-c49c-4ead-8b1e-2001b7a3c7fd"
-    }
+    },
+    "scheme": "gogreen"
   }
 }

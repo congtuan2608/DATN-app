@@ -5,6 +5,7 @@ export const APIPaths = {
   SignUp: `${ROOT_BE_URL}/v1/auth/sign-up`,
   GetUserProfile: `${ROOT_BE_URL}/v1/auth`,
   RefreshToken: `${ROOT_BE_URL}/v1/token/refresh`,
+  GoogleLogin: `${ROOT_BE_URL}/v1/auth/google-login`,
 
   // recycling
   //type
