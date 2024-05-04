@@ -19,6 +19,7 @@
       "config": {
         "googleMapsApiKey": "AIzaSyDnF0vmggyu_Gg7Q1Vhv45b8t_3vp1meOM"
       },
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "CFBundleURLTypes": [
           {
@@ -46,7 +47,8 @@
         "googleMaps": {
           "apiKey": "AIzaSyBxa95u7zKlOpGmuAGKxvDdhri3KDg3pjw"
         }
-      }
+      },
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
