@@ -1,5 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Camera, CameraType } from "expo-camera";
+import { CameraView } from "expo-camera";
+import { Camera, CameraType } from "expo-camera/legacy";
 import * as MediaLibrary from "expo-media-library";
 import React from "react";
 import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
@@ -167,7 +168,12 @@ export const CameraScreen = () => {
         </View>
       }
     >
-      <Camera type={type} flashMode={flash} ref={cameraRef} className="flex-1">
+      <CameraView
+        type={type}
+        flashMode={flash}
+        ref={cameraRef}
+        className="flex-1"
+      >
         {imagePreview && (
           <Image
             source={imagePreview}
@@ -175,7 +181,7 @@ export const CameraScreen = () => {
             className="flex-1 w-full z-10"
           />
         )}
-      </Camera>
+      </CameraView>
       <View
         className="pt-2"
         style={{ marginBottom: (screenUtils.safeAreaInsets.bottom || 20) - 5 }}

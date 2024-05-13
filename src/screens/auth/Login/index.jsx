@@ -1,8 +1,9 @@
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useNavigation, useRoute } from "@react-navigation/native";
 // import * as AuthSession from "expo-auth-session";
 import React from "react";
 import {
+  Alert,
   Image,
   Platform,
   ScrollView,
@@ -22,10 +23,10 @@ const validateSchema = {
   email: { required: true, label: "Please enter your email", type: "email" },
   password: { required: true, min: 6, label: "Please enter your password" },
 };
-GoogleSignin.configure({
-  webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB,
-  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_IOS,
-});
+// GoogleSignin.configure({
+//   webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB,
+//   iosClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_IOS,
+// });
 // WebBrowser.maybeCompleteAuthSession();
 export const LoginScreens = () => {
   const auth = useAuth();
@@ -67,12 +68,13 @@ export const LoginScreens = () => {
 
   const handleLoginWithGoogle = async () => {
     try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      console.log({ userInfo });
-      // const res = await RestAPI.GoogleLogin({
+      Alert.alert("Notification", "This feature is coming soon!");
+      // await GoogleSignin.hasPlayServices();
+      // const userInfo = await GoogleSignin.signIn();
+      // console.log({ userInfo });
+      // const res = await RestAPI.GoogleLogin.mutateAsync({
       //   idToken: userInfo.idToken,
-      // }).mutateAsync();
+      // });
       // if (res?.refreshToken && res?.accessToken) {
       //   auth.login({
       //     access_token: res.accessToken,
@@ -85,6 +87,7 @@ export const LoginScreens = () => {
   };
   const handleLoginWithFacebook = async () => {
     try {
+      Alert.alert("Notification", "This feature is coming soon!");
     } catch (error) {
       console.error(error);
     }
@@ -282,6 +285,7 @@ export const LoginScreens = () => {
                   color: theme.primaryTextColor,
                   gap: 10,
                 }}
+                onPress={handleLoginWithFacebook}
               >
                 <KCSVGAsset name="Facebook_Color" />
                 <Text

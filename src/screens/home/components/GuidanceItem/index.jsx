@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import Dayjs from "dayjs";
 import {
   Image,
@@ -12,14 +13,17 @@ import { useTheme } from "~hooks";
 export function GuidanceItem(props) {
   const { theme } = useTheme();
   const { width } = useWindowDimensions();
+  const navigate = useNavigation();
+
+  const handleOnPress = () => {
+    navigate.navigate("GuidanceDetailScreen", { data: props });
+  };
   return (
     <TouchableOpacity
-      activeOpacity={0.9}
+      activeOpacity={0.5}
       className="rounded-xl px-2 py-3 border-[#00000030] shadow-sm"
       style={{ backgroundColor: theme.secondBackgroundColor, gap: 5 }}
-      onPress={() => {
-        console.log("hello");
-      }}
+      onPress={handleOnPress}
     >
       <View
         className="flex-row items-center justify-center"

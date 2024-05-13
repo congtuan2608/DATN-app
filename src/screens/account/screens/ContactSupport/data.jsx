@@ -27,6 +27,10 @@ export const generateContent = () => [
           <KCSVGAsset name="Facebook_Color" style={{ width: 32, height: 32 }} />
         ),
         linkConfigs: [
+          // {
+          //   app: "Facebook",
+          //   pageId: "100026041985048",
+          // },
           {
             app: "HTTP_URL",
             url: "https://www.facebook.com/profile.php?id=100026041985048",

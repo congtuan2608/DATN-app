@@ -5,7 +5,7 @@ import { useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { generateContent } from "./data";
 
-export function ContactSupportScreens() {
+export function ContactSupportScreen() {
   const { theme } = useTheme();
 
   const content = React.useMemo(() => generateContent(), []);

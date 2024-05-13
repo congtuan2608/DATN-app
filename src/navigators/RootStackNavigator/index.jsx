@@ -12,16 +12,20 @@ import { SCREENS } from "../routes";
 const InitScreen = "DrawerNavigator";
 const RootScreens = [
   "MapScreen",
-  "DetectScreens",
+  "DetectScreen",
   "DetectResultsScreen",
   "LocationReportScreen",
   "CameraScreen",
   "EnvironmentalGuidanceScreen",
-  "CampaignsScreens",
-  "EditCampaigns",
+  "GuidanceDetailScreen",
+  "CampaignsScreen",
+  "CampaignDetailScreen",
+  "EditCampaignsScreen",
+  "SelectLocation",
   "SettingScreen",
   "TermOfPrivacyPolicyScreens",
-  "ContactSupportScreens",
+  "ContactSupportScreen",
+  "HistoryDetailScreen",
 ];
 const Stack = createNativeStackNavigator();
 export const RootStackNavigator = () => {
@@ -50,13 +54,9 @@ export const RootStackNavigator = () => {
         //
 
         if (access_token && refresh_token) {
-          // setTimeout(async () => {
           await auth.login({ access_token, refresh_token });
-          // }, 1000);
         } else {
-          // setTimeout(async () => {
           await auth.logout();
-          // }, 2000);
         }
       }
     }

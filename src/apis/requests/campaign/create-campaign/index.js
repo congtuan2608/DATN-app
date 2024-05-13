@@ -5,7 +5,7 @@ export function CreateCampaign() {
   return useRestAPIMutation({
     request: (params) => ({
       method: HTTPMethod.POST,
-      configs: [APIPaths.CreateCampaign, { params }],
+      configs: [APIPaths.CreateCampaign, params],
     }),
   });
 }

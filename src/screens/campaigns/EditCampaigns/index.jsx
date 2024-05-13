@@ -1,4 +1,4 @@
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React from "react";
 import {
@@ -15,6 +15,7 @@ import { RestAPI } from "~apis";
 import { KCButton, KCContainer, KCIcon, KCModal } from "~components";
 import { useForm, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
+import { ReportLocaionItem } from "~screens/history/HistoryDetail/components";
 import { getResponesive } from "~utils";
 
 const validateSchema = {
@@ -35,12 +36,14 @@ const validateSchema = {
     type: "date",
   },
   limit: {
-    required: true,
+    // required: true,
     type: "number",
     minValue: 10,
     maxValue: 200,
   },
-  ref: {},
+  ref: {
+    required: true,
+  },
 };
 
 const initialValues = {
@@ -48,13 +51,14 @@ const initialValues = {
   description: "",
   startDate: new Date(),
   endDate: "",
-  limit: 30,
+  limit: 0,
   ref: undefined,
 };
-export function EditCampaigns() {
+export function EditCampaignsScreen() {
   const { safeAreaInsets, dimensions } = useScreenUtils();
   const form = useForm({ initialValues, validateSchema });
   const navigateParams = useRoute();
+  const navigate = useNavigation();
   const { theme } = useTheme();
   const CreateCampaign = RestAPI.CreateCampaign();
   const UpdateCampaign = RestAPI.UpdateCampaign();
@@ -62,20 +66,31 @@ export function EditCampaigns() {
     startDate: false,
     endDate: false,
   });
-  console.log(form.values);
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
+    const submit = form.handleSubmit();
+
+    if (submit.errors) return;
+
     if (navigateParams.params?.id) {
       // Update campaign
-      const res = UpdateCampaign.mutateAsync(form.values);
+      const res = await UpdateCampaign.mutateAsync({
+        ...submit.values,
+        ref: submit.values.ref._id,
+        limit: Number(submit.values.limit) || 30,
+      });
       console.log("UpdateCampaign: ", res);
     } else {
       // Create campaign
-      const res = CreateCampaign.mutateAsync(form.values);
+      const res = await CreateCampaign.mutateAsync({
+        ...submit.values,
+        ref: submit.values.ref._id,
+        limit: Number(submit.values.limit) || 30,
+      });
       console.log("CreateCampaign: ", res);
     }
   };
 
-  console.log(form.values);
   return (
     <StackScreen
       headerTitle={navigateParams.params?.title || "Create campaign"}
@@ -111,7 +126,7 @@ export function EditCampaigns() {
               alignItems: "center",
             }}
           >
-            <View className="flex-1 w-full py-5" style={{ gap: 20 }}>
+            <View className="flex-1 w-full py-3" style={{ gap: 20 }}>
               <View>
                 <View className="relative">
                   <TextInput
@@ -160,8 +175,8 @@ export function EditCampaigns() {
                     }}
                     onFocus={() => form.handleFocus("limit")}
                     onBlur={() => form.handleBlur("limit")}
-                    placeholder={"Limit participants"}
-                    value={String(form.values.limit)}
+                    placeholder={"Limit participants, default 30"}
+                    value={String(form.values.limit || "")}
                     onChangeText={(value) => {
                       const convert = Math.round(Number(value));
                       form.handleChange("limit", convert || value);
@@ -245,9 +260,10 @@ export function EditCampaigns() {
                 <View className="relative flex-1">
                   <TouchableOpacity
                     activeOpacity={0.6}
-                    onPress={() =>
-                      setOpenDatePicker((p) => ({ ...p, endDate: true }))
-                    }
+                    onPress={() => {
+                      form.handleFocus("endDate");
+                      setOpenDatePicker((p) => ({ ...p, endDate: true }));
+                    }}
                     className={`rounded-xl px-5 pr-14 shadow-sm ${
                       Platform.OS === "ios" ? "py-5" : "py-4"
                     }`}
@@ -259,13 +275,15 @@ export function EditCampaigns() {
                       locale="en"
                       mode="single"
                       visible={openDatePicker.endDate}
-                      onDismiss={() =>
-                        setOpenDatePicker((p) => ({ ...p, endDate: false }))
-                      }
+                      onDismiss={() => {
+                        form.handleBlur("endDate");
+                        setOpenDatePicker((p) => ({ ...p, endDate: false }));
+                      }}
                       date={form.values?.endDate}
                       onConfirm={(param) => {
                         setOpenDatePicker((p) => ({ ...p, endDate: false }));
                         form.handleChange("endDate", param.date);
+                        form.removeError("endDate");
                       }}
                     />
                     <Text
@@ -308,9 +326,11 @@ export function EditCampaigns() {
                     style={{
                       backgroundColor: theme.secondBackgroundColor,
                       color: theme.primaryTextColor,
+                      maxHeight: 170,
                     }}
                     multiline
                     numberOfLines={4}
+                    maxLength={500}
                     onFocus={() => form.handleFocus("description")}
                     onBlur={() => form.handleBlur("description")}
                     placeholder={"Description"}
@@ -337,6 +357,69 @@ export function EditCampaigns() {
                   </View>
                 )}
               </View>
+              {form.values?.ref ? (
+                <View
+                  className="py-2 rounded-lg shadow-sm"
+                  style={{ backgroundColor: theme.secondBackgroundColor }}
+                >
+                  <ReportLocaionItem {...form.values?.ref} />
+                  <View className="px-2">
+                    <KCButton
+                      variant="Outline"
+                      onPress={() => form.handleChange("ref", undefined)}
+                      styleContainer={{ borderColor: "red" }}
+                      textStyle={{ color: "red" }}
+                    >
+                      Remove
+                    </KCButton>
+                  </View>
+                </View>
+              ) : (
+                <View>
+                  <View className="relative">
+                    <TouchableOpacity
+                      activeOpacity={0.6}
+                      onPress={() =>
+                        navigate.navigate("SelectLocation", {
+                          callback: (value) => form.handleChange("ref", value),
+                          prevValue: form.values?.ref,
+                        })
+                      }
+                      className={`rounded-xl px-5 pr-14 shadow-sm ${
+                        Platform.OS === "ios" ? "py-5" : "py-4"
+                      }`}
+                      style={{
+                        backgroundColor: theme.secondBackgroundColor,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: form.values?.ref
+                            ? theme.primaryTextColor
+                            : theme.thirdTextColor,
+                        }}
+                      >
+                        {form.values?.ref?.address || "Select location"}
+                      </Text>
+                    </TouchableOpacity>
+                    <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
+                      <KCIcon
+                        name="location"
+                        family="Entypo"
+                        size={23}
+                        color={theme.primaryTextColor}
+                      />
+                    </View>
+                  </View>
+                  {form.errors?.ref && (
+                    <View className="px-4 mt-2 -mb-3">
+                      <Text className="text-xs" style={{ color: "red" }}>
+                        {form.errors.ref?.message}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              )}
             </View>
           </ScrollView>
         </KeyboardAwareScrollView>
@@ -352,7 +435,7 @@ export function EditCampaigns() {
         >
           <KCButton
             variant="Filled"
-            onPress={() => console.log(form.handleSubmit())}
+            onPress={handleSubmit}
             // disabled={signUp.isPending}
           >
             {navigateParams.params?.id ? "Update" : "Create"}

@@ -17,11 +17,6 @@ export function CreateReportLocation() {
 
       formData.append("severity", params?.severity);
 
-      formData.append("status", params?.status);
-
-      params?.populationDensity &&
-        formData.append("populationDensity", params?.populationDensity);
-
       params?.isAnonymous &&
         formData.append("isAnonymous", params?.isAnonymous);
 

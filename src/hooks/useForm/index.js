@@ -63,7 +63,12 @@ export function useForm({ initialValues = {}, validateSchema }) {
   const resetForm = () => {
     setValues(initialValues);
   };
-
+  const removeError = (key) => {
+    setErrors((prev) => {
+      const { [key]: _, ...rest } = prev;
+      return rest;
+    });
+  };
   const setInitialValues = React.useCallback((newValues) => {
     setValues(newValues);
   }, []);
@@ -71,6 +76,7 @@ export function useForm({ initialValues = {}, validateSchema }) {
     values,
     errors,
     setErrors,
+    removeError,
     handleBlur,
     handleFocus,
     handleChange,

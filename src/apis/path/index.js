@@ -23,6 +23,8 @@ export const APIPaths = {
   GoogleVisionDetectImages: `${ROOT_BE_URL}/v1/detect/google-vision`,
 
   // campaign
+  GetCampaign: `${ROOT_BE_URL}/v1/canpaign`,
+  GetCampaignById: `${ROOT_BE_URL}/v1/canpaign/by-id`,
   CreateCampaign: `${ROOT_BE_URL}/v1/canpaign/create`,
   UpdateCampaign: `${ROOT_BE_URL}/v1/canpaign/update`,
   JoinCampaign: `${ROOT_BE_URL}/v1/canpaign/join-campaign`,

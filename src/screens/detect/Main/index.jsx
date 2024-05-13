@@ -22,7 +22,7 @@ const DATA_ITEMS = [
       "Predict the type of trash the image contains, such as glass, plastic...",
   },
 ];
-export const DetectScreens = () => {
+export const DetectScreen = () => {
   const { dimensions, safeAreaInsets } = useScreenUtils();
   const navigate = useNavigation();
   const navigateParams = useRoute();

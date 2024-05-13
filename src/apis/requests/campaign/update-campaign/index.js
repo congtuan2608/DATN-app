@@ -5,7 +5,7 @@ export function UpdateCampaign() {
   return useRestAPIMutation({
     request: (params) => ({
       method: HTTPMethod.PATCH,
-      configs: [APIPaths.UpdateCampaign, { params }],
+      configs: [APIPaths.UpdateCampaign, params],
     }),
   });
 }

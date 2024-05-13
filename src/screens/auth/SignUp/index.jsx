@@ -15,7 +15,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { DatePickerModal } from "react-native-paper-dates";
 import SelectDropdown from "react-native-select-dropdown";
 import { RestAPI } from "~apis";
-import { KCButton, KCIcon, KCSVGAsset } from "~components";
+import { KCButton, KCIcon } from "~components";
 import { AVATAR_URL } from "~constants";
 import { useAuth, useForm, useScreenUtils, useTheme } from "~hooks";
 import { getResponesive } from "~utils";
@@ -568,7 +568,7 @@ export const SignUpScreens = () => {
                 </View>
               )}
 
-              <View
+              {/* <View
                 className="w-full flex-row justify-center items-center px-20"
                 style={{
                   gap: 20,
@@ -622,7 +622,7 @@ export const SignUpScreens = () => {
                     Continue with facebook
                   </Text>
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </View>
         </ScrollView>

@@ -1,11 +1,11 @@
 import { APIPaths } from "~apis/path";
 import { HTTPMethod, useRestAPIMutation } from "~hooks/useRestAPI";
 
-export function GetHistoryDetails() {
+export function LeaveCampaign() {
   return useRestAPIMutation({
     request: (params) => ({
       method: HTTPMethod.GET,
-      configs: [`${APIPaths.HistoryDetails}/${params.id}`],
+      configs: [`${APIPaths.LeaveCampaign}/${params.id}`],
     }),
   });
 }

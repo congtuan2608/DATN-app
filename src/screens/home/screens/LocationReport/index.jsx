@@ -27,7 +27,7 @@ import {
 
 import { StackScreen } from "~layouts";
 import { getResponesive } from "~utils";
-import { severityList, statusList } from "./data";
+import { severityList } from "./data";
 
 const validateSchema = {
   address: {
@@ -49,10 +49,10 @@ const validateSchema = {
     required: true,
     label: "Please select severity",
   },
-  status: {
-    required: true,
-    default: "need-intervention",
-  },
+  // status: {
+  //   required: true,
+  //   default: "need-intervention",
+  // },
   // populationDensity: {},
   assets: {},
   isAnonymous: {},
@@ -65,7 +65,7 @@ const initialValues = {
   description: "",
   contaminatedType: [],
   severity: "",
-  status: "",
+  // status: "",
   // populationDensity: "",
   assets: [],
   isAnonymous: true,
@@ -522,7 +522,7 @@ export function LocationReportScreen() {
                     </View>
                   )}
                 </View>
-                <View>
+                {/* <View>
                   <SelectDropdown
                     ref={statusRef}
                     data={statusList}
@@ -603,7 +603,7 @@ export function LocationReportScreen() {
                       </Text>
                     </View>
                   )}
-                </View>
+                </View> */}
                 {/* <View>
                   <View className="relative">
                     <TextInput
@@ -661,6 +661,7 @@ export function LocationReportScreen() {
                       style={{
                         backgroundColor: theme.secondBackgroundColor,
                         color: theme.primaryTextColor,
+                        maxHeight: 170,
                       }}
                       placeholder={"Description"}
                       value={values.description}

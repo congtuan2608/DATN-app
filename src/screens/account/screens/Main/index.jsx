@@ -10,7 +10,6 @@ export const AccountScreens = () => {
   const navigate = useNavigation();
   const screenUtils = useScreenUtils();
   const auth = useAuth();
-
   return (
     <StackScreen
       headerShown={false}

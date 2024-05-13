@@ -16,6 +16,10 @@ export function generateAppURL(config) {
       return `fb-messenger://user-thread/${config.userId}`;
     }
 
+    case "Facebook": {
+      return `fb://profile/${config.pageId}`;
+    }
+
     case "Telegram": {
       return `tg://resolve?domain=${config.username}`;
     }

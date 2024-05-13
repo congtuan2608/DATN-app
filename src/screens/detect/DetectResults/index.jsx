@@ -129,6 +129,18 @@ export function DetectResultsScreen() {
         return true;
     }
   }, [googleVision.data, tensorflow.data]);
+  const renderTitle = () => {
+    switch (navigateParams.params?.type) {
+      case "google-vision": {
+        return "Result detect object";
+      }
+      case "tensorflow": {
+        return "Result garbage classification";
+      }
+      default:
+        return null;
+    }
+  };
   return (
     <StackScreen headerTitle={navigateParams.params?.title || "<Unknown>"}>
       <View
@@ -179,7 +191,7 @@ export function DetectResultsScreen() {
                     className="text-base font-semibold py-3"
                     style={{ color: theme.primaryTextColor }}
                   >
-                    Result detect object
+                    {renderTitle()}
                   </Text>
                   {renderResults()}
                 </View>

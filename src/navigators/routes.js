@@ -26,27 +26,39 @@ export const SCREENS = {
   EnvironmentalGuidanceScreen: {
     component: ScreenComponents.HomeScreens.EnvironmentalGuidanceScreen,
   },
+  GuidanceDetailScreen: {
+    component: ScreenComponents.HomeScreens.GuidanceDetailScreen,
+  },
   // blog
   BlogScreens: {
     component: ScreenComponents.BlogScreens,
   },
   // detect
-  DetectScreens: {
-    component: ScreenComponents.DetectScreens,
+  DetectScreen: {
+    component: ScreenComponents.DetectScreen,
   },
   DetectResultsScreen: {
     component: ScreenComponents.DetectResultsScreen,
   },
   // campaigns
-  CampaignsScreens: {
-    component: ScreenComponents.CampaignsScreens,
+  CampaignsScreen: {
+    component: ScreenComponents.CampaignsScreen,
   },
-  EditCampaigns: {
-    component: ScreenComponents.EditCampaigns,
+  CampaignDetailScreen: {
+    component: ScreenComponents.CampaignDetailScreen,
+  },
+  EditCampaignsScreen: {
+    component: ScreenComponents.EditCampaignsScreen,
+  },
+  SelectLocation: {
+    component: ScreenComponents.SelectLocation,
   },
   // history
   HistoryScreens: {
     component: ScreenComponents.HistoryScreens,
+  },
+  HistoryDetailScreen: {
+    component: ScreenComponents.HistoryDetailScreen,
   },
   //account
   AccountScreens: {
@@ -55,8 +67,8 @@ export const SCREENS = {
   SettingScreen: {
     component: ScreenComponents.AccountScreens.SettingScreen,
   },
-  ContactSupportScreens: {
-    component: ScreenComponents.AccountScreens.ContactSupportScreens,
+  ContactSupportScreen: {
+    component: ScreenComponents.AccountScreens.ContactSupportScreen,
   },
   TermOfPrivacyPolicyScreens: {
     component: ScreenComponents.AccountScreens.TermOfPrivacyPolicyScreens,

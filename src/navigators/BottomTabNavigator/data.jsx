@@ -3,7 +3,7 @@ import { SCREENS } from "../routes";
 export const bottomTabScreens = {
   Detection: {
     label: "Detection",
-    component: SCREENS.DetectScreens.component,
+    component: SCREENS.DetectScreen.component,
     icon: (props) => ({
       family: "Ionicons",
       name: "scan",
@@ -12,7 +12,7 @@ export const bottomTabScreens = {
   },
   Campaigns: {
     label: "Campaigns",
-    component: SCREENS.CampaignsScreens.component,
+    component: SCREENS.CampaignsScreen.component,
     icon: (props) => ({ family: "Entypo", name: "slideshare", size: 25 }),
   },
   Home: {

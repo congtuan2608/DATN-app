@@ -7,13 +7,13 @@ export const serviceList = [
   {
     title: "Detect images",
     image_url: require("~assets/images/detect-images-icon.png"),
-    navigate: "DetectScreens",
+    navigate: "DetectScreen",
     params: { headerShown: true },
   },
   {
     title: "Campaign",
     image_url: require("~assets/images/campaign-icon.png"),
-    navigate: "CampaignsScreens",
+    navigate: "CampaignsScreen",
     params: { headerShown: true },
   },
   {

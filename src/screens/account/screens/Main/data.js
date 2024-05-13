@@ -17,7 +17,7 @@ export const generateMenuGroups = ({ auth, navigate }) => {
           text: "Contact support",
           image: require("~assets/images/contact-support-icon.png"),
           onPress: async () => {
-            navigate.navigate("ContactSupportScreens");
+            navigate.navigate("ContactSupportScreen");
           },
         },
         {

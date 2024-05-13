@@ -2,25 +2,27 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   Image,
   Platform,
+  RefreshControl,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { KCButton } from "~components";
-import { useTheme } from "~hooks";
-import { StackScreen } from "~layouts";
-
+import { RestAPI } from "~apis";
+import { KCButton, KCContainer } from "~components";
 import { NO_DATA } from "~constants";
+import { useAuth, useTheme } from "~hooks";
+import { StackScreen } from "~layouts";
 import { CampaignItem } from "../components";
-import { KCContainer } from "./../../../components/KCContainer/index";
 
-const arr = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
-export const CampaignsScreens = () => {
+export function CampaignsScreen() {
   const navigateParams = useRoute();
   const { theme } = useTheme();
+  const { userProfile } = useAuth();
   const navigate = useNavigation();
+  const Campaign = RestAPI.GetCampaigns();
+
   return (
     <StackScreen
       headerTitle="Campaigns"
@@ -31,8 +33,8 @@ export const CampaignsScreens = () => {
         }
       }
     >
-      <KCContainer
-        className="pt-2 px-2"
+      <View
+        className="flex-1 pt-2 px-2"
         style={{ backgroundColor: theme.primaryBackgroundColor, gap: 10 }}
       >
         <View className="relative">
@@ -56,7 +58,7 @@ export const CampaignsScreens = () => {
           >
             <TouchableOpacity
               className="opacity-80"
-              onPress={() => navigate.navigate("EditCampaigns")}
+              onPress={() => navigate.navigate("EditCampaignsScreen")}
             >
               <Image
                 source={require("~assets/images/add-campaigns-icon.png")}
@@ -76,40 +78,48 @@ export const CampaignsScreens = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
             flexGrow: 1,
-            justifyContent: "center",
-            alignItems: "center",
             paddingBottom: 10,
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => Campaign.refetch()}
+            />
+          }
         >
-          <View
-            className="flex-1 justify-center items-center"
+          <KCContainer
+            className="flex-1"
+            isLoading={Campaign.isFetching}
             style={{ gap: 15 }}
           >
-            {arr.length !== 0 ? (
-              arr.map((item, idx) => <CampaignItem key={idx} {...item} />)
-            ) : (
-              <View
-                className="w-full rounded-lg shadow-sm justify-center items-center py-3 px-5"
-                style={{
-                  backgroundColor: theme.secondBackgroundColor,
-                  gap: 10,
-                }}
-              >
-                <Image source={NO_DATA} className="w-10 h-10" />
-                <Text className="text-base font-medium mb-2">
-                  No campaigns were organized
-                </Text>
-                <KCButton
-                  variant="Outline"
-                  onPress={() => navigate.navigate("EditCampaigns")}
+            {(Campaign.data ?? []).map((item, idx) => (
+              <CampaignItem key={idx} data={item} />
+            ))}
+            {(Campaign.data ?? []).length === 0 && (
+              <View className="flex-1 justify-center items-center">
+                <View
+                  className="w-full rounded-lg shadow-sm justify-center items-center py-3 px-5"
+                  style={{
+                    backgroundColor: theme.secondBackgroundColor,
+                    gap: 10,
+                  }}
                 >
-                  Create a campaign now
-                </KCButton>
+                  <Image source={NO_DATA} className="w-10 h-10" />
+                  <Text className="text-base font-medium mb-2">
+                    No campaigns were organized
+                  </Text>
+                  <KCButton
+                    variant="Outline"
+                    onPress={() => navigate.navigate("EditCampaignsScreen")}
+                  >
+                    Create a campaign now
+                  </KCButton>
+                </View>
               </View>
             )}
-          </View>
+          </KCContainer>
         </ScrollView>
-      </KCContainer>
+      </View>
     </StackScreen>
   );
-};
+}

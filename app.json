@@ -3,7 +3,7 @@
     "name": "Go Green",
     "slug": "go-green",
     "description": "App dọn rác",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon-app.png",
     "userInterfaceStyle": "light",
@@ -29,7 +29,15 @@
           }
         ]
       },
-      "buildNumber": "4"
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          }
+        ]
+      },
+      "buildNumber": "5"
     },
     "android": {
       "package": "com.lctuan.gogreen",
@@ -93,7 +101,15 @@
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ],
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ]
     ],
     "runtimeVersion": {
       "policy": "appVersion"

@@ -2,6 +2,7 @@ export * from "./AppLoading";
 export * from "./Button";
 export * from "./FlatList";
 export * from "./Icon";
+export * from "./ImagesPreview";
 export * from "./KCContainer";
 export * from "./Linking";
 export * from "./Modal";

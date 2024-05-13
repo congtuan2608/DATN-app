@@ -81,7 +81,9 @@ export const KCButton = (props) => {
               typeof props.children === "string" && (
                 <Text
                   style={{
-                    color: theme.primaryButtonBackgroundColor,
+                    color: props?.disabled
+                      ? theme?.thirdTextColor
+                      : theme?.primaryTextColor,
                     textAlign: "center",
                     fontWeight: "600",
                     ...(props.textStyle ?? {}),

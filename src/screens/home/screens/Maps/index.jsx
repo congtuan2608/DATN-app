@@ -14,10 +14,11 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import ImageView from "react-native-image-viewing";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { RestAPI } from "~apis";
 import { KCContainer } from "~components";
-import { useLocation, useTheme } from "~hooks";
+import { useLocation, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 
 export function MapScreen() {
@@ -29,8 +30,10 @@ export function MapScreen() {
   const bottomSheetRef = React.useRef(null);
   const [selectMarker, setSelectMarker] = React.useState(null);
   const mapRef = React.useRef(null);
-
+  const [visible, setIsVisible] = React.useState(false);
+  const [index, setIndex] = React.useState(0);
   const initialSnapPoints = React.useMemo(() => ["15%", "50%", "90%"], []);
+  const { safeAreaInsets } = useScreenUtils();
 
   const onFocusInput = () => {
     bottomSheetRef?.current?.snapToIndex(initialSnapPoints.length - 1);
@@ -61,7 +64,12 @@ export function MapScreen() {
     else {
       return { ...location };
     }
-  }, [navigateParams.params?.location]);
+  }, [location, navigateParams.params?.location]);
+
+  const openImageView = (idx) => {
+    setIsVisible(true);
+    setIndex(idx);
+  };
   const renderHeaderRight = () => {
     return (
       <View
@@ -80,39 +88,44 @@ export function MapScreen() {
   return (
     <StackScreen headerTitle="Map" headerRight={renderHeaderRight()}>
       <View className="flex-1 relative">
-        <MapView
-          ref={mapRef}
-          className="flex-1"
-          toolbarEnabled
-          mapType="standard"
-          loadingEnabled
-          provider={PROVIDER_GOOGLE}
-          onPress={onMapPress}
-          showsMyLocationButton={true}
-          showsUserLocation={true}
-          followsUserLocation={true}
-          mapPadding={{ bottom: 100 }}
-          userLocationCalloutEnabled={true}
-          initialRegion={{
-            ...currentMap,
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.1,
-          }}
-        >
-          {(ReportLocation.data ?? []).map((item, idx) => {
-            return (
-              <Marker
-                key={idx}
-                onPress={(e) => onMapMarker(item)}
-                coordinate={{
-                  latitude: item?.location?.latitude,
-                  longitude: item?.location?.longitude,
-                }}
-                title={item.address}
-              />
-            );
-          })}
-        </MapView>
+        {location?.latitude && location?.longitude ? (
+          <MapView
+            ref={mapRef}
+            className="flex-1"
+            toolbarEnabled
+            mapType="standard"
+            loadingEnabled
+            provider={Platform.OS === "ios" ? undefined : PROVIDER_GOOGLE}
+            onPress={onMapPress}
+            showsMyLocationButton={true}
+            showsUserLocation={true}
+            followsUserLocation={Platform.OS === "android"}
+            mapPadding={{ bottom: 100 }}
+            userLocationCalloutEnabled={true}
+            initialRegion={{
+              latitudeDelta: 0.1,
+              longitudeDelta: 0.1,
+              ...currentMap,
+            }}
+          >
+            {(ReportLocation.data ?? []).map((item, idx) => {
+              return (
+                <Marker
+                  key={idx}
+                  onPress={(e) => onMapMarker(item)}
+                  coordinate={{
+                    latitude: item?.location?.latitude,
+                    longitude: item?.location?.longitude,
+                  }}
+                  title={item.address}
+                />
+              );
+            })}
+          </MapView>
+        ) : (
+          <KCContainer isLoading={true} />
+        )}
+
         <BottomSheet
           ref={bottomSheetRef}
           onChange={handleSheetChanges}
@@ -151,130 +164,166 @@ export function MapScreen() {
             </View>
             <KCContainer className="p-2" isEmpty={!selectMarker}>
               <ScrollView
-                contentContainerStyle={{ flexGrow: 1 }}
+                contentContainerStyle={{ flexGrow: 1, gap: 15 }}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
               >
-                <View className="justify-start" style={{ gap: 10 }}>
+                <Text
+                  className="font-medium text-lg"
+                  style={{ color: theme.primaryTextColor }}
+                >
+                  {selectMarker?.address || "<unknown>"}
+                </Text>
+                <Text style={{ color: theme.primaryTextColor }}>
                   <Text
-                    className="font-medium text-lg"
+                    className="font-semibold"
                     style={{ color: theme.primaryTextColor }}
                   >
-                    {selectMarker?.address || "<unknown>"}
+                    Coordinates:{" "}
                   </Text>
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    <Text
-                      className="font-semibold"
-                      style={{ color: theme.primaryTextColor }}
-                    >
-                      Coordinates:{" "}
-                    </Text>
-                    {`${selectMarker?.location.latitude}, ${selectMarker?.location.longitude}` ||
-                      "<unknown>"}
-                  </Text>
+                  {`${selectMarker?.location.latitude}, ${selectMarker?.location.longitude}` ||
+                    "<unknown>"}
+                </Text>
 
-                  <Text style={{ color: theme.primaryTextColor }}>
+                <Text style={{ color: theme.primaryTextColor }}>
+                  <Text
+                    className="font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Contaminated type:{" "}
+                  </Text>
+                  {selectMarker?.contaminatedType
+                    .map((item) => item.contaminatedName)
+                    .join(", ")}
+                </Text>
+                <Text style={{ color: theme.primaryTextColor }}>
+                  <Text
+                    className="font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Severity:{" "}
+                  </Text>
+                  {selectMarker?.severity}
+                </Text>
+                <Text style={{ color: theme.primaryTextColor }}>
+                  <Text
+                    className="font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Status:{" "}
+                  </Text>
+                  {selectMarker?.status}
+                </Text>
+                <Text style={{ color: theme.primaryTextColor }}>
+                  <Text
+                    className="font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Population density:{" "}
+                  </Text>
+                  {selectMarker?.populationDensity}
+                </Text>
+                <Text style={{ color: theme.primaryTextColor }}>
+                  <Text
+                    className="font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Description:{" "}
+                  </Text>
+                  {selectMarker?.description}
+                </Text>
+                <Text style={{ color: theme.primaryTextColor }}>
+                  <Text
+                    className="font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Report by:{" "}
+                  </Text>
+                  {selectMarker?.isAnonymous ? (
                     <Text
-                      className="font-semibold"
+                      className="font-extralight"
                       style={{ color: theme.primaryTextColor }}
                     >
-                      Contaminated type:{" "}
+                      [anonymous]
                     </Text>
-                    {selectMarker?.contaminatedType
-                      .map((item) => item.contaminatedName)
-                      .join(", ")}
+                  ) : (
+                    `${selectMarker?.reportedBy?.fullName}`
+                  )}
+                </Text>
+                <Text style={{ color: theme.primaryTextColor }}>
+                  <Text
+                    className="font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
+                    Time report:
                   </Text>
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    <Text
-                      className="font-semibold"
-                      style={{ color: theme.primaryTextColor }}
-                    >
-                      Severity:{" "}
-                    </Text>
-                    {selectMarker?.severity}
-                  </Text>
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    <Text
-                      className="font-semibold"
-                      style={{ color: theme.primaryTextColor }}
-                    >
-                      Status:{" "}
-                    </Text>
-                    {selectMarker?.status}
-                  </Text>
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    <Text
-                      className="font-semibold"
-                      style={{ color: theme.primaryTextColor }}
-                    >
-                      Population density:{" "}
-                    </Text>
-                    {selectMarker?.populationDensity}
-                  </Text>
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    <Text
-                      className="font-semibold"
-                      style={{ color: theme.primaryTextColor }}
-                    >
-                      Description:{" "}
-                    </Text>
-                    {selectMarker?.description}
-                  </Text>
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    <Text
-                      className="font-semibold"
-                      style={{ color: theme.primaryTextColor }}
-                    >
-                      Report by:{" "}
-                    </Text>
-                    {selectMarker?.isAnonymous ? (
-                      <Text
-                        className="font-extralight"
-                        style={{ color: theme.primaryTextColor }}
-                      >
-                        [anonymous]
-                      </Text>
-                    ) : (
-                      `${selectMarker?.reportedBy?.fullName}`
-                    )}
-                  </Text>
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    <Text
-                      className="font-semibold"
-                      style={{ color: theme.primaryTextColor }}
-                    >
-                      Time report:
-                    </Text>
-                    {dayjs(selectMarker?.createdAt).format(
-                      " A hh:mm:ss DD/MM/YYYY"
-                    )}
-                  </Text>
-                </View>
-                <View className="flex-1 py-3">
+                  {dayjs(selectMarker?.createdAt).format(
+                    " A hh:mm:ss DD/MM/YYYY"
+                  )}
+                </Text>
+
+                <View className="w-full py-2">
                   {selectMarker?.assets && (
                     <FlatList
-                      // pagingEnabled
-                      initialNumToRender={1}
-                      data={selectMarker?.assets}
+                      initialNumToRender={3}
+                      data={selectMarker?.assets ?? []}
                       horizontal
-                      showsVerticalScrollIndicator={false}
                       showsHorizontalScrollIndicator={false}
-                      bounces={false}
-                      keyExtractor={(item) => item._id}
-                      renderItem={({ item }) => (
-                        <Image
-                          source={{ uri: item?.url }}
-                          style={{
-                            resizeMode: "contain",
-                            width: item?.width / 7 || width - 32,
-                            height: "70%",
-                          }}
-                        />
+                      renderItem={({ item, index }) => (
+                        <TouchableOpacity onPress={() => openImageView(index)}>
+                          <Image
+                            source={{ uri: item.url }}
+                            className="w-36 h-36 rounded-lg"
+                            resizeMode="cover"
+                          />
+                        </TouchableOpacity>
                       )}
+                      keyExtractor={(item, idx) =>
+                        `HorizontalList_Item__${idx}`
+                      }
                       ItemSeparatorComponent={() => <View className="w-4" />}
                     />
                   )}
                 </View>
+                <ImageView
+                  initialNumToRender={3}
+                  images={
+                    selectMarker?.assets.map((item) => ({ uri: item.url })) ||
+                    []
+                  }
+                  imageIndex={index}
+                  visible={visible}
+                  presentationStyle="overFullScreen"
+                  onRequestClose={() => setIsVisible(false)}
+                  keyExtractor={(item, idx) => `ImageView_Item__${idx}`}
+                  FooterComponent={({ imageIndex }) => (
+                    <View
+                      className="flex-row justify-center items-center "
+                      style={{
+                        paddingBottom:
+                          Platform.OS === "ios"
+                            ? safeAreaInsets.bottom - 15
+                            : safeAreaInsets.bottom || 10,
+                      }}
+                    >
+                      <View
+                        className="shadow-sm rounded-lg"
+                        style={{
+                          backgroundColor: theme.secondBackgroundColor,
+                        }}
+                      >
+                        <Text
+                          className="text-base font-medium rounded-lg px-3 py-1"
+                          style={{
+                            color: theme.primaryTextColor,
+                          }}
+                        >
+                          {imageIndex + 1}/{selectMarker?.assets.length}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                />
               </ScrollView>
             </KCContainer>
           </BottomSheetView>

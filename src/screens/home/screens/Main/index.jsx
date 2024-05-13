@@ -13,6 +13,7 @@ import { useAuth, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { getResponesive } from "~utils";
 import { GuidanceItem, InterestedItem } from "../../components";
+import { KCContainer } from "./../../../../components/KCContainer/index";
 import { ServiceGroups } from "./components";
 import { serviceList } from "./data";
 
@@ -180,7 +181,13 @@ export const HomeScreen = () => {
                   </Text>
                 </View>
               </View>
-              <View className="pt-3 pb-1">
+              <KCContainer
+                className="pt-3 pb-1"
+                isLoading={RecyclingGuide.getRecyclingGuide.isPending}
+                isEmpty={
+                  (RecyclingGuide.getRecyclingGuide.data ?? []).length === 0
+                }
+              >
                 <FlatList
                   horizontal
                   initialNumToRender={3}
@@ -191,7 +198,7 @@ export const HomeScreen = () => {
                   keyExtractor={(item, idx) => `HorizontalList_Item__${idx}`}
                   ItemSeparatorComponent={() => <View className="w-4" />}
                 />
-              </View>
+              </KCContainer>
             </View>
           </View>
         </View>

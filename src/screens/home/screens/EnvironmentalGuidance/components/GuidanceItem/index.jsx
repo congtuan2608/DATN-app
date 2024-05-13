@@ -1,16 +1,29 @@
 import Dayjs from "dayjs";
 import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import ImageView from "react-native-image-viewing";
 import { AVATAR_URL } from "~constants";
-import { useTheme } from "~hooks";
-
+import { useScreenUtils, useTheme } from "~hooks";
 const NUMBER_OF_LINES = 6;
 export function GuidanceItem(props) {
   const { data, ...other } = props;
   const { theme } = useTheme();
+  const { safeAreaInsets } = useScreenUtils();
   const [textShown, setTextShown] = React.useState(false);
   const [lengthMore, setLengthMore] = React.useState(false);
-
+  const [visible, setIsVisible] = React.useState(false);
+  const [index, setIndex] = React.useState(0);
+  const openImageView = (idx) => {
+    setIsVisible(true);
+    setIndex(idx);
+  };
   const onTextLayout = React.useCallback((e) => {
     setLengthMore(e.nativeEvent.lines?.length >= NUMBER_OF_LINES);
   }, []);
@@ -91,13 +104,59 @@ export function GuidanceItem(props) {
         ) : null}
         {assets && (
           <View className="flex-row flex-wrap justify-evenly items-center">
-            {assets?.images.map((item) => (
-              <Image
-                key={item._id}
-                source={{ uri: item.url ?? "" }}
-                className="w-28 h-28 rounded-lg"
-              />
-            ))}
+            <FlatList
+              data={assets?.images}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity onPress={() => openImageView(index)}>
+                  <Image
+                    source={{ uri: item.url }}
+                    className="w-36 h-36 rounded-lg"
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item, idx) => `HorizontalList_Item__${idx}`}
+              ItemSeparatorComponent={() => <View className="w-4" />}
+            />
+
+            <ImageView
+              initialNumToRender={3}
+              images={assets?.images.map((item) => ({ uri: item.url })) || []}
+              imageIndex={index}
+              visible={visible}
+              presentationStyle="overFullScreen"
+              onRequestClose={() => setIsVisible(false)}
+              keyExtractor={(item, idx) => `ImageView_Item__${idx}`}
+              FooterComponent={({ imageIndex }) => (
+                <View
+                  className="flex-row justify-center items-center "
+                  style={{
+                    paddingBottom:
+                      Platform.OS === "ios"
+                        ? safeAreaInsets.bottom - 15
+                        : safeAreaInsets.bottom || 10,
+                  }}
+                >
+                  <View
+                    className="shadow-sm rounded-lg"
+                    style={{
+                      backgroundColor: theme.secondBackgroundColor,
+                    }}
+                  >
+                    <Text
+                      className="text-base font-medium rounded-lg px-3 py-1"
+                      style={{
+                        color: theme.primaryTextColor,
+                      }}
+                    >
+                      {imageIndex + 1}/{assets?.images.length}
+                    </Text>
+                  </View>
+                </View>
+              )}
+            />
           </View>
         )}
       </View>
