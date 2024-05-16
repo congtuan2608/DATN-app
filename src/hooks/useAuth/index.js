@@ -1,11 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
+import { Platform } from "react-native";
 import { useRecoilState } from "recoil";
 import { RestAPI } from "~apis";
 import { AsyncStorageKey } from "~configs";
 import { SYSTEM_STATE } from "~states";
-
+let Google;
+if (Platform.OS !== "ios") {
+  Google = require("@react-native-google-signin/google-signin");
+}
 export const useAuth = () => {
   const [authData, setAuthData] = useRecoilState(SYSTEM_STATE.AuthData);
   const [appConfigs, setAppConfigs] = useRecoilState(SYSTEM_STATE.AppConfigs);
@@ -35,7 +40,7 @@ export const useAuth = () => {
     queryClient.removeQueries({ queryKey: ["GetUserProfile"] });
     setAuthData(undefined);
     setAppConfigs((prev) => ({ ...prev, firstInit: true }));
-    // GoogleSignin.signOut()
+    Google.GoogleSignin.signOut();
   }, []);
 
   const isInitializingApp = React.useMemo(

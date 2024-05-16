@@ -1,6 +1,8 @@
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useNavigation, useRoute } from "@react-navigation/native";
 // import * as AuthSession from "expo-auth-session";
+// import * as GoogleAuth from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
 import React from "react";
 import {
   Alert,
@@ -18,16 +20,26 @@ import { KCButton, KCIcon, KCSVGAsset } from "~components";
 import { useAuth, useScreenUtils, useTheme } from "~hooks";
 import { useForm } from "~hooks/useForm";
 import { getResponesive } from "~utils";
+let Google;
+if (Platform.OS !== "ios") {
+  Google = require("@react-native-google-signin/google-signin");
+  Google.GoogleSignin.configure({
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB,
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_IOS,
+  });
+}
 const initialValues = { email: "", password: "" };
 const validateSchema = {
   email: { required: true, label: "Please enter your email", type: "email" },
   password: { required: true, min: 6, label: "Please enter your password" },
 };
-// GoogleSignin.configure({
-//   webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB,
-//   iosClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_IOS,
+
+WebBrowser.maybeCompleteAuthSession();
+// const redirectUri = AuthSession.makeRedirectUri({
+//   // useProxy: true,
+//   projectNameForProxy: "@lctuan/go-green",
+//   // native: "com.lctuan.go-green://",
 // });
-// WebBrowser.maybeCompleteAuthSession();
 export const LoginScreens = () => {
   const auth = useAuth();
   const { theme } = useTheme();
@@ -37,11 +49,15 @@ export const LoginScreens = () => {
   const [isHidePassword, setIsHidePassword] = React.useState(true);
   const form = useForm({ initialValues, validateSchema });
   const login = RestAPI.Login();
-  // const [request, response, promptAsync] = Google.useAuthRequest({
+  // const [request, response, promptAsync] = GoogleAuth.useAuthRequest({
+  //   scopes: ["profile", "email"],
   //   iosClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_IOS,
   //   androidClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_ANDROID,
   //   webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB,
+  //   clientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB,
   //   // expoClientId: process.env.EXPO_PUBLIC_EXPO,
+
+  //   redirectUri: "https://auth.expo.io/@lctuan/go-green",
   // });
   React.useEffect(() => {
     if (navigateParams.params?.email) {
@@ -49,7 +65,6 @@ export const LoginScreens = () => {
       form.handleChange("password", "");
     }
   }, [navigateParams.params]);
-
   const onLogin = async () => {
     const formValues = form.handleSubmit();
 
@@ -68,10 +83,13 @@ export const LoginScreens = () => {
 
   const handleLoginWithGoogle = async () => {
     try {
-      Alert.alert("Notification", "This feature is coming soon!");
-      // await GoogleSignin.hasPlayServices();
-      // const userInfo = await GoogleSignin.signIn();
-      // console.log({ userInfo });
+      if (Platform.OS === "ios")
+        return Alert.alert("Notification", "This feature is coming soon!");
+
+      // await promptAsync();
+      await Google.GoogleSignin.hasPlayServices();
+      const userInfo = await Google.GoogleSignin.signIn();
+      console.log({ userInfo });
       // const res = await RestAPI.GoogleLogin.mutateAsync({
       //   idToken: userInfo.idToken,
       // });
@@ -278,6 +296,7 @@ export const LoginScreens = () => {
                   Continue with google
                 </Text>
               </TouchableOpacity>
+
               <TouchableOpacity
                 className="flex-row justify-center items-center py-2 rounded-lg shadow-sm "
                 style={{

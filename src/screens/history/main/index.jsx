@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  ActivityIndicator,
   Image,
   Platform,
   RefreshControl,
@@ -23,11 +24,19 @@ export const HistoryScreens = () => {
     page: 0,
     limit: 10,
   });
+  const [historyData, setHistoryData] = React.useState([]);
 
   React.useEffect(() => {
-    const { activity, ...other } = configsActivity;
-    const params = configsActivity.activity === "all" ? other : configsActivity;
-    History.mutate(params);
+    (async () => {
+      const { activity, ...other } = configsActivity;
+      const params =
+        configsActivity.activity === "all" ? other : configsActivity;
+      const res = await History.mutateAsync(params);
+      if (res) {
+        if (configsActivity.page === 0) setHistoryData(res ?? []);
+        else setHistoryData((prev) => [...prev, ...res]);
+      }
+    })();
   }, [configsActivity]);
 
   const handlePressItem = (item) => {
@@ -36,6 +45,11 @@ export const HistoryScreens = () => {
   };
   const handleRefresh = () => {
     setConfigsActivity((p) => ({ ...p, page: 0 }));
+  };
+  const handleLoadMore = () => {
+    if ((History.data ?? []).length) {
+      setConfigsActivity((prev) => ({ ...prev, page: prev.page + 1 }));
+    }
   };
   return (
     <StackScreen
@@ -85,31 +99,63 @@ export const HistoryScreens = () => {
           isLoading={ActivityType.isFetching}
           renderText={(item) => item.activityName}
         />
-
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: "start",
-            alignItems: "center",
-            gap: 5,
-            paddingBottom: 10,
-          }}
-          refreshControl={
-            <RefreshControl refreshing={false} onRefresh={handleRefresh} />
+        <KCContainer
+          style={{ backgroundColor: theme.primaryBackgroundColor }}
+          isLoading={History.isPending && configsActivity.page === 0}
+          isEmpty={
+            (History.data ?? []).length === 0 &&
+            historyData.length === 0 &&
+            configsActivity.page === 0
           }
         >
-          <KCContainer
-            style={{ backgroundColor: theme.primaryBackgroundColor, gap: 10 }}
-            isLoading={History.isPending}
-            isEmpty={(History.data ?? []).length === 0}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: "start",
+              alignItems: "center",
+              gap: 10,
+              paddingBottom: 10,
+            }}
+            refreshControl={
+              <RefreshControl refreshing={false} onRefresh={handleRefresh} />
+            }
+            onScrollEndDrag={handleLoadMore}
           >
-            {(History.data ?? []).map((item, idx) => (
+            {/* <FlatList
+              showsVerticalScrollIndicator={false}
+              data={historyData}
+              renderItem={({ item }) => <HistoryItem {...item} />}
+              keyExtractor={(item, idx) => `VerticalList_Item__${idx}`}
+              onEndReached={handleLoadMore}
+              ListFooterComponent={
+                <View>
+                  {History.isPending.isLoading && (
+                    <View className="w-full flex-col justify-center items-center pt-5">
+                      <Text>Load more</Text>
+                      <ActivityIndicator
+                        size="small"
+                        color={theme.primaryButtonColor}
+                      />
+                    </View>
+                  )}
+                </View>
+              }
+            /> */}
+            {(historyData ?? []).map((item, idx) => (
               <HistoryItem key={idx} {...item} />
             ))}
-          </KCContainer>
-        </ScrollView>
+            {History.isPending && (
+              <View className="w-full flex-col justify-center items-center py-3">
+                <ActivityIndicator
+                  size="small"
+                  color={theme.primaryButtonBackgroundColor}
+                />
+              </View>
+            )}
+          </ScrollView>
+        </KCContainer>
       </View>
     </StackScreen>
   );

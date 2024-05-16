@@ -1,4 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
+import React from "react";
 import {
   Image,
   Platform,
@@ -22,7 +23,24 @@ export function CampaignsScreen() {
   const { userProfile } = useAuth();
   const navigate = useNavigation();
   const Campaign = RestAPI.GetCampaigns();
+  const [joinedCampaigns, setJoinedCampaigns] = React.useState([]);
 
+  React.useEffect(() => {
+    if (Campaign.data) {
+      const newJoined = Campaign.data
+        .filter((item) => {
+          return item.participants.find(
+            (participant) => participant._id === userProfile?._id
+          );
+        })
+        .map((item) => item?._id);
+      setJoinedCampaigns(newJoined);
+    }
+  }, []);
+  const handleRefresh = () => {
+    Campaign.refetch();
+    setJoinedCampaigns([]);
+  };
   return (
     <StackScreen
       headerTitle="Campaigns"
@@ -81,10 +99,7 @@ export function CampaignsScreen() {
             paddingBottom: 10,
           }}
           refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => Campaign.refetch()}
-            />
+            <RefreshControl refreshing={false} onRefresh={handleRefresh} />
           }
         >
           <KCContainer
@@ -93,7 +108,12 @@ export function CampaignsScreen() {
             style={{ gap: 15 }}
           >
             {(Campaign.data ?? []).map((item, idx) => (
-              <CampaignItem key={idx} data={item} />
+              <CampaignItem
+                key={idx}
+                data={item}
+                joinedCampaigns={joinedCampaigns}
+                setJoinedCampaigns={setJoinedCampaigns}
+              />
             ))}
             {(Campaign.data ?? []).length === 0 && (
               <View className="flex-1 justify-center items-center">

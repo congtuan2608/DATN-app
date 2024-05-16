@@ -1,55 +1,84 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useRoute } from "@react-navigation/native";
-import dayjs from "dayjs";
 import React from "react";
 import {
-  FlatList,
   Image,
   Keyboard,
   Platform,
-  ScrollView,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from "react-native";
-import ImageView from "react-native-image-viewing";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Circle, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { RestAPI } from "~apis";
 import { KCContainer } from "~components";
-import { useLocation, useScreenUtils, useTheme } from "~hooks";
+import { useDebounce, useLocation, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
-
+import { TabListLocations } from "./tabs/TabListLocations";
+import { returnPointIcon } from "./utils";
 export function MapScreen() {
   const { theme } = useTheme();
   const { width } = useWindowDimensions();
   const navigateParams = useRoute();
-  const { location } = useLocation();
-  const ReportLocation = RestAPI.GetReportLocation();
+  const { location, geocodeAsync } = useLocation();
   const bottomSheetRef = React.useRef(null);
   const [selectMarker, setSelectMarker] = React.useState(null);
+  const [search, setSearch] = React.useState("");
+  const [searchCoord, setsearchCoord] = React.useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [newPoint, setNewPoint] = React.useState(null);
   const mapRef = React.useRef(null);
-  const [visible, setIsVisible] = React.useState(false);
-  const [index, setIndex] = React.useState(0);
-  const initialSnapPoints = React.useMemo(() => ["15%", "50%", "90%"], []);
+  const initialSnapPoints = React.useMemo(() => ["15%", "50%", "95%"], []);
   const { safeAreaInsets } = useScreenUtils();
+  const ReportLocation = RestAPI.GetReportLocation();
+
+  const handleSearch = useDebounce(async (text) => {
+    const res = await geocodeAsync(text);
+    setSelectMarker(null);
+    if (res) {
+      setsearchCoord(res);
+    } else {
+      setsearchCoord(null);
+    }
+    if (text === "") {
+      setsearchCoord({
+        latitude: 0,
+        longitude: 0,
+      });
+    }
+  }, 250);
 
   const onFocusInput = () => {
     bottomSheetRef?.current?.snapToIndex(initialSnapPoints.length - 1);
   };
 
-  const onMapPress = () => {
+  const onMapPress = (point) => {
     if (bottomSheetRef?.current?.index === initialSnapPoints.length - 1)
       bottomSheetRef?.current?.snapToIndex(0);
     Keyboard.dismiss();
-  };
-  const onMapMarker = (item) => {
-    bottomSheetRef?.current?.snapToIndex(1);
-    console.log(item);
-    setSelectMarker(item);
-  };
+    if (point.nativeEvent.coordinate) {
+      if (bottomSheetRef.current.index < 0) bottomSheetRef?.current?.collapse();
 
+      setNewPoint(point.nativeEvent.coordinate);
+      setsearchCoord({ latitude: 0, longitude: 0 });
+      if (
+        point.nativeEvent.coordinate?.longitude !==
+          selectMarker?.location?.coordinates[0] &&
+        point.nativeEvent.coordinate?.latitude !==
+          selectMarker?.location?.coordinates[1]
+      ) {
+        setSelectMarker(null);
+      }
+    }
+  };
+  const onMapMarker = useDebounce((item) => {
+    setSelectMarker(item);
+  }, 0);
+
+  // console.log(selectMarker);
   const handleSheetChanges = React.useCallback((index) => {
     console.log("handleSheetChanges", index);
     bottomSheetRef.current = { ...bottomSheetRef.current, index: index };
@@ -66,10 +95,6 @@ export function MapScreen() {
     }
   }, [location, navigateParams.params?.location]);
 
-  const openImageView = (idx) => {
-    setIsVisible(true);
-    setIndex(idx);
-  };
   const renderHeaderRight = () => {
     return (
       <View
@@ -85,9 +110,13 @@ export function MapScreen() {
       </View>
     );
   };
+  const newPointMarker =
+    newPoint &&
+    newPoint?.latitude !== selectMarker?.location?.coordinates[1] &&
+    newPoint?.longitude !== selectMarker?.location?.coordinates[0];
   return (
     <StackScreen headerTitle="Map" headerRight={renderHeaderRight()}>
-      <View className="flex-1 relative">
+      <KCContainer className="flex-1 relative" isLoading={!location}>
         {location?.latitude && location?.longitude ? (
           <MapView
             ref={mapRef}
@@ -102,23 +131,47 @@ export function MapScreen() {
             followsUserLocation={Platform.OS === "android"}
             mapPadding={{ bottom: 100 }}
             userLocationCalloutEnabled={true}
+            onRegionChangeComplete={(region) => {
+              // console.log({ region });
+            }}
             initialRegion={{
               latitudeDelta: 0.1,
               longitudeDelta: 0.1,
               ...currentMap,
             }}
+            radius={1000}
           >
+            {currentMap && currentMap?.longitude && (
+              <>
+                {newPointMarker && (
+                  <Marker
+                    coordinate={newPoint}
+                    image={require("~assets/images/new-location-icon.png")}
+                  />
+                )}
+                <Circle
+                  center={newPoint || currentMap}
+                  radius={1000}
+                  fillColor="#5A66CD1A"
+                  strokeWidth={0.5}
+                />
+              </>
+            )}
             {(ReportLocation.data ?? []).map((item, idx) => {
               return (
-                <Marker
-                  key={idx}
-                  onPress={(e) => onMapMarker(item)}
-                  coordinate={{
-                    latitude: item?.location?.latitude,
-                    longitude: item?.location?.longitude,
-                  }}
-                  title={item.address}
-                />
+                <View key={idx}>
+                  <Marker
+                    onPress={(e) => onMapMarker(item)}
+                    coordinate={{
+                      longitude: item?.location?.coordinates[0],
+                      latitude: item?.location?.coordinates[1],
+                    }}
+                    title={item.address}
+                    image={returnPointIcon(
+                      item.contaminatedType[0]?.contaminatedType ?? ""
+                    )}
+                  />
+                </View>
               );
             })}
           </MapView>
@@ -131,7 +184,10 @@ export function MapScreen() {
           onChange={handleSheetChanges}
           snapPoints={initialSnapPoints}
           backgroundStyle={{ backgroundColor: theme.primaryBackgroundColor }}
-          handleIndicatorStyle={{ backgroundColor: theme.primaryTextColor }}
+          handleIndicatorStyle={{
+            backgroundColor: theme.primaryTextColor,
+          }}
+          enablePanDownToClose
         >
           <BottomSheetView
             style={{
@@ -150,185 +206,37 @@ export function MapScreen() {
                   color: theme.primaryTextColor,
                 }}
                 placeholder="Search on the map"
-                // value=""
-                // onChangeText={(value) => {}}
+                value={search}
+                onChangeText={async (text) => {
+                  setSearch(text);
+                  handleSearch(text);
+                }}
                 onFocus={onFocusInput}
                 placeholderTextColor={theme.thirdTextColor}
               />
-              <View className="absolute right-0 items-center h-full justify-center opacity-80 px-5">
+              <TouchableOpacity
+                className="absolute right-0 items-center h-full justify-center opacity-80 px-5"
+                onPress={() => handleSearch(search)}
+              >
                 <Image
                   source={require("~assets/images/search-map-icon.png")}
                   className="h-9 w-9"
                 />
-              </View>
+              </TouchableOpacity>
             </View>
-            <KCContainer className="p-2" isEmpty={!selectMarker}>
-              <ScrollView
-                contentContainerStyle={{ flexGrow: 1, gap: 15 }}
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
-              >
-                <Text
-                  className="font-medium text-lg"
-                  style={{ color: theme.primaryTextColor }}
-                >
-                  {selectMarker?.address || "<unknown>"}
-                </Text>
-                <Text style={{ color: theme.primaryTextColor }}>
-                  <Text
-                    className="font-semibold"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Coordinates:{" "}
-                  </Text>
-                  {`${selectMarker?.location.latitude}, ${selectMarker?.location.longitude}` ||
-                    "<unknown>"}
-                </Text>
-
-                <Text style={{ color: theme.primaryTextColor }}>
-                  <Text
-                    className="font-semibold"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Contaminated type:{" "}
-                  </Text>
-                  {selectMarker?.contaminatedType
-                    .map((item) => item.contaminatedName)
-                    .join(", ")}
-                </Text>
-                <Text style={{ color: theme.primaryTextColor }}>
-                  <Text
-                    className="font-semibold"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Severity:{" "}
-                  </Text>
-                  {selectMarker?.severity}
-                </Text>
-                <Text style={{ color: theme.primaryTextColor }}>
-                  <Text
-                    className="font-semibold"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Status:{" "}
-                  </Text>
-                  {selectMarker?.status}
-                </Text>
-                <Text style={{ color: theme.primaryTextColor }}>
-                  <Text
-                    className="font-semibold"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Population density:{" "}
-                  </Text>
-                  {selectMarker?.populationDensity}
-                </Text>
-                <Text style={{ color: theme.primaryTextColor }}>
-                  <Text
-                    className="font-semibold"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Description:{" "}
-                  </Text>
-                  {selectMarker?.description}
-                </Text>
-                <Text style={{ color: theme.primaryTextColor }}>
-                  <Text
-                    className="font-semibold"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Report by:{" "}
-                  </Text>
-                  {selectMarker?.isAnonymous ? (
-                    <Text
-                      className="font-extralight"
-                      style={{ color: theme.primaryTextColor }}
-                    >
-                      [anonymous]
-                    </Text>
-                  ) : (
-                    `${selectMarker?.reportedBy?.fullName}`
-                  )}
-                </Text>
-                <Text style={{ color: theme.primaryTextColor }}>
-                  <Text
-                    className="font-semibold"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Time report:
-                  </Text>
-                  {dayjs(selectMarker?.createdAt).format(
-                    " A hh:mm:ss DD/MM/YYYY"
-                  )}
-                </Text>
-
-                <View className="w-full py-2">
-                  {selectMarker?.assets && (
-                    <FlatList
-                      initialNumToRender={3}
-                      data={selectMarker?.assets ?? []}
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      renderItem={({ item, index }) => (
-                        <TouchableOpacity onPress={() => openImageView(index)}>
-                          <Image
-                            source={{ uri: item.url }}
-                            className="w-36 h-36 rounded-lg"
-                            resizeMode="cover"
-                          />
-                        </TouchableOpacity>
-                      )}
-                      keyExtractor={(item, idx) =>
-                        `HorizontalList_Item__${idx}`
-                      }
-                      ItemSeparatorComponent={() => <View className="w-4" />}
-                    />
-                  )}
-                </View>
-                <ImageView
-                  initialNumToRender={3}
-                  images={
-                    selectMarker?.assets.map((item) => ({ uri: item.url })) ||
-                    []
-                  }
-                  imageIndex={index}
-                  visible={visible}
-                  presentationStyle="overFullScreen"
-                  onRequestClose={() => setIsVisible(false)}
-                  keyExtractor={(item, idx) => `ImageView_Item__${idx}`}
-                  FooterComponent={({ imageIndex }) => (
-                    <View
-                      className="flex-row justify-center items-center "
-                      style={{
-                        paddingBottom:
-                          Platform.OS === "ios"
-                            ? safeAreaInsets.bottom - 15
-                            : safeAreaInsets.bottom || 10,
-                      }}
-                    >
-                      <View
-                        className="shadow-sm rounded-lg"
-                        style={{
-                          backgroundColor: theme.secondBackgroundColor,
-                        }}
-                      >
-                        <Text
-                          className="text-base font-medium rounded-lg px-3 py-1"
-                          style={{
-                            color: theme.primaryTextColor,
-                          }}
-                        >
-                          {imageIndex + 1}/{selectMarker?.assets.length}
-                        </Text>
-                      </View>
-                    </View>
-                  )}
-                />
-              </ScrollView>
+            <KCContainer className="p-2">
+              <TabListLocations
+                newPoint={newPoint}
+                search={search}
+                searchCoord={searchCoord}
+                selectMarker={selectMarker}
+                setSelectMarker={setSelectMarker}
+                setNewPoint={setNewPoint}
+              />
             </KCContainer>
           </BottomSheetView>
         </BottomSheet>
-      </View>
+      </KCContainer>
     </StackScreen>
   );
 }

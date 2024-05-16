@@ -1,11 +1,9 @@
-import { View, Text, ActivityIndicator, Image } from "react-native";
-import React from "react";
-import { ScrollView } from "react-native-gesture-handler";
-import { useTheme } from "~hooks";
+import { ActivityIndicator, Image, Text, View } from "react-native";
 import { NO_DATA } from "~constants";
+import { useTheme } from "~hooks";
 
 export function KCContainer(props) {
-  const { isLoading, isEmpty, hideImage, ...viewProps } = props;
+  const { isLoading, isEmpty, hideImage, textEmpty, ...viewProps } = props;
   const { theme } = useTheme();
   if (isLoading) {
     return (
@@ -18,7 +16,9 @@ export function KCContainer(props) {
     return (
       <View className="flex-1 justify-center items-center mb-2" {...viewProps}>
         {!hideImage && <Image source={NO_DATA} className="w-20 h-20" />}
-        <Text style={{ color: theme.primaryTextColor }}>No data</Text>
+        <Text style={{ color: theme.primaryTextColor }}>
+          {textEmpty ?? "No data"}
+        </Text>
       </View>
     );
   } else {

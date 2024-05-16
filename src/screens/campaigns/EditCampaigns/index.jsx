@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Checkbox } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 import { RestAPI } from "~apis";
 import { KCButton, KCContainer, KCIcon, KCModal } from "~components";
@@ -53,6 +54,7 @@ const initialValues = {
   endDate: "",
   limit: 0,
   ref: undefined,
+  allowDonate: false,
 };
 export function EditCampaignsScreen() {
   const { safeAreaInsets, dimensions } = useScreenUtils();
@@ -67,6 +69,7 @@ export function EditCampaignsScreen() {
     endDate: false,
   });
 
+  console.log(navigateParams.params);
   const handleSubmit = async () => {
     const submit = form.handleSubmit();
 
@@ -317,6 +320,7 @@ export function EditCampaignsScreen() {
                   )}
                 </View>
               </View>
+
               <View>
                 <View className="relative">
                   <TextInput
@@ -356,6 +360,20 @@ export function EditCampaignsScreen() {
                     </Text>
                   </View>
                 )}
+              </View>
+              <View>
+                <View className="flex-row justify-between items-center px-2">
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    Allow donate
+                  </Text>
+                  <Checkbox
+                    value={form.values.allowDonate}
+                    onValueChange={(newValue) =>
+                      form.onCheckBox("allowDonate", newValue)
+                    }
+                    className="mr-3"
+                  />
+                </View>
               </View>
               {form.values?.ref ? (
                 <View
@@ -436,7 +454,7 @@ export function EditCampaignsScreen() {
           <KCButton
             variant="Filled"
             onPress={handleSubmit}
-            // disabled={signUp.isPending}
+            disabled={CreateCampaign.isPending || UpdateCampaign.isPending}
           >
             {navigateParams.params?.id ? "Update" : "Create"}
           </KCButton>

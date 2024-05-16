@@ -6,7 +6,7 @@ import { RestAPI } from "~apis";
 import { KCButton } from "~components";
 import { useAuth, useTheme } from "~hooks";
 
-export function CampaignItem({ data }) {
+export function CampaignItem({ data, joinedCampaigns, setJoinedCampaigns }) {
   const { theme } = useTheme();
   const { userProfile } = useAuth();
   const navigate = useNavigation();
@@ -16,12 +16,23 @@ export function CampaignItem({ data }) {
   const Join = RestAPI.JoinCampaign();
   const Leave = RestAPI.LeaveCampaign();
 
+  React.useEffect(() => {
+    setJoin(joinedCampaigns.includes(data?._id));
+  }, [joinedCampaigns]);
+
+  React.useEffect(() => {
+    if (data?.participants?.find((item) => item?._id === userProfile?._id))
+      setJoinedCampaigns((prev) => [...prev, data?._id]);
+  }, []);
+
   const handleAction = () => {
     if (data?.organizer?._id === userProfile?._id) return;
     if (join) {
       Leave.mutate({ id: data?._id });
+      setJoinedCampaigns((prev) => prev.filter((item) => item !== data?._id));
     } else {
       Join.mutate({ id: data?._id });
+      setJoinedCampaigns((prev) => [...prev, data?._id]);
     }
     setJoin(!join);
     return;
@@ -33,19 +44,28 @@ export function CampaignItem({ data }) {
       Dayjs().isAfter(Dayjs(data.endDate)) ||
       data?.organizer?._id === userProfile?._id
   );
-  const renderTextJoin = () => {
-    if (data?.organizer?._id === userProfile?._id)
-      return "You are the organizer";
+  const renderStyle = () => {
     if (
-      join ||
-      data?.participants?.find((item) => item._id === userProfile?._id)
-    )
-      return "Leave";
+      data?.organizer?._id === userProfile?._id ||
+      Dayjs().isBefore(Dayjs(data.startDate)) ||
+      Dayjs().isAfter(Dayjs(data.endDate))
+    ) {
+      return {};
+    }
+    if (join) {
+      return {
+        backgroundColor: "#F87171",
+        borderColor: "#F87171",
+      };
+    }
+  };
+  const renderTextJoin = () => {
+    if (data?.organizer?._id === userProfile?._id) return "Organizer";
+    if (join || joinedCampaigns.includes(data?._id)) return "Leave";
 
     return "Join";
   };
-  const participants = data?.participants?.map((data) => data._id);
-  console.log(participants.includes(data?.organizer._id));
+
   return (
     <View
       className="justify-center rounded-lg px-2 py-3 shadow-sm"
@@ -90,10 +110,7 @@ export function CampaignItem({ data }) {
           styleContainer={{
             flex: 1,
             paddingVertical: 8,
-            ...((join || participants.includes(userProfile?._id)) && {
-              backgroundColor: "#F87171",
-              borderColor: "#F87171",
-            }),
+            ...renderStyle(),
           }}
           isLoading={Join.isPending || Leave.isPending}
           disabled={disabledJoin}
@@ -107,6 +124,7 @@ export function CampaignItem({ data }) {
           onPress={() =>
             navigate.navigate("CampaignDetailScreen", {
               id: data._id,
+              setJoinedCampaigns,
             })
           }
         >

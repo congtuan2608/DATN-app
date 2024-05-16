@@ -34,18 +34,20 @@ export function LocationItem(props) {
       style={{ backgroundColor: theme.secondBackgroundColor, gap: 20 }}
     >
       <View
-        className="flex-row justify-between items-center"
-        style={{ gap: 10 }}
+        className="flex-row justify-between items-start flex-wrap"
+        style={{ gap: 20 }}
       >
         <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           Address
         </Text>
-        <Text
-          className="text-sm font-medium"
-          style={{ color: theme.primaryTextColor }}
-        >
-          {props?.address || "Unknown"}
-        </Text>
+        <View className="flex-1 items-end">
+          <Text
+            className="text-sm font-medium"
+            style={{ color: theme.primaryTextColor }}
+          >
+            {props?.address || "Unknown"}
+          </Text>
+        </View>
       </View>
       <View
         className="flex-row justify-between items-center"
@@ -73,9 +75,7 @@ export function LocationItem(props) {
           className="text-sm font-medium"
           style={{ color: theme.primaryTextColor }}
         >
-          {(props.location &&
-            `${props.location.latitude}, ${props.location.longitude}`) ||
-            "Unknown"}
+          {props.location.coordinates.join(", ")}
         </Text>
       </View>
       <View
@@ -119,12 +119,14 @@ export function LocationItem(props) {
         <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           Description
         </Text>
-        <Text
-          className="text-sm font-medium"
-          style={{ color: theme.primaryTextColor }}
-        >
-          {props?.description || "Unknown"}
-        </Text>
+        <View className="flex-1 items-end">
+          <Text
+            className="text-sm font-medium"
+            style={{ color: theme.primaryTextColor }}
+          >
+            {props?.description || "Unknown"}
+          </Text>
+        </View>
       </View>
       {props?.assets.length !== 0 && (
         <View

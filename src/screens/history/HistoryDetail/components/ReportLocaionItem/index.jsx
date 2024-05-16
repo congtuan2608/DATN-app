@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import ImageView from "react-native-image-viewing";
+import { KCContainer } from "~components";
 import { useScreenUtils, useTheme } from "~hooks";
 export function ReportLocaionItem(props) {
   const { theme } = useTheme();
@@ -18,6 +19,8 @@ export function ReportLocaionItem(props) {
     setIsVisible(true);
     setIndex(idx);
   };
+  if (!props?._id)
+    return <KCContainer isEmpty={true} textEmpty="This location not found" />;
   return (
     <View
       className="w-full rounded-lg p-3 shadow-sm"
@@ -30,26 +33,22 @@ export function ReportLocaionItem(props) {
         <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           Report ID
         </Text>
-        <Text
-          className="text-sm font-medium"
-          style={{ color: theme.primaryTextColor }}
-        >
+        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           {props?._id || "Unknown"}
         </Text>
       </View>
       <View
-        className="flex-row justify-between items-center"
-        style={{ gap: 10 }}
+        className="flex-row justify-between items-start flex-wrap"
+        style={{ gap: 20 }}
       >
         <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           Address
         </Text>
-        <Text
-          className="text-sm font-medium"
-          style={{ color: theme.primaryTextColor }}
-        >
-          {props?.address || "Unknown"}
-        </Text>
+        <View className="flex-1 items-end">
+          <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+            {props?.address || "Unknown"}
+          </Text>
+        </View>
       </View>
       <View
         className="flex-row justify-between items-center"
@@ -58,12 +57,10 @@ export function ReportLocaionItem(props) {
         <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           Contaminated type
         </Text>
-        <Text
-          className="text-sm font-medium"
-          style={{ color: theme.primaryTextColor }}
-        >
-          {props?.contaminatedType.map((item) => item.contaminatedName) ||
-            "Unknown"}
+        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+          {(props?.contaminatedType ?? []).map(
+            (item) => item.contaminatedName
+          ) || "Unknown"}
         </Text>
       </View>
       <View
@@ -71,12 +68,9 @@ export function ReportLocaionItem(props) {
         style={{ gap: 10 }}
       >
         <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
-          Location
+          Coordinates
         </Text>
-        <Text
-          className="text-sm font-medium"
-          style={{ color: theme.primaryTextColor }}
-        >
+        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           {(props.location &&
             `${props.location.latitude}, ${props.location.longitude}`) ||
             "Unknown"}
@@ -90,7 +84,7 @@ export function ReportLocaionItem(props) {
           Report by
         </Text>
         <Text
-          className="text-sm font-medium"
+          className="text-sm"
           style={{
             color: props?.isAnonymous
               ? theme.thirdTextColor
@@ -109,10 +103,7 @@ export function ReportLocaionItem(props) {
         <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           Severity
         </Text>
-        <Text
-          className="text-sm font-medium"
-          style={{ color: theme.primaryTextColor }}
-        >
+        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           {props?.severity || "Unknown"}
         </Text>
       </View>
@@ -123,15 +114,12 @@ export function ReportLocaionItem(props) {
         <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           Description
         </Text>
-        <Text
-          className="text-sm font-medium"
-          style={{ color: theme.primaryTextColor }}
-        >
+        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
           {props?.description || "Unknown"}
         </Text>
       </View>
 
-      {props?.assets.length !== 0 && (
+      {(props?.assets ?? []).length !== 0 && (
         <View
           className="flex-row justify-between items-center"
           style={{ gap: 10 }}
@@ -157,7 +145,7 @@ export function ReportLocaionItem(props) {
 
       <ImageView
         initialNumToRender={3}
-        images={props?.assets.map((item) => ({ uri: item.url })) || []}
+        images={(props?.assets ?? []).map((item) => ({ uri: item.url })) || []}
         imageIndex={index}
         visible={visible}
         presentationStyle="overFullScreen"
@@ -180,12 +168,12 @@ export function ReportLocaionItem(props) {
               }}
             >
               <Text
-                className="text-base font-medium rounded-lg px-3 py-1"
+                className="text-base rounded-lg px-3 py-1"
                 style={{
                   color: theme.primaryTextColor,
                 }}
               >
-                {imageIndex + 1}/{props?.assets.length}
+                {imageIndex + 1}/{(props?.assets ?? []).length}
               </Text>
             </View>
           </View>

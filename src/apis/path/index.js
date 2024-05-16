@@ -17,6 +17,7 @@ export const APIPaths = {
   ContaminatedType: `${ROOT_BE_URL}/v1/polluted/contaminated-type`,
   //contaminated location
   ContaminatedLocation: `${ROOT_BE_URL}/v1/polluted/contaminated-location`,
+  ContaminatedLocationNear: `${ROOT_BE_URL}/v1/polluted/contaminated-location-nearby`,
 
   // detect images
   TensorflowDetectImages: `${ROOT_BE_URL}/v1/detect/tensorflow`,
