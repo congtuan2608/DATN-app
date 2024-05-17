@@ -50,7 +50,7 @@ export function CampaignItem({ data, joinedCampaigns, setJoinedCampaigns }) {
       Dayjs().isBefore(Dayjs(data.startDate)) ||
       Dayjs().isAfter(Dayjs(data.endDate))
     ) {
-      return {};
+      return { backgroundColor: theme.primaryBackgroundColor };
     }
     if (join) {
       return {

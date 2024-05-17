@@ -15,11 +15,12 @@ import { RestAPI } from "~apis";
 import { KCContainer } from "~components";
 import { useDebounce, useLocation, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
+import { PointInfo } from "./PointInfo";
 import { TabListLocations } from "./tabs/TabListLocations";
 import { returnPointIcon } from "./utils";
 export function MapScreen() {
   const { theme } = useTheme();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const navigateParams = useRoute();
   const { location, geocodeAsync } = useLocation();
   const bottomSheetRef = React.useRef(null);
@@ -34,20 +35,23 @@ export function MapScreen() {
   const initialSnapPoints = React.useMemo(() => ["15%", "50%", "95%"], []);
   const { safeAreaInsets } = useScreenUtils();
   const ReportLocation = RestAPI.GetReportLocation();
+  const PollutionType = RestAPI.GetPollutedType();
+  const [configs, setConfigs] = React.useState({
+    bottomSheetIndex: 0,
+  });
 
   const handleSearch = useDebounce(async (text) => {
+    if (text === "") {
+      setNewPoint(null);
+      setsearchCoord(location);
+      return;
+    }
     const res = await geocodeAsync(text);
     setSelectMarker(null);
     if (res) {
       setsearchCoord(res);
     } else {
       setsearchCoord(null);
-    }
-    if (text === "") {
-      setsearchCoord({
-        latitude: 0,
-        longitude: 0,
-      });
     }
   }, 250);
 
@@ -60,8 +64,14 @@ export function MapScreen() {
       bottomSheetRef?.current?.snapToIndex(0);
     Keyboard.dismiss();
     if (point.nativeEvent.coordinate) {
-      if (bottomSheetRef.current.index < 0) bottomSheetRef?.current?.collapse();
+      if (configs.bottomSheetIndex < 0) bottomSheetRef?.current?.collapse();
 
+      if (
+        point.nativeEvent.coordinate?.longitude === newPoint?.longitude &&
+        point.nativeEvent.coordinate?.latitude === newPoint?.latitude
+      ) {
+        return;
+      }
       setNewPoint(point.nativeEvent.coordinate);
       setsearchCoord({ latitude: 0, longitude: 0 });
       if (
@@ -80,9 +90,9 @@ export function MapScreen() {
 
   // console.log(selectMarker);
   const handleSheetChanges = React.useCallback((index) => {
-    console.log("handleSheetChanges", index);
     bottomSheetRef.current = { ...bottomSheetRef.current, index: index };
-    if (index === 0) {
+    setConfigs((prev) => ({ ...prev, bottomSheetIndex: index }));
+    if (index <= 0) {
       Keyboard.dismiss();
     }
   }, []);
@@ -95,41 +105,45 @@ export function MapScreen() {
     }
   }, [location, navigateParams.params?.location]);
 
-  const renderHeaderRight = () => {
-    return (
-      <View
-        className="flex-row justify-center items-center"
-        style={{ gap: 10 }}
-      >
-        <TouchableOpacity className="px-2">
-          <Image
-            source={require("~assets/images/info-icon.png")}
-            className="w-8 h-8"
-          />
-        </TouchableOpacity>
-      </View>
-    );
+  const backCurrentLocation = () => {
+    if (location && mapRef.current) {
+      setNewPoint(null);
+      mapRef.current.animateToRegion({
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+    }
   };
+  const returnPosition = () => {
+    if (configs.bottomSheetIndex === -1) return 30;
+    if (configs.bottomSheetIndex === 0) return height / 6.7;
+    return height / 2.15;
+  };
+
   const newPointMarker =
     newPoint &&
     newPoint?.latitude !== selectMarker?.location?.coordinates[1] &&
     newPoint?.longitude !== selectMarker?.location?.coordinates[0];
   return (
-    <StackScreen headerTitle="Map" headerRight={renderHeaderRight()}>
+    <StackScreen
+      headerTitle="Map"
+      headerRight={<PointInfo pollutionType={PollutionType} />}
+    >
       <KCContainer className="flex-1 relative" isLoading={!location}>
         {location?.latitude && location?.longitude ? (
           <MapView
             ref={mapRef}
-            className="flex-1"
+            className="flex-1 relative"
             toolbarEnabled
             mapType="standard"
             loadingEnabled
+            showsCompass={true}
             provider={Platform.OS === "ios" ? undefined : PROVIDER_GOOGLE}
             onPress={onMapPress}
             showsMyLocationButton={true}
             showsUserLocation={true}
-            followsUserLocation={Platform.OS === "android"}
-            mapPadding={{ bottom: 100 }}
+            // followsUserLocation={Platform.OS === "android"}
+            // mapPadding={{ bottom: 100 }}
             userLocationCalloutEnabled={true}
             onRegionChangeComplete={(region) => {
               // console.log({ region });
@@ -159,26 +173,39 @@ export function MapScreen() {
             )}
             {(ReportLocation.data ?? []).map((item, idx) => {
               return (
-                <View key={idx}>
-                  <Marker
-                    onPress={(e) => onMapMarker(item)}
-                    coordinate={{
-                      longitude: item?.location?.coordinates[0],
-                      latitude: item?.location?.coordinates[1],
-                    }}
-                    title={item.address}
-                    image={returnPointIcon(
-                      item.contaminatedType[0]?.contaminatedType ?? ""
-                    )}
-                  />
-                </View>
+                <Marker
+                  key={idx}
+                  onPress={(e) => onMapMarker(item)}
+                  coordinate={{
+                    longitude: item?.location?.coordinates[0],
+                    latitude: item?.location?.coordinates[1],
+                  }}
+                  title={item.address}
+                  image={returnPointIcon(
+                    item.contaminatedType[0]?.contaminatedType ?? ""
+                  )}
+                />
               );
             })}
           </MapView>
         ) : (
           <KCContainer isLoading={true} />
         )}
-
+        {Platform.OS === "ios" && (
+          <TouchableOpacity
+            className="absolute rounded-full shadow-sm p-2 right-3"
+            onPress={backCurrentLocation}
+            style={{
+              bottom: returnPosition(),
+              backgroundColor: theme.secondBackgroundColor,
+            }}
+          >
+            <Image
+              source={require("~assets/images/current-location-icon.png")}
+              className="w-8 h-8"
+            />
+          </TouchableOpacity>
+        )}
         <BottomSheet
           ref={bottomSheetRef}
           onChange={handleSheetChanges}
@@ -215,7 +242,7 @@ export function MapScreen() {
                 placeholderTextColor={theme.thirdTextColor}
               />
               <TouchableOpacity
-                className="absolute right-0 items-center h-full justify-center opacity-80 px-5"
+                className="absolute right-0 items-center h-full justify-center opacity-80 px-5 "
                 onPress={() => handleSearch(search)}
               >
                 <Image

@@ -192,7 +192,9 @@ export function LocationItem(props) {
           variant="Outline"
           onPress={handlePress}
           styleContainer={
-            props?.prevValue?._id === props?._id ? { borderColor: "red" } : {}
+            props?.hadCampaign && {
+              backgroundColor: theme.primaryBackgroundColor,
+            }
           }
           disabled={props?.hadCampaign}
         >

@@ -19,14 +19,12 @@ export const useLocation = () => {
       return;
     }
     let getLocation = await Location.getCurrentPositionAsync({});
-    console.log(getLocation.coords);
     setLocation(getLocation.coords);
     return getLocation.coords;
   }, []);
 
   const reverseGeocodeAsync = React.useCallback(async (props) => {
     let getRreverseGeocode = await Location.reverseGeocodeAsync(props);
-    console.log(getRreverseGeocode[0]);
     if (!getRreverseGeocode[0]?.formattedAddress) {
       getRreverseGeocode[0].formattedAddress = formatted(
         getRreverseGeocode[0]

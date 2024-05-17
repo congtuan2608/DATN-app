@@ -47,7 +47,6 @@ export function TabListLocations(props) {
       distance,
     });
   }, [props.selectMarker, props.searchCoord, props.newPoint]);
-  console.log(props.searchCoord);
   const renderStyle = (item) => {
     if (props.selectMarker && props.selectMarker?._id === item?._id) {
       return theme.highLightColor;
@@ -66,6 +65,7 @@ export function TabListLocations(props) {
   };
   const onPressItem = (item) => {
     if (props.setSelectMarker) {
+      if (item._id === props.selectMarker?._id) return;
       const coordinate = {
         longitude: item.location.coordinates[0],
         latitude: item.location.coordinates[1],
@@ -98,7 +98,10 @@ export function TabListLocations(props) {
       >
         {LocationNear.data && (
           <View>
-            <Text className="font-semibold text-base">
+            <Text
+              className="font-semibold text-base"
+              style={{ color: theme.primaryTextColor }}
+            >
               Locations are reported around here
             </Text>
           </View>
@@ -123,19 +126,19 @@ export function TabListLocations(props) {
               />
             </View>
             <View className="flex-1 justify-center" style={{ gap: 2 }}>
-              <Text numberOfLines={1}>
+              <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
                 <Text className="font-medium">Address: </Text>
                 {item.address}
               </Text>
-              <Text numberOfLines={1}>
+              <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
                 <Text className="font-medium">Coordinates: </Text>
                 {(item.location.coordinates ?? []).join(", ")}
               </Text>
-              <Text numberOfLines={1}>
+              <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
                 <Text className="font-medium">Description: </Text>
                 {item.description}
               </Text>
-              <Text numberOfLines={1}>
+              <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
                 {/* <Text className="font-medium">Current distance: </Text>
                 {(item.dist?.calculated ?? 0)?.toFixed(1)}m */}
                 <Text className="font-medium">Current distance: </Text>
@@ -144,6 +147,14 @@ export function TabListLocations(props) {
                   latitude: item.location.coordinates[1],
                 })}
                 m{/* {(item.dist?.calculated ?? 0)?.toFixed(1)}m */}
+              </Text>
+              <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
+                {/* <Text className="font-medium">Current distance: </Text>
+                {(item.dist?.calculated ?? 0)?.toFixed(1)}m */}
+                <Text className="font-medium">Contaminated type: </Text>
+                {(item?.contaminatedType ?? [])
+                  .map((s) => s.contaminatedName)
+                  .join(", ")}
               </Text>
             </View>
           </TouchableOpacity>

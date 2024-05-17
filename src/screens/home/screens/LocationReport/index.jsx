@@ -247,6 +247,22 @@ export function LocationReportScreen() {
         title="Notification"
         content="Thank you for reporting, do you want to report to another location?"
         showModal={CreateReportLocation.isSuccess}
+        buttons={[
+          {
+            text: "Go back",
+            variant: "Outline",
+            onPress: ({ setVisible }) => {
+              setVisible(false);
+              navigate.goBack();
+            },
+          },
+          {
+            text: "Stay here",
+            onPress: ({ setVisible }) => {
+              setVisible(false);
+            },
+          },
+        ]}
       />
       <View
         className="flex-1 relative"
@@ -277,39 +293,49 @@ export function LocationReportScreen() {
             >
               <View style={{ gap: 20 }}>
                 <View className="justify-center items-center">
-                  <Text
-                    className="text-2xl"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Report
-                  </Text>
-                  <Text
-                    className="text-base"
-                    style={{ color: theme.primaryTextColor }}
-                  >
-                    Please provide some information
-                  </Text>
+                  <View style={{ gap: 5 }}>
+                    <Text
+                      className="font-light text-xs"
+                      style={{ color: theme.highLightColor }}
+                    >
+                      *To increase location accuracy, you should select "Get
+                      current location".
+                    </Text>
+                    <Text
+                      className="font-light text-xs"
+                      style={{ color: theme.highLightColor }}
+                    >
+                      *Please provide as complete information as possible.
+                    </Text>
+                  </View>
                 </View>
               </View>
               <View className="w-full flex-1" style={{ gap: 20 }}>
                 <View>
-                  <View className="flex-row justify-between items-center pb-3 px-2">
+                  <TouchableOpacity
+                    className={`flex-row justify-between rounded-xl pl-4 pr-2 py-3 shadow-sm -mb-3 `}
+                    onPress={() =>
+                      onCheckBox("address", {
+                        readOnly: !formConfigs.address?.readOnly,
+                      })
+                    }
+                  >
                     <Text style={{ color: theme.primaryTextColor }}>
                       Get current location
                     </Text>
                     <Checkbox
                       value={formConfigs.address?.readOnly}
-                      onValueChange={(newValue) =>
-                        onCheckBox("address", { readOnly: newValue })
-                      }
                       className="mr-3"
+                      color={theme.primaryButtonBackgroundColor}
                     />
-                  </View>
+                  </TouchableOpacity>
+                </View>
+                <View>
                   <View className="relative">
                     <TextInput
                       readOnly={formConfigs.address.readOnly}
                       autoComplete="name-given"
-                      className={`rounded-xl px-5 pr-14 ${
+                      className={`rounded-xl px-5 pr-14 shadow-sm ${
                         Platform.OS === "ios" ? "py-5" : "py-3"
                       }`}
                       style={{
@@ -370,7 +396,7 @@ export function LocationReportScreen() {
                               backgroundColor: theme.secondBackgroundColor,
                             }}
                             activeOpacity={0.6}
-                            className={`rounded-xl px-5 pr-14 ${
+                            className={`rounded-xl px-5 pr-14 shadow-sm ${
                               Platform.OS === "ios" ? "py-5" : "py-4"
                             }`}
                           >
@@ -458,7 +484,7 @@ export function LocationReportScreen() {
                               backgroundColor: theme.secondBackgroundColor,
                             }}
                             activeOpacity={0.6}
-                            className={`rounded-xl px-5 pr-14 ${
+                            className={`rounded-xl px-5 pr-14 shadow-sm ${
                               Platform.OS === "ios" ? "py-5" : "py-4"
                             }`}
                           >
@@ -522,135 +548,11 @@ export function LocationReportScreen() {
                     </View>
                   )}
                 </View>
-                {/* <View>
-                  <SelectDropdown
-                    ref={statusRef}
-                    data={statusList}
-                    onSelect={(selectedItem, index) => {
-                      handleFocus("status");
-                      handleSelect("status", selectedItem.value);
-                    }}
-                    renderButton={(selectedItem, isOpened) => {
-                      return (
-                        <View className="relative">
-                          <TouchableOpacity
-                            onPress={() => {
-                              statusRef.current?.openDropdown();
-                            }}
-                            style={{
-                              backgroundColor: theme.secondBackgroundColor,
-                            }}
-                            activeOpacity={0.6}
-                            className={`rounded-xl px-5 pr-14 ${
-                              Platform.OS === "ios" ? "py-5" : "py-4"
-                            }`}
-                          >
-                            <Text
-                              style={{
-                                color: values?.status
-                                  ? theme.primaryTextColor
-                                  : theme.thirdTextColor,
-                              }}
-                            >
-                              {selectedItem?.label || "Status"}
-                            </Text>
-                            <View className="absolute top-0 bottom-0 right-0 items-center justify-center opacity-40 px-5">
-                              <KCIcon
-                                name="bulb1"
-                                family="AntDesign"
-                                size={25}
-                                color={theme.primaryTextColor}
-                              />
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      );
-                    }}
-                    renderItem={(item, index, isSelected) => {
-                      return (
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            paddingVertical: 12,
-                            paddingHorizontal: 20,
-                            ...(isSelected && { backgroundColor: "#D2D9DF" }),
-                          }}
-                        >
-                          <Text className="flex-1 text-center">
-                            {item?.label}
-                          </Text>
-                          {item?.icon && (
-                            <KCIcon
-                              name={item.icon.name}
-                              family={item.icon.family}
-                              size={20}
-                            />
-                          )}
-                        </View>
-                      );
-                    }}
-                    showsVerticalScrollIndicator={false}
-                    dropdownStyle={{
-                      borderRadius: 8,
-                    }}
-                  />
-                  {errors?.status && (
-                    <View className="px-4 mt-2 -mb-3">
-                      <Text className="text-xs" style={{ color: "red" }}>
-                        {errors.status?.message}
-                      </Text>
-                    </View>
-                  )}
-                </View> */}
-                {/* <View>
-                  <View className="relative">
-                    <TextInput
-                      keyboardType="numeric"
-                      className={`rounded-xl px-5 pr-14 ${
-                        Platform.OS === "ios" ? "py-5" : "py-4"
-                      }`}
-                      onFocus={(e) => handleFocus("populationDensity")}
-                      onBlur={() => handleBlur("populationDensity")}
-                      style={{
-                        backgroundColor: theme.secondBackgroundColor,
-                        color: theme.primaryTextColor,
-                      }}
-                      placeholder={"Population density"}
-                      value={String(values.populationDensity)}
-                      onChangeText={(value) =>
-                        handleChange("populationDensity", value)
-                      }
-                      placeholderTextColor={theme.thirdTextColor}
-                    />
-                    <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
-                      <KCIcon
-                        name="people-group"
-                        family="FontAwesome6"
-                        size={23}
-                        color={theme.primaryTextColor}
-                      />
-                    </View>
-                  </View>
-                  {errors?.populationDensity && (
-                    <View className="px-4 mt-2 -mb-3">
-                      <Text
-                        className="text-xs"
-                        style={{
-                          color: "red",
-                        }}
-                      >
-                        {errors.populationDensity?.message}
-                      </Text>
-                    </View>
-                  )}
-                </View> */}
                 <View>
                   <View className="relative">
                     <TextInput
                       autoComplete="name-family"
-                      className={`rounded-xl px-5 pr-14 ${
+                      className={`rounded-xl px-5 pr-14 shadow-sm ${
                         Platform.OS === "ios" ? "py-5" : "py-4"
                       }`}
                       onFocus={(e) => handleFocus("description")}
@@ -687,18 +589,26 @@ export function LocationReportScreen() {
                     </View>
                   )}
                 </View>
-                <View className="flex-row justify-between items-center pb-3 px-2">
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    Report anonymously
-                  </Text>
-                  <Checkbox
-                    value={values.isAnonymous}
-                    onValueChange={(newValue) =>
-                      handleChange("isAnonymous", newValue)
+                <View>
+                  <TouchableOpacity
+                    className={`flex-row justify-between rounded-xl px-5 shadow-sm py-5`}
+                    style={{
+                      backgroundColor: theme.secondBackgroundColor,
+                    }}
+                    onPress={() =>
+                      handleChange("isAnonymous", !values.isAnonymous)
                     }
-                    className="mr-3"
-                  />
+                  >
+                    <Text style={{ color: theme.primaryTextColor }}>
+                      Report anonymously
+                    </Text>
+                    <Checkbox
+                      value={values.isAnonymous}
+                      color={theme.primaryButtonBackgroundColor}
+                    />
+                  </TouchableOpacity>
                 </View>
+
                 <View className="pt-2">
                   <Text
                     className="font-medium"

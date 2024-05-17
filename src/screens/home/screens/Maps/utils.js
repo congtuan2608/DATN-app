@@ -7,6 +7,6 @@ export const returnPointIcon = (type) => {
     case "air-pollution":
       return require("~assets/images/air-pollution-icon.png");
     default:
-      return undefined;
+      return require("~assets/images/not-found-icon.png");
   }
 };

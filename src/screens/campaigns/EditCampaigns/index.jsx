@@ -1,5 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
+import Checkbox from "expo-checkbox";
 import React from "react";
 import {
   Platform,
@@ -10,7 +11,6 @@ import {
   View,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { Checkbox } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 import { RestAPI } from "~apis";
 import { KCButton, KCContainer, KCIcon, KCModal } from "~components";
@@ -69,7 +69,7 @@ export function EditCampaignsScreen() {
     endDate: false,
   });
 
-  console.log(navigateParams.params);
+  console.log(form.values);
   const handleSubmit = async () => {
     const submit = form.handleSubmit();
 
@@ -101,14 +101,32 @@ export function EditCampaignsScreen() {
       <KCModal
         title="Notification"
         content={`${
-          navigateParams.params?.id ? "Update success!" : "Create success!"
-        } Do you want to create a new campaign?`}
+          navigateParams.params?.id
+            ? "Update success!"
+            : "Create success! Do you want to create a new campaign?"
+        }`}
         showModal={
           navigateParams.params?.id
             ? UpdateCampaign.isSuccess
             : CreateCampaign.isSuccess
         }
-        cbButtonRight={() => form.resetForm()}
+        buttons={[
+          {
+            text: "Go back",
+            variant: "Outline",
+            onPress: ({ setVisible }) => {
+              setVisible(false);
+              navigate.goBack();
+            },
+          },
+          {
+            text: "Stay here",
+            onPress: ({ setVisible }) => {
+              setVisible(false);
+              !navigateParams.params?.id && form.resetForm();
+            },
+          },
+        ]}
       />
       <KCContainer
         className="px-2"
@@ -361,20 +379,7 @@ export function EditCampaignsScreen() {
                   </View>
                 )}
               </View>
-              <View>
-                <View className="flex-row justify-between items-center px-2">
-                  <Text style={{ color: theme.primaryTextColor }}>
-                    Allow donate
-                  </Text>
-                  <Checkbox
-                    value={form.values.allowDonate}
-                    onValueChange={(newValue) =>
-                      form.onCheckBox("allowDonate", newValue)
-                    }
-                    className="mr-3"
-                  />
-                </View>
-              </View>
+
               {form.values?.ref ? (
                 <View
                   className="py-2 rounded-lg shadow-sm"
@@ -438,6 +443,25 @@ export function EditCampaignsScreen() {
                   )}
                 </View>
               )}
+              <View>
+                <TouchableOpacity
+                  className={`flex-row justify-between rounded-xl px-5 shadow-sm py-5`}
+                  style={{
+                    backgroundColor: theme.secondBackgroundColor,
+                  }}
+                  onPress={() =>
+                    form.handleChange("allowDonate", !form.values.allowDonate)
+                  }
+                >
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    Allow donate
+                  </Text>
+                  <Checkbox
+                    value={form.values.allowDonate}
+                    color={theme.primaryButtonBackgroundColor}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </ScrollView>
         </KeyboardAwareScrollView>

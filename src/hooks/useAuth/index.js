@@ -21,26 +21,32 @@ export const useAuth = () => {
   const queryClient = useQueryClient();
 
   const login = React.useCallback(async (authData) => {
-    await AsyncStorage.setItem(
-      AsyncStorageKey.ACCESS_TOKEN,
-      authData.access_token
-    );
-    await AsyncStorage.setItem(
-      AsyncStorageKey.REFRESH_TOKEN,
-      authData.refresh_token
-    );
+    await Promise.all([
+      await AsyncStorage.setItem(
+        AsyncStorageKey.ACCESS_TOKEN,
+        authData.access_token
+      ),
+      await AsyncStorage.setItem(
+        AsyncStorageKey.REFRESH_TOKEN,
+        authData.refresh_token
+      ),
+    ]);
     setAuthData(authData);
     setAppConfigs((prev) => ({ ...prev, firstInit: true }));
   }, []);
 
   const logout = React.useCallback(async () => {
-    await AsyncStorage.removeItem(AsyncStorageKey.ACCESS_TOKEN);
-    await AsyncStorage.removeItem(AsyncStorageKey.REFRESH_TOKEN);
+    await Promise.all([
+      await AsyncStorage.removeItem(AsyncStorageKey.ACCESS_TOKEN),
+      await AsyncStorage.removeItem(AsyncStorageKey.REFRESH_TOKEN),
+    ]);
 
     queryClient.removeQueries({ queryKey: ["GetUserProfile"] });
     setAuthData(undefined);
     setAppConfigs((prev) => ({ ...prev, firstInit: true }));
-    Google.GoogleSignin.signOut();
+    if (Platform.OS !== "ios") {
+      Google.GoogleSignin.signOut();
+    }
   }, []);
 
   const isInitializingApp = React.useMemo(

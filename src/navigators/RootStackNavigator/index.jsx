@@ -42,16 +42,11 @@ export const RootStackNavigator = () => {
     async function init() {
       if (auth.appConfigs.firstInit === false) {
         // get init theme
-        await initTheme();
-
-        // get token
-        const access_token = await AsyncStorage.getItem(
-          AsyncStorageKey.ACCESS_TOKEN
-        );
-        const refresh_token = await AsyncStorage.getItem(
-          AsyncStorageKey.REFRESH_TOKEN
-        );
-        //
+        const [access_token, refresh_token, _] = await Promise.all([
+          await AsyncStorage.getItem(AsyncStorageKey.ACCESS_TOKEN),
+          await AsyncStorage.getItem(AsyncStorageKey.REFRESH_TOKEN),
+          await initTheme(),
+        ]);
 
         if (access_token && refresh_token) {
           await auth.login({ access_token, refresh_token });

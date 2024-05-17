@@ -23,14 +23,14 @@ export const StackScreen = (props) => {
         <View>
           {props.header ?? (
             <View
-              className="flex flex-row justify-between items-center px-4 pl-0 py-2"
+              className="flex flex-row justify-between items-center py-3 relative"
               style={{
                 borderBottomWidth: props.showBorderBottom ? 1 : 0,
                 borderBottomColor: theme.primaryBorderColor,
               }}
             >
               <View className="flex flex-1 flex-row items-center">
-                <View>
+                <View className="absolute z-20">
                   <TouchableOpacity className="px-[12px]" onPress={onGoBack}>
                     <KCIcon
                       family="Entypo"
@@ -41,7 +41,7 @@ export const StackScreen = (props) => {
                     />
                   </TouchableOpacity>
                 </View>
-                <View className="flex-1">
+                <View className="flex-1 justify-center items-center">
                   <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"
@@ -52,7 +52,7 @@ export const StackScreen = (props) => {
                   </Text>
                 </View>
               </View>
-              {props.headerRight}
+              <View className="absolute right-0 px-2">{props.headerRight}</View>
             </View>
           )}
         </View>

@@ -1,43 +1,23 @@
-import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Modal, Text, View } from "react-native";
 import { KCButton } from "~components";
 import { useTheme } from "~hooks";
 
 export function KCModal(props) {
-  const navigate = useNavigation();
-  const {
-    title,
-    content,
-    titleButtonLeft,
-    titleButtonRight,
-    hideButtonLeft,
-    cbButtonLeft,
-    cbButtonRight,
-    ...other
-  } = props;
-  const [showModal, setShowModal] = React.useState(false);
+  const { title, content, buttons, ...other } = props;
+  const [visible, setVisible] = React.useState(false);
   const { theme } = useTheme();
 
   React.useEffect(() => {
-    if (props?.showModal !== undefined) setShowModal(props?.showModal);
+    if (props?.showModal !== undefined) setVisible(props?.showModal);
   }, [props?.showModal]);
 
-  const onGoBack = async () => {
-    setShowModal(!showModal);
-    cbButtonLeft && cbButtonLeft();
-    navigate.goBack();
-  };
-  const onStayHere = () => {
-    setShowModal(!showModal);
-    cbButtonRight && cbButtonRight();
-  };
   return (
     <Modal
       animationType="fade"
       transparent={true}
-      visible={showModal}
-      onRequestClose={() => setShowModal(!showModal)}
+      visible={visible}
+      onRequestClose={() => setVisible(!visible)}
     >
       <View className="flex-1 justify-center items-center bg-[#00000030] px-10">
         <View
@@ -62,22 +42,16 @@ export function KCModal(props) {
             className="w-full flex-row justify-around items-center"
             // style={{ gap: 10 }}
           >
-            {!hideButtonLeft && (
+            {buttons?.map((button, index) => (
               <KCButton
-                variant="Outline"
-                onPress={onGoBack}
-                styleContainer={{ paddingVertical: 8 }}
+                key={index}
+                variant={button.variant || "Filled"}
+                onPress={() => button.onPress({ visible, setVisible })}
+                styleContainer={{ paddingVertical: 8, ...button.style }}
               >
-                {titleButtonLeft || "Go back"}
+                {button?.text || "Change text here"}
               </KCButton>
-            )}
-            <KCButton
-              variant="Filled"
-              onPress={onStayHere}
-              styleContainer={{ paddingVertical: 8 }}
-            >
-              {titleButtonRight || "Stay here"}
-            </KCButton>
+            ))}
           </View>
         </View>
       </View>

@@ -17,7 +17,7 @@ export function generateAppURL(config) {
     }
 
     case "Facebook": {
-      return `fb://profile/${config.pageId}`;
+      return `fb://${config.type}/?id=${config.pageId}`;
     }
 
     case "Telegram": {
