@@ -26,7 +26,7 @@ export const bottomTabScreens = {
   },
   History: {
     label: "History",
-    component: SCREENS.HistoryScreens.component,
+    component: SCREENS.HistoryScreen.component,
     icon: (props) => ({
       family: "MaterialIcons",
       name: "history-toggle-off",

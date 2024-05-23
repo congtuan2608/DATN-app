@@ -4,6 +4,7 @@ import "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { en, registerTranslation } from "react-native-paper-dates";
 import { RecoilRoot } from "recoil";
+import "regenerator-runtime";
 import "~configs/react-native";
 import { queryClient } from "~configs/react-query";
 import { RootStackNavigator } from "./src/navigators";

@@ -49,11 +49,6 @@ const validateSchema = {
     required: true,
     label: "Please select severity",
   },
-  // status: {
-  //   required: true,
-  //   default: "need-intervention",
-  // },
-  // populationDensity: {},
   assets: {},
   isAnonymous: {},
   location: {
@@ -65,8 +60,6 @@ const initialValues = {
   description: "",
   contaminatedType: [],
   severity: "",
-  // status: "",
-  // populationDensity: "",
   assets: [],
   isAnonymous: true,
   location: { latitude: 0, longitude: 0 },
@@ -292,7 +285,7 @@ export function LocationReportScreen() {
               }}
             >
               <View style={{ gap: 20 }}>
-                <View className="justify-center items-center">
+                <View className="justify-center items-center px-2">
                   <View style={{ gap: 5 }}>
                     <Text
                       className="font-light text-xs"

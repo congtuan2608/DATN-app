@@ -3,7 +3,7 @@ import { getDistance } from "geolib";
 import React from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { RestAPI } from "~apis";
-import { KCContainer } from "~components";
+import { KCButton, KCContainer } from "~components";
 import { useLocation, useTheme } from "~hooks";
 
 const distance = 1000;
@@ -70,7 +70,7 @@ export function TabListLocations(props) {
         longitude: item.location.coordinates[0],
         latitude: item.location.coordinates[1],
       };
-      setLocationSelected(coordinate);
+      // setLocationSelected(coordinate);
       props.setNewPoint(coordinate);
       props.setSelectMarker(item);
     }
@@ -81,8 +81,8 @@ export function TabListLocations(props) {
   const returnTextEmpty = () => {
     if (!props.searchCoord) return "Invalid address";
     if (LocationNear.isError) return "Error, please try again";
-    if (props.newPoint || props.selectMarker || props.searchCoord?.longitude)
-      return "There are no recently reported locations";
+    // if (props.newPoint || props.selectMarker || props.searchCoord?.longitude)
+    return "There are no recently reported locations";
   };
   return (
     <KCContainer
@@ -109,7 +109,7 @@ export function TabListLocations(props) {
         {(LocationNear.data ?? []).map((item, index) => (
           <TouchableOpacity
             onPress={() => onPressItem(item)}
-            className="p-2 flex-row rounded-lg"
+            className="p-2 rounded-lg"
             key={index}
             style={{
               backgroundColor: theme.secondBackgroundColor,
@@ -118,45 +118,72 @@ export function TabListLocations(props) {
               borderWidth: 1.3,
             }}
           >
-            <View>
-              <Image
-                className="w-20 h-20 rounded-lg"
-                source={{ uri: item.assets[0]?.url || "" }}
-                resizeMode="cover"
-              />
-            </View>
-            <View className="flex-1 justify-center" style={{ gap: 2 }}>
-              <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
-                <Text className="font-medium">Address: </Text>
-                {item.address}
-              </Text>
-              <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
-                <Text className="font-medium">Coordinates: </Text>
-                {(item.location.coordinates ?? []).join(", ")}
-              </Text>
-              <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
+            <View className="flex-row " style={{ gap: 10 }}>
+              <View>
+                <Image
+                  className="w-20 h-20 rounded-lg"
+                  source={{ uri: item.assets[0]?.url || "" }}
+                  resizeMode="cover"
+                />
+              </View>
+              <View className="flex-1 justify-center" style={{ gap: 2 }}>
+                <Text
+                  numberOfLines={1}
+                  style={{ color: theme.primaryTextColor }}
+                >
+                  <Text className="font-medium">Address: </Text>
+                  {item.address}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  style={{ color: theme.primaryTextColor }}
+                >
+                  <Text className="font-medium">Coordinates: </Text>
+                  {(item.location.coordinates ?? []).join(", ")}
+                </Text>
+                {/* <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
                 <Text className="font-medium">Description: </Text>
                 {item.description}
-              </Text>
-              <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
-                {/* <Text className="font-medium">Current distance: </Text>
+              </Text> */}
+                <Text
+                  numberOfLines={1}
+                  style={{ color: theme.primaryTextColor }}
+                >
+                  {/* <Text className="font-medium">Current distance: </Text>
                 {(item.dist?.calculated ?? 0)?.toFixed(1)}m */}
-                <Text className="font-medium">Current distance: </Text>
-                {getDistance(location, {
-                  longitude: item.location.coordinates[0],
-                  latitude: item.location.coordinates[1],
-                })}
-                m{/* {(item.dist?.calculated ?? 0)?.toFixed(1)}m */}
-              </Text>
-              <Text numberOfLines={1} style={{ color: theme.primaryTextColor }}>
-                {/* <Text className="font-medium">Current distance: </Text>
+                  <Text className="font-medium">Current distance: </Text>
+                  {getDistance(location, {
+                    longitude: item.location.coordinates[0],
+                    latitude: item.location.coordinates[1],
+                  }).toLocaleString("de-DE")}
+                  m{/* {(item.dist?.calculated ?? 0)?.toFixed(1)}m */}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  style={{ color: theme.primaryTextColor }}
+                >
+                  {/* <Text className="font-medium">Current distance: </Text>
                 {(item.dist?.calculated ?? 0)?.toFixed(1)}m */}
-                <Text className="font-medium">Contaminated type: </Text>
-                {(item?.contaminatedType ?? [])
-                  .map((s) => s.contaminatedName)
-                  .join(", ")}
-              </Text>
+                  <Text className="font-medium">Contaminated type: </Text>
+                  {(item?.contaminatedType ?? [])
+                    .map((s) => s.contaminatedName)
+                    .join(", ")}
+                </Text>
+              </View>
             </View>
+            {props.selectMarker && props.selectMarker?._id === item?._id && (
+              <View>
+                <KCButton
+                  variant="Filled"
+                  onPress={() =>
+                    navigate.navigate("PointDetailScreen", { id: item?._id })
+                  }
+                  styleContainer={{ paddingVertical: 8 }}
+                >
+                  View detail
+                </KCButton>
+              </View>
+            )}
           </TouchableOpacity>
         ))}
       </ScrollView>

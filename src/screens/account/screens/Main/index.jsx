@@ -35,7 +35,7 @@ export const AccountScreens = () => {
             >
               <Image
                 source={{
-                  uri: auth.userProfile?.avatar || AVATAR_URL,
+                  uri: auth.userProfile?.avatar?.url || AVATAR_URL,
                 }}
                 className="w-24 h-24 rounded-full"
                 resizeMode="cover"

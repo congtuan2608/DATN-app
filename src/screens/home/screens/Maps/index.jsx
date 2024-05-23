@@ -17,7 +17,6 @@ import { useDebounce, useLocation, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { PointInfo } from "./PointInfo";
 import { TabListLocations } from "./tabs/TabListLocations";
-import { returnPointIcon } from "./utils";
 export function MapScreen() {
   const { theme } = useTheme();
   const { width, height } = useWindowDimensions();
@@ -85,7 +84,17 @@ export function MapScreen() {
     }
   };
   const onMapMarker = useDebounce((item) => {
+    if (Platform.OS === "android") {
+      setNewPoint({
+        longitude: item?.location?.coordinates[0],
+        latitude: item?.location?.coordinates[1],
+      });
+    }
     setSelectMarker(item);
+    mapRef.current.animateToRegion({
+      longitude: item?.location?.coordinates[0],
+      latitude: item?.location?.coordinates[1],
+    });
   }, 0);
 
   // console.log(selectMarker);
@@ -173,18 +182,17 @@ export function MapScreen() {
             )}
             {(ReportLocation.data ?? []).map((item, idx) => {
               return (
-                <Marker
-                  key={idx}
-                  onPress={(e) => onMapMarker(item)}
-                  coordinate={{
-                    longitude: item?.location?.coordinates[0],
-                    latitude: item?.location?.coordinates[1],
-                  }}
-                  title={item.address}
-                  image={returnPointIcon(
-                    item.contaminatedType[0]?.contaminatedType ?? ""
-                  )}
-                />
+                <React.Fragment key={idx}>
+                  <Marker
+                    onPress={(e) => onMapMarker(item)}
+                    coordinate={{
+                      longitude: item?.location?.coordinates[0],
+                      latitude: item?.location?.coordinates[1],
+                    }}
+                    title={item.address}
+                    image={{ uri: item.contaminatedType[0]?.asset?.url ?? "" }}
+                  />
+                </React.Fragment>
               );
             })}
           </MapView>

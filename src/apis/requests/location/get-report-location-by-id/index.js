@@ -1,11 +1,11 @@
 import { APIPaths } from "~apis/path";
 import { HTTPMethod, useRestAPIMutation } from "~hooks/useRestAPI";
 
-export function GoogleLogin() {
+export function GetReportLocationById() {
   return useRestAPIMutation({
     request: (params) => ({
-      method: HTTPMethod.POST,
-      configs: [APIPaths.GoogleLogin, params],
+      method: HTTPMethod.GET,
+      configs: [`${APIPaths.ContaminatedLocation}/${params.id}`],
     }),
   });
 }

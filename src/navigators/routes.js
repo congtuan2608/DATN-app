@@ -16,6 +16,9 @@ export const SCREENS = {
   MapScreen: {
     component: ScreenComponents.HomeScreens.MapScreen,
   },
+  PointDetailScreen: {
+    component: ScreenComponents.HomeScreens.PointDetailScreen,
+  },
   LocationReportScreen: {
     component: ScreenComponents.HomeScreens.LocationReportScreen,
   },
@@ -54,8 +57,8 @@ export const SCREENS = {
     component: ScreenComponents.SelectLocation,
   },
   // history
-  HistoryScreens: {
-    component: ScreenComponents.HistoryScreens,
+  HistoryScreen: {
+    component: ScreenComponents.HistoryScreen,
   },
   HistoryDetailScreen: {
     component: ScreenComponents.HistoryDetailScreen,
@@ -64,13 +67,22 @@ export const SCREENS = {
   AccountScreens: {
     component: ScreenComponents.AccountScreens.AccountScreens,
   },
+  MyProfileScreen: {
+    component: ScreenComponents.AccountScreens.MyProfileScreen,
+  },
   SettingScreen: {
     component: ScreenComponents.AccountScreens.SettingScreen,
+  },
+  ChangeThemeScreen: {
+    component: ScreenComponents.AccountScreens.ChangeThemeScreen,
   },
   ContactSupportScreen: {
     component: ScreenComponents.AccountScreens.ContactSupportScreen,
   },
   TermOfPrivacyPolicyScreens: {
     component: ScreenComponents.AccountScreens.TermOfPrivacyPolicyScreens,
+  },
+  MyProfileScreen: {
+    component: ScreenComponents.AccountScreens.MyProfileScreen,
   },
 };

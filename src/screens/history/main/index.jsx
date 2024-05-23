@@ -15,7 +15,7 @@ import { useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { HistoryItem } from "../components";
 
-export const HistoryScreens = () => {
+export const HistoryScreen = () => {
   const { theme } = useTheme();
   const ActivityType = RestAPI.GetActivityHistory();
   const History = RestAPI.GetHistory();

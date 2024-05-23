@@ -21,13 +21,12 @@ export function DetectResultsScreen() {
   const { theme } = useTheme();
   const { dimensions, safeAreaInsets } = useScreenUtils();
   const googleVision = RestAPI.GoogleVisionDetectImages();
-  const tensorflow = RestAPI.TensorflowDetectImages();
+  const roboflow = RestAPI.RoboflowDetectImages();
   const [images, setImages] = React.useState([]);
   const [loading, setLoading] = React.useState({
     upload: false,
     detect: false,
   });
-  console.log(images);
   React.useEffect(() => {
     (async () => {
       if (images.length === 0) return;
@@ -41,7 +40,7 @@ export function DetectResultsScreen() {
         }
         case "tensorflow": {
           setLoading({ ...loading, detect: true });
-          const res = await tensorflow.mutateAsync({ images });
+          const res = await roboflow.mutateAsync({ images });
           console.log("tensorflow ", res[0]);
           setLoading({ ...loading, detect: false });
           return;
@@ -95,9 +94,9 @@ export function DetectResultsScreen() {
         ));
       }
       case "tensorflow": {
-        if (!tensorflow.data) return;
-        return tensorflow.data.map((groups, idx) =>
-          groups.map((groupsItem, idx) => (
+        if (!roboflow.data) return;
+        return roboflow.data.map((groups, idx) =>
+          (groups?.predictions ?? []).map((groupsItem, idx) => (
             <View
               key={idx}
               className="py-5 px-3 rounded-xl"
@@ -107,7 +106,7 @@ export function DetectResultsScreen() {
                 Name: {groupsItem.class}
               </Text>
               <Text style={{ color: theme.primaryTextColor }}>
-                Exact ratio: {convertToPercent(groupsItem.score)}%
+                Exact ratio: {convertToPercent(groupsItem.confidence)}%
               </Text>
             </View>
           ))
@@ -116,19 +115,21 @@ export function DetectResultsScreen() {
       default:
         return null;
     }
-  }, [googleVision.data, tensorflow.data]);
+  }, [googleVision.data, roboflow.data]);
+
   const isEmpty = React.useMemo(() => {
     switch (navigateParams.params?.type) {
       case "google-vision": {
         return (googleVision.data ?? []).length === 0;
       }
       case "tensorflow": {
-        return (tensorflow.data ?? []).length === 0;
+        return (roboflow.data ?? []).length === 0;
       }
       default:
         return true;
     }
-  }, [googleVision.data, tensorflow.data]);
+  }, [googleVision.data, roboflow.data]);
+
   const renderTitle = () => {
     switch (navigateParams.params?.type) {
       case "google-vision": {
@@ -140,6 +141,26 @@ export function DetectResultsScreen() {
       default:
         return null;
     }
+  };
+
+  const renderCoordinate = (data) => {
+    if (!data) return;
+    const results = (data.predictions ?? []).map((item) => {
+      const { x, y, width, height } = item;
+      console.log(convertToPercent(y), convertToPercent(x));
+      return (
+        <View
+          className="absolute border-2 border-red-500 z-50"
+          style={{
+            width: 100,
+            height: 100,
+            top: `${y / 100}%`,
+            left: `${x / 100}%`,
+          }}
+        ></View>
+      );
+    });
+    return results;
   };
   return (
     <StackScreen headerTitle={navigateParams.params?.title || "<Unknown>"}>
@@ -157,16 +178,45 @@ export function DetectResultsScreen() {
         >
           {images.length ? (
             <View className="flex-1">
-              <View
-                className="relative w-full rounded-lg"
-                style={{ height: dimensions.screen.height / 2.5 }}
-              >
-                <Image
+              <View className="relative rounded-lg ">
+                {/* <KCCanvas
+                  images={images}
+                  googleVision={googleVision}
+                  roboflow={roboflow}
+                /> */}
+                <KCContainer
+                  className="flex-1 z-0"
+                  isLoading={googleVision.isPending || roboflow.isPending}
+                  isEmpty={isEmpty}
+                  style={{ backgroundColor: theme.primaryBackgroundColor }}
+                >
+                  <Image
+                    source={{ uri: roboflow.data[0]?.src }}
+                    className="w-full rounded-lg "
+                    resizeMode="contain"
+                    style={{
+                      backgroundColor: theme.secondBackgroundColor,
+                      height:
+                        images[0]?.height *
+                        ((dimensions.window.width - 15) / images[0]?.width),
+                    }}
+                  />
+                </KCContainer>
+                {/* <Image
                   source={{ uri: images[0]?.uri }}
-                  className="w-full h-full rounded-lg"
+                  className="w-full rounded-lg "
                   resizeMode="contain"
-                  style={{ backgroundColor: theme.secondBackgroundColor }}
-                />
+                  style={{
+                    backgroundColor: theme.secondBackgroundColor,
+                    height:
+                      images[0]?.height *
+                      ((dimensions.window.width - 15) / images[0]?.width),
+                  }}
+                /> */}
+                {/* <View className="absolute z-10">
+                  {roboflow.data && renderCoordinate(roboflow.data[0])}
+                </View> */}
+
                 <TouchableOpacity
                   className="absolute -top-1 -right-1 rounded-full p-2"
                   onPress={() => setImages([])}
@@ -181,8 +231,8 @@ export function DetectResultsScreen() {
               </View>
 
               <KCContainer
-                className="flex-1"
-                isLoading={googleVision.isPending || tensorflow.isPending}
+                className="flex-1 z-0"
+                isLoading={googleVision.isPending || roboflow.isPending}
                 isEmpty={isEmpty}
                 style={{ backgroundColor: theme.primaryBackgroundColor }}
               >

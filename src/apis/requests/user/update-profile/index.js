@@ -1,7 +1,7 @@
 import { APIPaths } from "~apis/path";
 import { HTTPMethod, useRestAPIMutation } from "~hooks/useRestAPI";
 
-export function SignUp() {
+export function UpdateProfile() {
   return useRestAPIMutation({
     request: (params) => {
       const formData = new FormData();
@@ -15,15 +15,20 @@ export function SignUp() {
         }
         return formData.append(key, value);
       });
+
       return {
-        method: HTTPMethod.POST,
+        method: HTTPMethod.PATCH,
         configs: [
-          APIPaths.SignUp,
+          APIPaths.User,
           formData,
           {
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
+              "Content-Type": "multipart/form-data",
+              Accept: "application/json",
             },
+            // headers: {
+            //   "Content-Type": "application/x-www-form-urlencoded",
+            // },
           },
         ],
       };

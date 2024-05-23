@@ -1,7 +1,7 @@
 import React from "react";
 import { validateInput } from "~utils";
 
-export function useForm({ initialValues = {}, validateSchema }) {
+export function useForm({ initialValues = {}, validateSchema = {} }) {
   const [values, setValues] = React.useState(initialValues);
   const [errors, setErrors] = React.useState({});
 

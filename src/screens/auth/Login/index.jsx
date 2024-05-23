@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { RestAPI } from "~apis";
 import login_1 from "~assets/images/login_1.png";
-import { KCButton, KCIcon, KCSVGAsset } from "~components";
+import { KCButton, KCContainer, KCIcon, KCSVGAsset } from "~components";
 import { useAuth, useScreenUtils, useTheme } from "~hooks";
 import { useForm } from "~hooks/useForm";
 import { getResponesive } from "~utils";
@@ -49,6 +49,7 @@ export const LoginScreens = () => {
   const [isHidePassword, setIsHidePassword] = React.useState(true);
   const form = useForm({ initialValues, validateSchema });
   const login = RestAPI.Login();
+  const loginGoogle = RestAPI.GoogleLogin();
   // const [request, response, promptAsync] = GoogleAuth.useAuthRequest({
   //   scopes: ["profile", "email"],
   //   iosClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_IOS,
@@ -67,7 +68,7 @@ export const LoginScreens = () => {
   }, [navigateParams.params]);
   const onLogin = async () => {
     const formValues = form.handleSubmit();
-
+    console.log(formValues.values);
     if (!formValues.isSuccess) return;
 
     const res = await login.mutateAsync(formValues.values);
@@ -89,16 +90,16 @@ export const LoginScreens = () => {
       // await promptAsync();
       await Google.GoogleSignin.hasPlayServices();
       const userInfo = await Google.GoogleSignin.signIn();
-      console.log({ userInfo });
-      // const res = await RestAPI.GoogleLogin.mutateAsync({
-      //   idToken: userInfo.idToken,
-      // });
-      // if (res?.refreshToken && res?.accessToken) {
-      //   auth.login({
-      //     access_token: res.accessToken,
-      //     refresh_token: res.refreshToken,
-      //   });
-      // }
+
+      const res = await loginGoogle.mutateAsync({
+        idToken: userInfo.idToken,
+      });
+      if (res?.refreshToken && res?.accessToken) {
+        auth.login({
+          access_token: res.accessToken,
+          refresh_token: res.refreshToken,
+        });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -115,6 +116,12 @@ export const LoginScreens = () => {
       className="flex-1 relative"
       style={{ backgroundColor: theme.primaryBackgroundColor }}
     >
+      {(login.isPending || loginGoogle.isPending) && (
+        <KCContainer
+          className="absolute z-10 top-0 bottom-0 left-0 right-0 bg-[#00000030]"
+          isLoading={true}
+        />
+      )}
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}

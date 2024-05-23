@@ -12,6 +12,7 @@ import { SCREENS } from "../routes";
 const InitScreen = "DrawerNavigator";
 const RootScreens = [
   "MapScreen",
+  "PointDetailScreen",
   "DetectScreen",
   "DetectResultsScreen",
   "LocationReportScreen",
@@ -25,6 +26,8 @@ const RootScreens = [
   "SettingScreen",
   "TermOfPrivacyPolicyScreens",
   "ContactSupportScreen",
+  "MyProfileScreen",
+  "ChangeThemeScreen",
   "HistoryDetailScreen",
 ];
 const Stack = createNativeStackNavigator();

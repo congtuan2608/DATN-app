@@ -12,24 +12,6 @@ import { useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { GuidanceItem } from "./components";
 
-const fakeData = [
-  {
-    id: "1",
-    label: "Thuy Tinh",
-  },
-  {
-    id: "2",
-    label: "Chai nhua",
-  },
-  {
-    id: "3",
-    label: "Nilon",
-  },
-  {
-    id: "4",
-    label: "Giaasy",
-  },
-];
 export function EnvironmentalGuidanceScreen() {
   const { theme } = useTheme();
   const RecyclingTypes = RestAPI.RecyclingType();

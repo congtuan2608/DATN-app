@@ -101,7 +101,6 @@ export const SignUpScreens = () => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-      base64: true,
     });
     if (result.canceled) {
       handleChange("avatar", undefined);
@@ -163,13 +162,27 @@ export const SignUpScreens = () => {
                   className="w-28 h-28 rounded-full"
                   resizeMode="cover"
                 />
-                <KCIcon
-                  className="absolute bottom-0 right-0"
-                  name="file-image-plus-outline"
-                  family="MaterialCommunityIcons"
-                  size={30}
-                  color={theme.primaryIconColor}
-                />
+                {values.avatar?.uri ? (
+                  <TouchableOpacity
+                    onPress={() => handleChange("avatar", undefined)}
+                  >
+                    <KCIcon
+                      className="absolute bottom-0 right-0"
+                      name="delete"
+                      family="AntDesign"
+                      size={30}
+                      color="red"
+                    />
+                  </TouchableOpacity>
+                ) : (
+                  <KCIcon
+                    className="absolute bottom-0 right-0"
+                    name="file-image-plus-outline"
+                    family="MaterialCommunityIcons"
+                    size={30}
+                    color={theme.primaryIconColor}
+                  />
+                )}
               </TouchableOpacity>
             </View>
             <View style={{ gap: 20 }}>

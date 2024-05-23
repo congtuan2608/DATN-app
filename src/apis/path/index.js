@@ -6,6 +6,7 @@ export const APIPaths = {
   GetUserProfile: `${ROOT_BE_URL}/v1/auth`,
   RefreshToken: `${ROOT_BE_URL}/v1/token/refresh`,
   GoogleLogin: `${ROOT_BE_URL}/v1/auth/google-login`,
+  User: `${ROOT_BE_URL}/v1/user`,
 
   // recycling
   //type
@@ -22,6 +23,7 @@ export const APIPaths = {
   // detect images
   TensorflowDetectImages: `${ROOT_BE_URL}/v1/detect/tensorflow`,
   GoogleVisionDetectImages: `${ROOT_BE_URL}/v1/detect/google-vision`,
+  RoboflowDetectImages: `${ROOT_BE_URL}/v1/detect/roboflow`,
 
   // campaign
   GetCampaign: `${ROOT_BE_URL}/v1/canpaign`,

@@ -6,7 +6,9 @@ export const generateMenuGroups = ({ auth, navigate }) => {
         {
           text: "My profile",
           image: require("~assets/images/user-profile-icon.png"),
-          onPress: async () => {},
+          onPress: async () => {
+            navigate.navigate("MyProfileScreen");
+          },
         },
       ],
     },

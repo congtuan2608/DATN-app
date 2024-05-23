@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { KCContainer, KCIcon } from "~components";
 import { useTheme } from "~hooks";
-import { returnPointIcon } from "../utils";
 
 export function PointInfo(props) {
   const [visible, setVisible] = React.useState(false);
@@ -86,7 +85,7 @@ export function PointInfo(props) {
                   }}
                 >
                   <Image
-                    source={returnPointIcon(item?.contaminatedType ?? "")}
+                    source={{ uri: item?.asset?.url }}
                     className="w-14 h-14"
                   />
                   <View className="flex-1" style={{ gap: 5 }}>

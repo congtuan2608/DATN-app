@@ -4,3 +4,4 @@ export * from "./GuidanceDetail";
 export * from "./LocationReport";
 export * from "./Main";
 export * from "./Maps";
+export * from "./Maps/PointDetail";

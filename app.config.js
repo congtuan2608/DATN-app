@@ -64,7 +64,7 @@ module.exports = {
       favicon: "./assets/favicon.png",
     },
     extra: {
-      clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+      clerkPublishableKey: process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
       eas: {
         projectId: "92b16408-c49c-4ead-8b1e-2001b7a3c7fd",
       },
