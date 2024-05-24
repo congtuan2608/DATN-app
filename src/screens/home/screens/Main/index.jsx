@@ -109,14 +109,6 @@ export const HomeScreen = () => {
               </TouchableOpacity>
               <View className="pt-2 pb-4">
                 <ServiceGroups data={serviceList} />
-                {/* <FlatList
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  data={serviceList}
-                  renderItem={({ item }) => <GroupItem {...item} />}
-                  keyExtractor={(item, idx) => `HorizontalList_Item__${idx}`}
-                  ItemSeparatorComponent={() => <View className="w-6" />}
-                /> */}
               </View>
             </View>
             {/* <View>

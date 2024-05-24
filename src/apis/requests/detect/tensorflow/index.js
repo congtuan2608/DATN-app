@@ -8,7 +8,7 @@ export function TensorflowDetectImages() {
 
       (params?.images ?? []).map((asset) => {
         formData.append("images", {
-          uri: asset.uri,
+          uri: asset.uri || "",
           type: asset?.mimeType || "image/jpeg",
           name: asset?.fileName || String(Date.now()),
         });

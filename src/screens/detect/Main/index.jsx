@@ -32,6 +32,7 @@ export const DetectScreen = () => {
   const onGetStarted = () => {
     navigate.navigate("DetectResultsScreen", DATA_ITEMS[selectDetect]);
   };
+
   return (
     <StackScreen
       headerTitle="Detection images"

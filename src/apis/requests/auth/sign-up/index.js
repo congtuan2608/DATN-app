@@ -8,7 +8,7 @@ export function SignUp() {
       Object.entries(params).map(([key, value], index) => {
         if (key === "avatar" && value) {
           return formData.append(key, {
-            uri: value.uri,
+            uri: value.uri || "",
             type: value?.mimeType || "image/jpeg",
             name: value?.fileName || String(Date.now()),
           });

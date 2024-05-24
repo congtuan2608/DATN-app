@@ -23,7 +23,7 @@ export function GroupItem(props) {
         onPress={onNavigate}
       >
         <Image
-          source={props.image_url ?? require("~assets/gif/home.gif")}
+          source={props?.image_url}
           className="h-10 w-10"
           resizeMode="cover"
         />

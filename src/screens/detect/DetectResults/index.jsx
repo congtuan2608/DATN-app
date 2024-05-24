@@ -4,16 +4,17 @@ import React from "react";
 import {
   ActivityIndicator,
   Image,
+  Platform,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import ImageView from "react-native-image-viewing";
 import { RestAPI } from "~apis";
 import { KCContainer, KCIcon } from "~components";
 import { useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
-
 const LIMIT_IMAGE = 1;
 export function DetectResultsScreen() {
   const navigateParams = useRoute();
@@ -27,6 +28,12 @@ export function DetectResultsScreen() {
     upload: false,
     detect: false,
   });
+  const [visible, setIsVisible] = React.useState(false);
+  const [index, setIndex] = React.useState(0);
+  const openImageView = (idx) => {
+    setIsVisible(true);
+    setIndex(idx);
+  };
   React.useEffect(() => {
     (async () => {
       if (images.length === 0) return;
@@ -40,8 +47,9 @@ export function DetectResultsScreen() {
         }
         case "tensorflow": {
           setLoading({ ...loading, detect: true });
+
           const res = await roboflow.mutateAsync({ images });
-          console.log("tensorflow ", res[0]);
+          console.log("roboflow ", res[0]);
           setLoading({ ...loading, detect: false });
           return;
         }
@@ -120,16 +128,15 @@ export function DetectResultsScreen() {
   const isEmpty = React.useMemo(() => {
     switch (navigateParams.params?.type) {
       case "google-vision": {
-        return (googleVision.data ?? []).length === 0;
+        return (googleVision.data ?? []).lenght === 0;
       }
       case "tensorflow": {
-        return (roboflow.data ?? []).length === 0;
+        return (roboflow.data ?? []).lenght === 0;
       }
       default:
         return true;
     }
   }, [googleVision.data, roboflow.data]);
-
   const renderTitle = () => {
     switch (navigateParams.params?.type) {
       case "google-vision": {
@@ -176,66 +183,89 @@ export function DetectResultsScreen() {
             paddingBottom: safeAreaInsets.bottom,
           }}
         >
-          {images.length ? (
-            <View className="flex-1">
-              <View className="relative rounded-lg ">
-                {/* <KCCanvas
+          <KCContainer
+            className="flex-1 z-0"
+            isLoading={googleVision.isPending || roboflow.isPending}
+            isEmpty={isEmpty}
+            style={{ backgroundColor: theme.primaryBackgroundColor }}
+          >
+            {images.length ? (
+              <View className="flex-1">
+                <View className="relative rounded-lg ">
+                  {/* <KCCanvas
                   images={images}
                   googleVision={googleVision}
                   roboflow={roboflow}
                 /> */}
-                <KCContainer
-                  className="flex-1 z-0"
-                  isLoading={googleVision.isPending || roboflow.isPending}
-                  isEmpty={isEmpty}
-                  style={{ backgroundColor: theme.primaryBackgroundColor }}
-                >
-                  <Image
-                    source={{ uri: roboflow.data[0]?.src }}
-                    className="w-full rounded-lg "
-                    resizeMode="contain"
-                    style={{
-                      backgroundColor: theme.secondBackgroundColor,
-                      height:
-                        images[0]?.height *
-                        ((dimensions.window.width - 15) / images[0]?.width),
-                    }}
+                  <TouchableOpacity
+                    onPress={() => openImageView(index)}
+                    activeOpacity={0.8}
+                  >
+                    <Image
+                      source={{ uri: (roboflow.data ?? [])[0]?.src || "" }}
+                      className="w-full rounded-lg"
+                      resizeMode="contain"
+                      style={{
+                        backgroundColor: theme.secondBackgroundColor,
+                        height:
+                          images[0]?.height *
+                          ((dimensions.window.width - 15) / images[0]?.width),
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <ImageView
+                    initialNumToRender={3}
+                    images={
+                      (roboflow.data ?? []).map((item) => ({
+                        uri: item?.src || "",
+                      })) || []
+                    }
+                    imageIndex={index}
+                    visible={visible}
+                    presentationStyle="overFullScreen"
+                    onRequestClose={() => setIsVisible(false)}
+                    keyExtractor={(item, idx) => `ImageView_Item__${idx}`}
+                    FooterComponent={({ imageIndex }) => (
+                      <View
+                        className="flex-row justify-center items-center "
+                        style={{
+                          paddingBottom:
+                            Platform.OS === "ios"
+                              ? safeAreaInsets.bottom - 15
+                              : safeAreaInsets.bottom || 10,
+                        }}
+                      >
+                        <View
+                          className="shadow-sm rounded-lg"
+                          style={{
+                            backgroundColor: theme.secondBackgroundColor,
+                          }}
+                        >
+                          <Text
+                            className="text-base font-medium rounded-lg px-3 py-1"
+                            style={{
+                              color: theme.primaryTextColor,
+                            }}
+                          >
+                            {imageIndex + 1}/{images.length}
+                          </Text>
+                        </View>
+                      </View>
+                    )}
                   />
-                </KCContainer>
-                {/* <Image
-                  source={{ uri: images[0]?.uri }}
-                  className="w-full rounded-lg "
-                  resizeMode="contain"
-                  style={{
-                    backgroundColor: theme.secondBackgroundColor,
-                    height:
-                      images[0]?.height *
-                      ((dimensions.window.width - 15) / images[0]?.width),
-                  }}
-                /> */}
-                {/* <View className="absolute z-10">
-                  {roboflow.data && renderCoordinate(roboflow.data[0])}
-                </View> */}
+                  <TouchableOpacity
+                    className="absolute -top-1 -right-1 rounded-full p-2"
+                    onPress={() => setImages([])}
+                  >
+                    <KCIcon
+                      name="close"
+                      family="Ionicons"
+                      size={35}
+                      color="red"
+                    />
+                  </TouchableOpacity>
+                </View>
 
-                <TouchableOpacity
-                  className="absolute -top-1 -right-1 rounded-full p-2"
-                  onPress={() => setImages([])}
-                >
-                  <KCIcon
-                    name="close"
-                    family="Ionicons"
-                    size={35}
-                    color="red"
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <KCContainer
-                className="flex-1 z-0"
-                isLoading={googleVision.isPending || roboflow.isPending}
-                isEmpty={isEmpty}
-                style={{ backgroundColor: theme.primaryBackgroundColor }}
-              >
                 <View className="flex-1 w-full" style={{ gap: 5 }}>
                   <Text
                     className="text-base font-semibold py-3"
@@ -245,50 +275,56 @@ export function DetectResultsScreen() {
                   </Text>
                   {renderResults()}
                 </View>
-              </KCContainer>
-            </View>
-          ) : (
-            <View
-              className="flex-1 w-full justify-center px-2"
-              style={{ gap: 20 }}
-            >
-              <TouchableOpacity
-                className="justify-center items-center py-6 rounded-xl shadow-md"
-                style={{ gap: 5, backgroundColor: theme.secondBackgroundColor }}
-                onPress={onChooseFromLibrary}
+              </View>
+            ) : (
+              <View
+                className="flex-1 w-full justify-center px-2"
+                style={{ gap: 20 }}
               >
-                {loading.upload ? (
-                  <ActivityIndicator
-                    size="large"
-                    color={theme.primaryIconColor}
-                  />
-                ) : (
-                  <Image
-                    source={require("~assets/images/upload-image-icon.png")}
-                    className="w-8 h-8"
-                    resizeMode="contain"
-                  />
-                )}
+                <TouchableOpacity
+                  className="justify-center items-center py-6 rounded-xl shadow-md"
+                  style={{
+                    gap: 5,
+                    backgroundColor: theme.secondBackgroundColor,
+                  }}
+                  onPress={onChooseFromLibrary}
+                >
+                  {loading.upload ? (
+                    <ActivityIndicator
+                      size="large"
+                      color={theme.primaryIconColor}
+                    />
+                  ) : (
+                    <Image
+                      source={require("~assets/images/upload-image-icon.png")}
+                      className="w-8 h-8"
+                      resizeMode="contain"
+                    />
+                  )}
 
-                <Text style={{ color: theme.primaryTextColor }}>
-                  Choose photo from gallery
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="justify-center items-center py-6 rounded-xl shadow-md"
-                style={{ gap: 5, backgroundColor: theme.secondBackgroundColor }}
-                onPress={onTakePhoto}
-              >
-                <Image
-                  source={require("~assets/images/camera-icon.png")}
-                  className="w-8 h-8"
-                />
-                <Text style={{ color: theme.primaryTextColor }}>
-                  Take photos with your camera
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    Choose photo from gallery
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="justify-center items-center py-6 rounded-xl shadow-md"
+                  style={{
+                    gap: 5,
+                    backgroundColor: theme.secondBackgroundColor,
+                  }}
+                  onPress={onTakePhoto}
+                >
+                  <Image
+                    source={require("~assets/images/camera-icon.png")}
+                    className="w-8 h-8"
+                  />
+                  <Text style={{ color: theme.primaryTextColor }}>
+                    Take photos with your camera
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </KCContainer>
         </ScrollView>
       </View>
     </StackScreen>

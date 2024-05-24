@@ -189,7 +189,7 @@ export function PointDetailScreen() {
                   renderItem={({ item, index }) => (
                     <TouchableOpacity onPress={() => openImageView(index)}>
                       <Image
-                        source={{ uri: item.url }}
+                        source={{ uri: item.url || "" }}
                         className="w-36 h-36 rounded-lg"
                         resizeMode="cover"
                       />
@@ -202,7 +202,7 @@ export function PointDetailScreen() {
                   initialNumToRender={3}
                   images={
                     (LocationInfo.data?.assets ?? []).map((item) => ({
-                      uri: item.url,
+                      uri: item.url || "",
                     })) || []
                   }
                   imageIndex={index}

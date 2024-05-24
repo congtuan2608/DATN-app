@@ -131,7 +131,7 @@ export function ReportLocaionItem(props) {
             renderItem={({ item, index }) => (
               <TouchableOpacity onPress={() => openImageView(index)}>
                 <Image
-                  source={{ uri: item.url }}
+                  source={{ uri: item.url || "" }}
                   className="w-36 h-36 rounded-lg"
                   resizeMode="cover"
                 />
@@ -145,7 +145,9 @@ export function ReportLocaionItem(props) {
 
       <ImageView
         initialNumToRender={3}
-        images={(props?.assets ?? []).map((item) => ({ uri: item.url })) || []}
+        images={
+          (props?.assets ?? []).map((item) => ({ uri: item.url || "" })) || []
+        }
         imageIndex={index}
         visible={visible}
         presentationStyle="overFullScreen"

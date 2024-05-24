@@ -85,7 +85,7 @@ export function PointInfo(props) {
                   }}
                 >
                   <Image
-                    source={{ uri: item?.asset?.url }}
+                    source={{ uri: item?.asset?.url || "" }}
                     className="w-14 h-14"
                   />
                   <View className="flex-1" style={{ gap: 5 }}>

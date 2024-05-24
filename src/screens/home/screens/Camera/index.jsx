@@ -7,6 +7,7 @@ import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import { KCIcon } from "~components";
 import { useScreenUtils } from "~hooks";
 import { StackScreen } from "~layouts";
+
 export const CameraScreen = () => {
   const screenUtils = useScreenUtils();
   const navigateParams = useRoute();
@@ -47,6 +48,7 @@ export const CameraScreen = () => {
       try {
         const data = await cameraRef.current.takePictureAsync();
         // await MediaLibrary.createAssetAsync(data?.uri);
+
         setImagePreview(data);
         setImageList((prev) => [...prev, data]);
       } catch (error) {
@@ -176,7 +178,7 @@ export const CameraScreen = () => {
       >
         {imagePreview && (
           <Image
-            source={imagePreview}
+            source={{ uri: imagePreview?.uri || "" }}
             resizeMode="cover"
             className="flex-1 w-full z-10"
           />

@@ -125,7 +125,7 @@ export function CampaignItem() {
             renderItem={({ item, index }) => (
               <TouchableOpacity onPress={openImageView}>
                 <ImagePreview
-                  imageSource={{ uri: item.url }}
+                  imageSource={{ uri: item.url || "" }}
                   imageStyle={{
                     width: 144,
                     height: 144,

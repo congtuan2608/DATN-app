@@ -18,7 +18,7 @@ export function KCImagesPreview(props) {
     >
       <View className="flex-1 justify-center items-center bg-[#00000030]">
         <ImagePreview
-          imageSource={{ uri: props?.data[0].url }}
+          imageSource={{ uri: props?.data[0]?.url ?? "" }}
           imageStyle={{
             width: "100%",
             height: "100%",

@@ -135,7 +135,7 @@ export function CampaignDetailScreen(props) {
               >
                 <Image
                   className="w-8 h-8 rounded-full"
-                  source={{ uri: campaign.data?.organizer?.avatar }}
+                  source={{ uri: campaign.data?.organizer?.avatar || "" }}
                 />
                 <Text
                   className="text-sm font-medium"

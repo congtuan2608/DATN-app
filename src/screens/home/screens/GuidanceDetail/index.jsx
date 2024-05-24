@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import ImageView from "react-native-image-viewing";
 import { KCContainer } from "~components";
+import { AVATAR_URL } from "~constants";
 import { useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 export function GuidanceDetailScreen() {
@@ -67,7 +68,9 @@ export function GuidanceDetailScreen() {
                 style={{ borderColor: theme.primaryTextColor }}
               >
                 <Image
-                  source={{ uri: dataGuidance?.author?.avatar ?? AVATAR_URL }}
+                  source={{
+                    uri: dataGuidance?.author?.avatar?.src ?? AVATAR_URL,
+                  }}
                   className="w-12 h-12 rounded-full"
                   resizeMode="cover"
                 />
@@ -110,7 +113,7 @@ export function GuidanceDetailScreen() {
                     renderItem={({ item, index }) => (
                       <TouchableOpacity onPress={() => openImageView(index)}>
                         <Image
-                          source={{ uri: item.url }}
+                          source={{ uri: item.url || "" }}
                           className="w-36 h-36 rounded-lg"
                           resizeMode="cover"
                         />
@@ -123,7 +126,8 @@ export function GuidanceDetailScreen() {
                   <ImageView
                     initialNumToRender={3}
                     images={
-                      assets?.images.map((item) => ({ uri: item.url })) || []
+                      assets?.images.map((item) => ({ uri: item.url || "" })) ||
+                      []
                     }
                     imageIndex={index}
                     visible={visible}

@@ -55,7 +55,7 @@ export function GuidanceItem(props) {
           style={{ borderColor: theme.primaryTextColor }}
         >
           <Image
-            source={{ uri: data?.author?.avatar ?? AVATAR_URL }}
+            source={{ uri: data?.author?.avatar?.src ?? AVATAR_URL }}
             className="w-12 h-12 rounded-full"
             resizeMode="cover"
           />
@@ -111,7 +111,7 @@ export function GuidanceItem(props) {
               renderItem={({ item, index }) => (
                 <TouchableOpacity onPress={() => openImageView(index)}>
                   <Image
-                    source={{ uri: item.url }}
+                    source={{ uri: item.url || "" }}
                     className="w-36 h-36 rounded-lg"
                     resizeMode="cover"
                   />
@@ -123,7 +123,9 @@ export function GuidanceItem(props) {
 
             <ImageView
               initialNumToRender={3}
-              images={assets?.images.map((item) => ({ uri: item.url })) || []}
+              images={
+                assets?.images.map((item) => ({ uri: item.url || "" })) || []
+              }
               imageIndex={index}
               visible={visible}
               presentationStyle="overFullScreen"

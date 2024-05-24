@@ -15,7 +15,7 @@ export function PostRecyclingGuide() {
       });
       params.assets.map((asset) => {
         formData.append("assets", {
-          uri: asset.uri,
+          uri: asset.uri || "",
         });
       });
 

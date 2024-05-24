@@ -26,7 +26,7 @@ export function CreateReportLocation() {
 
       (params?.assets ?? []).map((asset) => {
         formData.append("assets", {
-          uri: asset.uri,
+          uri: asset.uri || "",
           type: asset?.mimeType || "image/jpeg",
           name: asset?.fileName || String(Date.now()),
         });
