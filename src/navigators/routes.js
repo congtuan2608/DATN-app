@@ -16,6 +16,9 @@ export const SCREENS = {
   MapScreen: {
     component: ScreenComponents.HomeScreens.MapScreen,
   },
+  AirPollutionScreen: {
+    component: ScreenComponents.HomeScreens.AirPollutionScreen,
+  },
   PointDetailScreen: {
     component: ScreenComponents.HomeScreens.PointDetailScreen,
   },

@@ -1,3 +1,4 @@
+export * from "./AirPollution";
 export * from "./Camera";
 export * from "./EnvironmentalGuidance";
 export * from "./GuidanceDetail";

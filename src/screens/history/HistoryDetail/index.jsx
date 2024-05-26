@@ -6,6 +6,7 @@ import { KCContainer } from "~components";
 import { useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { HistoryDetailHeader, ReportLocaionItem } from "./components";
+import { CampaignItem } from "./components/CampaignItem";
 
 export function HistoryDetailScreen() {
   const { theme } = useTheme();
@@ -15,11 +16,20 @@ export function HistoryDetailScreen() {
     if (navigateParams.params?.id)
       HistoryDetail.mutate({ id: navigateParams.params?.id });
   }, [navigateParams.params?.id]);
-
   const renderComponent = (activity) => {
     switch (activity) {
       case "report-location": {
         return <ReportLocaionItem {...HistoryDetail.data?.details} />;
+      }
+      case "campaign": {
+        return (
+          <CampaignItem
+            {...{
+              ...HistoryDetail.data?.details,
+              campaign: HistoryDetail.data?.details?.ref,
+            }}
+          />
+        );
       }
 
       default:

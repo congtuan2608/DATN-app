@@ -4,6 +4,7 @@ import React from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { RestAPI } from "~apis";
 import { KCButton, KCContainer } from "~components";
+import { AVATAR_URL } from "~constants";
 import { useAuth, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { ReportLocaionItem } from "~screens/history/HistoryDetail/components";
@@ -135,7 +136,9 @@ export function CampaignDetailScreen(props) {
               >
                 <Image
                   className="w-8 h-8 rounded-full"
-                  source={{ uri: campaign.data?.organizer?.avatar || "" }}
+                  source={{
+                    uri: campaign.data?.organizer?.avatar?.url || AVATAR_URL,
+                  }}
                 />
                 <Text
                   className="text-sm font-medium"

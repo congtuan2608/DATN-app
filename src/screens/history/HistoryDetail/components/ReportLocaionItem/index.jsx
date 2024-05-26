@@ -27,17 +27,6 @@ export function ReportLocaionItem(props) {
       style={{ backgroundColor: theme.secondBackgroundColor, gap: 20 }}
     >
       <View
-        className="flex-row justify-between items-center"
-        style={{ gap: 10 }}
-      >
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
-          Report ID
-        </Text>
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
-          {props?._id || "Unknown"}
-        </Text>
-      </View>
-      <View
         className="flex-row justify-between items-start flex-wrap"
         style={{ gap: 20 }}
       >
@@ -71,8 +60,7 @@ export function ReportLocaionItem(props) {
           Coordinates
         </Text>
         <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
-          {(props.location &&
-            `${props.location.latitude}, ${props.location.longitude}`) ||
+          {(props.location && props.location.coordinates.join(", ")) ||
             "Unknown"}
         </Text>
       </View>

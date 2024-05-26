@@ -14,7 +14,7 @@ export function KCContainer(props) {
   }
   if (isEmpty) {
     return (
-      <View className="flex-1 justify-center items-center mb-2" {...viewProps}>
+      <View className="flex-1 justify-center items-center py-2" {...viewProps}>
         {!hideImage && <Image source={NO_DATA} className="w-20 h-20" />}
         <Text style={{ color: theme.primaryTextColor }}>
           {textEmpty ?? "No data"}

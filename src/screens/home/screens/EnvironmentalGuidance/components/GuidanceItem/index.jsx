@@ -55,7 +55,7 @@ export function GuidanceItem(props) {
           style={{ borderColor: theme.primaryTextColor }}
         >
           <Image
-            source={{ uri: data?.author?.avatar?.src ?? AVATAR_URL }}
+            source={{ uri: data?.author?.avatar?.url ?? AVATAR_URL }}
             className="w-12 h-12 rounded-full"
             resizeMode="cover"
           />

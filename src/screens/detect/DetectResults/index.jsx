@@ -189,7 +189,7 @@ export function DetectResultsScreen() {
             isEmpty={isEmpty}
             style={{ backgroundColor: theme.primaryBackgroundColor }}
           >
-            {images.length ? (
+            {(roboflow.data ?? [])[0]?.src ? (
               <View className="flex-1">
                 <View className="relative rounded-lg ">
                   {/* <KCCanvas
@@ -303,7 +303,7 @@ export function DetectResultsScreen() {
                   )}
 
                   <Text style={{ color: theme.primaryTextColor }}>
-                    Choose photo from gallery
+                    Choose photo from gallery (PNG, JPEG, JPG)
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity

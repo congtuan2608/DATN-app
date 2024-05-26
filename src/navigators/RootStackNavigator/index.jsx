@@ -29,6 +29,7 @@ const RootScreens = [
   "MyProfileScreen",
   "ChangeThemeScreen",
   "HistoryDetailScreen",
+  "AirPollutionScreen",
 ];
 const Stack = createNativeStackNavigator();
 export const RootStackNavigator = () => {

@@ -1,9 +1,9 @@
 import { SCREENS } from "../routes";
 
 export const bottomTabScreens = {
-  Detection: {
-    label: "Detection",
-    component: SCREENS.DetectScreen.component,
+  AirMap: {
+    label: "Air Map",
+    component: SCREENS.AirPollutionScreen.component,
     icon: (props) => ({
       family: "Ionicons",
       name: "scan",
