@@ -42,7 +42,7 @@ const validateSchema = {
     minValue: 10,
     maxValue: 200,
   },
-  ref: {
+  reference: {
     required: true,
   },
 };
@@ -53,7 +53,7 @@ const initialValues = {
   startDate: new Date(),
   endDate: "",
   limit: 0,
-  ref: undefined,
+  reference: undefined,
   allowDonate: false,
 };
 export function EditCampaignsScreen() {
@@ -79,7 +79,7 @@ export function EditCampaignsScreen() {
       // Update campaign
       const res = await UpdateCampaign.mutateAsync({
         ...submit.values,
-        ref: submit.values.ref._id,
+        reference: submit.values.reference._id,
         limit: Number(submit.values.limit) || 30,
       });
       console.log("UpdateCampaign: ", res);
@@ -87,7 +87,7 @@ export function EditCampaignsScreen() {
       // Create campaign
       const res = await CreateCampaign.mutateAsync({
         ...submit.values,
-        ref: submit.values.ref._id,
+        reference: submit.values.reference._id,
         limit: Number(submit.values.limit) || 30,
       });
       console.log("CreateCampaign: ", res);
@@ -380,16 +380,16 @@ export function EditCampaignsScreen() {
                 )}
               </View>
 
-              {form.values?.ref ? (
+              {form.values?.reference ? (
                 <View
                   className="py-2 rounded-lg shadow-sm"
                   style={{ backgroundColor: theme.secondBackgroundColor }}
                 >
-                  <ReportLocaionItem {...form.values?.ref} />
+                  <ReportLocaionItem {...form.values?.reference} />
                   <View className="px-2">
                     <KCButton
                       variant="Outline"
-                      onPress={() => form.handleChange("ref", undefined)}
+                      onPress={() => form.handleChange("reference", undefined)}
                       styleContainer={{ borderColor: "red" }}
                       textStyle={{ color: "red" }}
                     >
@@ -404,8 +404,9 @@ export function EditCampaignsScreen() {
                       activeOpacity={0.6}
                       onPress={() =>
                         navigate.navigate("SelectLocation", {
-                          callback: (value) => form.handleChange("ref", value),
-                          prevValue: form.values?.ref,
+                          callback: (value) =>
+                            form.handleChange("reference", value),
+                          prevValue: form.values?.reference,
                         })
                       }
                       className={`rounded-xl px-5 pr-14 shadow-sm ${
@@ -417,12 +418,12 @@ export function EditCampaignsScreen() {
                     >
                       <Text
                         style={{
-                          color: form.values?.ref
+                          color: form.values?.reference
                             ? theme.primaryTextColor
                             : theme.thirdTextColor,
                         }}
                       >
-                        {form.values?.ref?.address || "Select location"}
+                        {form.values?.reference?.address || "Select location"}
                       </Text>
                     </TouchableOpacity>
                     <View className="absolute right-0 items-center h-full justify-center opacity-40 px-5">
@@ -434,10 +435,10 @@ export function EditCampaignsScreen() {
                       />
                     </View>
                   </View>
-                  {form.errors?.ref && (
+                  {form.errors?.reference && (
                     <View className="px-4 mt-2 -mb-3">
                       <Text className="text-xs" style={{ color: "red" }}>
-                        {form.errors.ref?.message}
+                        {form.errors.reference?.message}
                       </Text>
                     </View>
                   )}

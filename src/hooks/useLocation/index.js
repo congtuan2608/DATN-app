@@ -11,7 +11,6 @@ const formatted = ({ streetNumber, street, district, city, region }) => {
 
 export const useLocation = () => {
   const [location, setLocation] = useRecoilState(SYSTEM_STATE.Location);
-
   const getCurrentLocation = React.useCallback(async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {

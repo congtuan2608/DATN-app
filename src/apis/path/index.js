@@ -1,11 +1,16 @@
 const ROOT_BE_URL = process.env.EXPO_PUBLIC_ROOT_BE_URL;
 export const APIPaths = {
-  //api User-Authentication
+  //api Authentication
   Login: `${ROOT_BE_URL}/v1/auth/login`,
   SignUp: `${ROOT_BE_URL}/v1/auth/sign-up`,
+  GoogleLogin: `${ROOT_BE_URL}/v1/auth/google-login`,
+  SendOTP: `${ROOT_BE_URL}/v1/auth/send-otp`,
+  VerifyOTP: `${ROOT_BE_URL}/v1/auth/verify-otp`,
+  ResetPassword: `${ROOT_BE_URL}/v1/auth/reset-password`,
+
+  //api User
   GetUserProfile: `${ROOT_BE_URL}/v1/auth`,
   RefreshToken: `${ROOT_BE_URL}/v1/token/refresh`,
-  GoogleLogin: `${ROOT_BE_URL}/v1/auth/google-login`,
   User: `${ROOT_BE_URL}/v1/user`,
 
   // recycling
@@ -26,12 +31,13 @@ export const APIPaths = {
   RoboflowDetectImages: `${ROOT_BE_URL}/v1/detect/roboflow`,
 
   // campaign
-  GetCampaign: `${ROOT_BE_URL}/v1/canpaign`,
-  GetCampaignById: `${ROOT_BE_URL}/v1/canpaign/by-id`,
-  CreateCampaign: `${ROOT_BE_URL}/v1/canpaign/create`,
-  UpdateCampaign: `${ROOT_BE_URL}/v1/canpaign/update`,
-  JoinCampaign: `${ROOT_BE_URL}/v1/canpaign/join-campaign`,
-  LeaveCampaign: `${ROOT_BE_URL}/v1/canpaign/leave-campaign`,
+  GetCampaign: `${ROOT_BE_URL}/v1/campaign`,
+  GetCampaignById: `${ROOT_BE_URL}/v1/campaign/by-id`,
+  CreateCampaign: `${ROOT_BE_URL}/v1/campaign/create`,
+  UpdateCampaign: `${ROOT_BE_URL}/v1/campaign/update`,
+  JoinCampaign: `${ROOT_BE_URL}/v1/campaign/join-campaign`,
+  LeaveCampaign: `${ROOT_BE_URL}/v1/campaign/leave-campaign`,
+  NearbyCampaign: `${ROOT_BE_URL}/v1/campaign/nearby`,
 
   // history
   History: `${ROOT_BE_URL}/v1/history`,

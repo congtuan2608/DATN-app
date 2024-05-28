@@ -253,7 +253,14 @@ export const LoginScreens = () => {
               </View>
             )}
             <View className="flex-row justify-end px-1">
-              <TouchableOpacity className="px-2 py-1">
+              <TouchableOpacity
+                className="px-2 py-1"
+                onPress={() =>
+                  navigate.navigate("ForgotPassword", {
+                    email: form.values.email,
+                  })
+                }
+              >
                 <Text
                   className="text-xs"
                   style={{ color: theme?.highLightColor }}

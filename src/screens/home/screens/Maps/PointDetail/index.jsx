@@ -1,4 +1,5 @@
 import { useRoute } from "@react-navigation/native";
+import { getDistance } from "geolib";
 import React from "react";
 import {
   FlatList,
@@ -159,6 +160,29 @@ export function PointDetailScreen() {
               </Text>
             </View>
             <View
+              className="flex-row justify-between items-center"
+              style={{ gap: 10 }}
+            >
+              <Text
+                className="text-sm"
+                style={{ color: theme.primaryTextColor }}
+              >
+                Current distance:{" "}
+              </Text>
+              <Text
+                className="text-sm font-medium"
+                numberOfLines={1}
+                style={{ color: theme.primaryTextColor }}
+              >
+                {LocationInfo.data &&
+                  getDistance(location, {
+                    longitude: LocationInfo.data?.location?.coordinates[0],
+                    latitude: LocationInfo.data?.location?.coordinates[1],
+                  }).toLocaleString("de-DE")}
+                m
+              </Text>
+            </View>
+            <View
               className="flex-row justify-between items-start flex-wrap"
               style={{ gap: 10 }}
             >
@@ -254,7 +278,9 @@ export function PointDetailScreen() {
         }}
       >
         <KCButton variant="Filled" onPress={handleOpenGoogleMap}>
-          Open in Google Map
+          {`Open directions in ${
+            Platform.OS === "ios" ? "Apple" : "Google"
+          } Map`}
         </KCButton>
       </View>
     </StackScreen>

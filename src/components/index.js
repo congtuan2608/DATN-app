@@ -6,4 +6,5 @@ export * from "./ImagesPreview";
 export * from "./KCContainer";
 export * from "./Linking";
 export * from "./Modal";
+export * from "./OTP";
 export * from "./SVGAsset";

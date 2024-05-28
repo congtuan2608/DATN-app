@@ -15,7 +15,7 @@ const DATA_ITEMS = [
       "Extract information about objects, faces, and text within images",
   },
   {
-    type: "tensorflow",
+    type: "roboflow",
     path: require("~assets/images/detect-trash-icon.png"),
     title: "Garbage classification",
     description:

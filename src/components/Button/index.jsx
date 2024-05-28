@@ -2,7 +2,7 @@ import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "~hooks";
 
 export const KCButton = (props) => {
-  const { styleContainer, ...other } = props;
+  const { styleContainer, onPress, ...other } = props;
   const { theme } = useTheme();
   switch (props.variant) {
     case "Filled": {
@@ -21,6 +21,10 @@ export const KCButton = (props) => {
               ? theme.primaryDisabledButtonColor
               : theme.primaryButtonBackgroundColor,
             ...(styleContainer ?? {}),
+          }}
+          onPress={() => {
+            if (props.isLoading) return;
+            onPress();
           }}
           {...other}
         >
@@ -66,6 +70,10 @@ export const KCButton = (props) => {
               ? theme.primaryDisabledButtonColor
               : theme.primaryButtonBackgroundColor,
             ...(props.styleContainer ?? {}),
+          }}
+          onPress={() => {
+            if (props.isLoading) return;
+            onPress();
           }}
           {...other}
         >

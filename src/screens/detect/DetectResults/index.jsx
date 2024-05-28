@@ -45,7 +45,7 @@ export function DetectResultsScreen() {
           setLoading({ ...loading, detect: false });
           return;
         }
-        case "tensorflow": {
+        case "roboflow": {
           setLoading({ ...loading, detect: true });
 
           const res = await roboflow.mutateAsync({ images });
@@ -101,7 +101,7 @@ export function DetectResultsScreen() {
           </View>
         ));
       }
-      case "tensorflow": {
+      case "roboflow": {
         if (!roboflow.data) return;
         return roboflow.data.map((groups, idx) =>
           (groups?.predictions ?? []).map((groupsItem, idx) => (
@@ -111,10 +111,13 @@ export function DetectResultsScreen() {
               style={{ backgroundColor: theme.secondBackgroundColor, gap: 5 }}
             >
               <Text style={{ color: theme.primaryTextColor }}>
-                Name: {groupsItem.class}
+                Name: {groupsItem.class} ({idx + 1})
               </Text>
               <Text style={{ color: theme.primaryTextColor }}>
                 Exact ratio: {convertToPercent(groupsItem.confidence)}%
+              </Text>
+              <Text style={{ color: theme.primaryTextColor }}>
+                Description: {groupsItem?.info?.description}
               </Text>
             </View>
           ))
@@ -130,7 +133,7 @@ export function DetectResultsScreen() {
       case "google-vision": {
         return (googleVision.data ?? []).lenght === 0;
       }
-      case "tensorflow": {
+      case "roboflow": {
         return (roboflow.data ?? []).lenght === 0;
       }
       default:
@@ -142,7 +145,7 @@ export function DetectResultsScreen() {
       case "google-vision": {
         return "Result detect object";
       }
-      case "tensorflow": {
+      case "roboflow": {
         return "Result garbage classification";
       }
       default:
@@ -189,7 +192,7 @@ export function DetectResultsScreen() {
             isEmpty={isEmpty}
             style={{ backgroundColor: theme.primaryBackgroundColor }}
           >
-            {(roboflow.data ?? [])[0]?.src ? (
+            {(roboflow.data ?? [])[0]?.src && images.length ? (
               <View className="flex-1">
                 <View className="relative rounded-lg ">
                   {/* <KCCanvas

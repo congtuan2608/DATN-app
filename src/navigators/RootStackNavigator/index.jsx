@@ -6,7 +6,12 @@ import { View } from "react-native";
 import { AsyncStorageKey } from "~configs";
 import { initAxiosConfigs } from "~configs/axios";
 import { useAuth, useLocation, useTheme } from "~hooks";
-import { LoginScreens, OnboardingScreens, SignUpScreens } from "~screens";
+import {
+  ForgotPasswordScreen,
+  LoginScreens,
+  OnboardingScreens,
+  SignUpScreens,
+} from "~screens";
 import { SCREENS } from "../routes";
 
 const InitScreen = "DrawerNavigator";
@@ -108,6 +113,11 @@ export const RootStackNavigator = () => {
           <Stack.Screen
             name="SignUp"
             component={SignUpScreens}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ForgotPassword"
+            component={ForgotPasswordScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

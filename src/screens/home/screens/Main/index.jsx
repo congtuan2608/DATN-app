@@ -3,13 +3,14 @@ import {
   Animated,
   FlatList,
   Image,
+  RefreshControl,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { RestAPI } from "~apis";
 import { KCIcon } from "~components";
-import { useAuth, useScreenUtils, useTheme } from "~hooks";
+import { useAuth, useLocation, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { getResponesive } from "~utils";
 import { GuidanceItem, InterestedItem } from "../../components";
@@ -19,15 +20,28 @@ import { serviceList } from "./data";
 
 export const HomeScreen = () => {
   const { theme, changeTheme } = useTheme();
+  const { location } = useLocation();
   const { safeAreaInsets, dimensions } = useScreenUtils();
   const scrollY = React.useRef(new Animated.Value(0)).current;
   const auth = useAuth();
   const RecyclingGuide = RestAPI.RecyclingGuide();
+  const nearbyCampaigns = RestAPI.GetNearbyCampaigns();
+  const [refreshing, setRefreshing] = React.useState(false);
 
   React.useEffect(() => {
     RecyclingGuide.getRecyclingGuide.mutate({});
-  }, []);
+  }, [refreshing]);
+  React.useEffect(() => {
+    if (location)
+      nearbyCampaigns.mutate({
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+  }, [location, refreshing]);
 
+  const handleRefresh = () => {
+    setRefreshing(!refreshing);
+  };
   const handleOnScroll = React.useMemo(
     () => ({
       transform: [
@@ -56,6 +70,15 @@ export const HomeScreen = () => {
       <Animated.ScrollView
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            style={{
+              zIndex: 10,
+            }}
+            refreshing={false}
+            onRefresh={handleRefresh}
+          />
+        }
         contentContainerStyle={{
           flexGrow: 1,
           backgroundColor: "#dddddd",
@@ -151,15 +174,23 @@ export const HomeScreen = () => {
                 </View>
               </View>
               <View className="pt-3 pb-4">
-                <FlatList
-                  style={{ paddingBottom: 12 }}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  data={serviceList}
-                  renderItem={({ item }) => <InterestedItem {...item} />}
-                  keyExtractor={(item, idx) => `HorizontalList_Item__${idx}`}
-                  ItemSeparatorComponent={() => <View className="w-4" />}
-                />
+                <KCContainer
+                  className={
+                    !location || nearbyCampaigns.isPending ? "my-10" : ""
+                  }
+                  isLoading={!location || nearbyCampaigns.isPending}
+                  isEmpty={!(location && nearbyCampaigns.data)}
+                >
+                  <FlatList
+                    style={{ paddingBottom: 12 }}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    data={nearbyCampaigns.data ?? []}
+                    renderItem={({ item }) => <InterestedItem {...item} />}
+                    keyExtractor={(item, idx) => `HorizontalList_Item__${idx}`}
+                    ItemSeparatorComponent={() => <View className="w-4" />}
+                  />
+                </KCContainer>
               </View>
             </View>
             <View>

@@ -29,10 +29,10 @@ export async function getAxiosRequestFn(request, otherConfigs) {
     return response.data;
     //
   } catch (error) {
-    // if (otherConfigs?.returnStatus) {
-    //   console.error(error);
-    //   return { status: error.status, detail: error.data };
-    // }
+    if (otherConfigs?.returnStatus) {
+      console.error(error);
+      return { status: error.status, detail: error.data };
+    }
 
     throw error;
   }

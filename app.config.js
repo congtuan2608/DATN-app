@@ -2,6 +2,7 @@ module.exports = {
   expo: {
     name: "Go Green",
     slug: "go-green",
+    scheme: "go-green",
     description: "App dọn rác",
     version: "1.0.7",
     orientation: "portrait",
@@ -147,6 +148,5 @@ module.exports = {
     updates: {
       url: "https://u.expo.dev/92b16408-c49c-4ead-8b1e-2001b7a3c7fd",
     },
-    scheme: "com.lctuan.go-green",
   },
 };

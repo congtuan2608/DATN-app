@@ -102,7 +102,7 @@ export function CampaignDetailScreen(props) {
   return (
     <StackScreen headerTitle="Campaigns detail">
       <KCContainer
-        className="pt-2 px-2"
+        className="pt-2 px-3"
         isLoading={campaign.isPending}
         isEmpty={!campaign.data}
         style={{ backgroundColor: theme.primaryBackgroundColor }}
@@ -241,10 +241,10 @@ export function CampaignDetailScreen(props) {
             </View>
           </View>
 
-          <ReportLocaionItem {...campaign.data?.ref} />
+          <ReportLocaionItem {...campaign.data?.reference} />
         </ScrollView>
         <View
-          className="w-full flex-col justify-center pt-3 px-4 border-t "
+          className="w-full flex-col justify-center pt-3 border-t "
           style={{
             gap: 10,
             paddingBottom: getResponesive(safeAreaInsets, dimensions)
