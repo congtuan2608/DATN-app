@@ -47,7 +47,8 @@ export function InterestedItem(props) {
           numberOfLines={1}
           style={{ color: theme.primaryTextColor, width: width - 130 }}
         >
-          Number of participants: {props?.participants.length || "<undefined>"}
+          Number of participants:{" "}
+          {props?.participants.length + "/" + props?.limit || "<undefined>"}
         </Text>
         <Text
           className="text-left text-xs"

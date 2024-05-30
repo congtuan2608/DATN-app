@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   Animated,
@@ -9,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { RestAPI } from "~apis";
-import { KCIcon } from "~components";
+import { KCButton, KCIcon } from "~components";
 import { useAuth, useLocation, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { getResponesive } from "~utils";
@@ -27,6 +28,7 @@ export const HomeScreen = () => {
   const RecyclingGuide = RestAPI.RecyclingGuide();
   const nearbyCampaigns = RestAPI.GetNearbyCampaigns();
   const [refreshing, setRefreshing] = React.useState(false);
+  const navigate = useNavigation();
 
   React.useEffect(() => {
     RecyclingGuide.getRecyclingGuide.mutate({});
@@ -176,10 +178,28 @@ export const HomeScreen = () => {
               <View className="pt-3 pb-4">
                 <KCContainer
                   className={
-                    !location || nearbyCampaigns.isPending ? "my-10" : ""
+                    !(location && (nearbyCampaigns.data ?? []).length !== 0)
+                      ? "mt-3"
+                      : ""
                   }
                   isLoading={!location || nearbyCampaigns.isPending}
-                  isEmpty={!(location && nearbyCampaigns.data)}
+                  isEmpty={
+                    !(location && (nearbyCampaigns.data ?? []).length !== 0)
+                  }
+                  textEmpty="There are no volunteer trash cleanups nearby (1km)"
+                  childrenEmpty={
+                    <KCButton
+                      onPress={() =>
+                        navigate.navigate("CampaignsScreen", {
+                          headerShown: true,
+                        })
+                      }
+                      variant="Outline"
+                      styleContainer={{ flex: 1, marginTop: 10 }}
+                    >
+                      See other activities
+                    </KCButton>
+                  }
                 >
                   <FlatList
                     style={{ paddingBottom: 12 }}

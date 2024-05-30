@@ -3,7 +3,14 @@ import { NO_DATA } from "~constants";
 import { useTheme } from "~hooks";
 
 export function KCContainer(props) {
-  const { isLoading, isEmpty, hideImage, textEmpty, ...viewProps } = props;
+  const {
+    isLoading,
+    isEmpty,
+    hideImage,
+    textEmpty,
+    childrenEmpty,
+    ...viewProps
+  } = props;
   const { theme } = useTheme();
   if (isLoading) {
     return (
@@ -19,6 +26,7 @@ export function KCContainer(props) {
         <Text style={{ color: theme.primaryTextColor }}>
           {textEmpty ?? "No data"}
         </Text>
+        {childrenEmpty}
       </View>
     );
   } else {

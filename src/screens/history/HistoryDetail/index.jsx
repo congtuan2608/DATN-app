@@ -26,14 +26,14 @@ export function HistoryDetailScreen() {
           <CampaignItem
             {...{
               ...HistoryDetail.data?.details,
-              campaign: HistoryDetail.data?.details?.ref,
+              campaign: HistoryDetail.data?.details?.reference,
             }}
           />
         );
       }
 
       default:
-        return <></>;
+        return <KCContainer isEmpty />;
     }
   };
 

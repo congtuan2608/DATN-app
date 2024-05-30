@@ -35,7 +35,7 @@ export function ForgotPasswordScreen() {
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
         renderTabBar={(props) => <></>}
-        // swipeEnabled={false}
+        swipeEnabled={false}
       />
     </StackScreen>
   );

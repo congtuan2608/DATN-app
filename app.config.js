@@ -54,6 +54,9 @@ module.exports = {
           "spotify",
           "twitch",
           "momo",
+          "zalo",
+          "zalopay",
+          "zalopay.guide.v2",
         ],
       },
       privacyManifests: {

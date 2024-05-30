@@ -1,3 +1,5 @@
+import { Alert } from "react-native";
+
 export const generateMenuGroups = ({ auth, navigate }) => {
   return [
     {
@@ -12,6 +14,7 @@ export const generateMenuGroups = ({ auth, navigate }) => {
         },
       ],
     },
+
     {
       groupTitle: "Genaral",
       groupItems: [
@@ -29,11 +32,38 @@ export const generateMenuGroups = ({ auth, navigate }) => {
             navigate.navigate("TermOfPrivacyPolicyScreens");
           },
         },
+        // {
+        //   text: "Settings",
+        //   image: require("~assets/images/setting-icon.png"),
+        //   onPress: async () => {
+        //     navigate.navigate("SettingScreen");
+        //   },
+        // },
+      ],
+    },
+    {
+      groupTitle: "Setting",
+      groupItems: [
         {
-          text: "Settings",
-          image: require("~assets/images/setting-icon.png"),
+          text: "Method payment",
+          image: require("~assets/images/payment-method-icon.png"),
           onPress: async () => {
-            navigate.navigate("SettingScreen");
+            navigate.navigate("MethodPaymentScreen");
+          },
+        },
+        {
+          text: "Change theme",
+          image: require("~assets/images/theme-icon.png"),
+          onPress: async () => {
+            navigate.navigate("ChangeThemeScreen");
+          },
+        },
+        {
+          text: "Delete account",
+          image: require("~assets/images/delete-account-icon.png"),
+          onPress: async () => {
+            Alert.alert("Notification", "This feature is not available yet!");
+            // navigate.navigate("ChangeThemeScreen");
           },
         },
       ],

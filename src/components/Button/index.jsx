@@ -24,6 +24,7 @@ export const KCButton = (props) => {
           }}
           onPress={() => {
             if (props.isLoading) return;
+            if (!onPress) return;
             onPress();
           }}
           {...other}
@@ -62,7 +63,7 @@ export const KCButton = (props) => {
         <TouchableOpacity
           style={{
             backgroundColor: "transparent",
-            paddingVertical: 12,
+            paddingVertical: 15,
             paddingHorizontal: 20,
             borderRadius: 8,
             borderWidth: 1,
@@ -73,6 +74,57 @@ export const KCButton = (props) => {
           }}
           onPress={() => {
             if (props.isLoading) return;
+            if (!onPress) return;
+            onPress();
+          }}
+          {...other}
+        >
+          <View>
+            {props?.isLoading ? (
+              <View>
+                <ActivityIndicator
+                  size="small"
+                  color={theme.primaryButtonBackgroundColor}
+                />
+              </View>
+            ) : (
+              typeof props.children === "string" && (
+                <Text
+                  style={{
+                    color: props?.disabled
+                      ? theme?.thirdTextColor
+                      : theme?.primaryTextColor,
+                    textAlign: "center",
+                    fontWeight: "600",
+                    ...(props.textStyle ?? {}),
+                  }}
+                >
+                  {props.children}
+                </Text>
+              )
+            )}
+            {typeof props.children !== "string" && props.children}
+          </View>
+        </TouchableOpacity>
+      );
+    }
+    case "SimpleText": {
+      return (
+        <TouchableOpacity
+          style={{
+            // backgroundColor: "transparent",
+            paddingVertical: 15,
+            paddingHorizontal: 20,
+            // borderRadius: 8,
+            // borderWidth: 1,
+            // borderColor: props?.disabled
+            //   ? theme.primaryDisabledButtonColor
+            //   : theme.primaryButtonBackgroundColor,
+            ...(props.styleContainer ?? {}),
+          }}
+          onPress={() => {
+            if (props.isLoading) return;
+            if (!onPress) return;
             onPress();
           }}
           {...other}

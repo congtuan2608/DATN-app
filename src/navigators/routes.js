@@ -35,6 +35,10 @@ export const SCREENS = {
   GuidanceDetailScreen: {
     component: ScreenComponents.HomeScreens.GuidanceDetailScreen,
   },
+  // donate
+  MomoScreen: {
+    component: ScreenComponents.HomeScreens.MomoScreen,
+  },
   // blog
   BlogScreens: {
     component: ScreenComponents.BlogScreens,
@@ -78,6 +82,9 @@ export const SCREENS = {
   },
   ChangeThemeScreen: {
     component: ScreenComponents.AccountScreens.ChangeThemeScreen,
+  },
+  MethodPaymentScreen: {
+    component: ScreenComponents.AccountScreens.MethodPaymentScreen,
   },
   ContactSupportScreen: {
     component: ScreenComponents.AccountScreens.ContactSupportScreen,

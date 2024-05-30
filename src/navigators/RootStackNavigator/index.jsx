@@ -35,6 +35,8 @@ const RootScreens = [
   "ChangeThemeScreen",
   "HistoryDetailScreen",
   "AirPollutionScreen",
+  "MethodPaymentScreen",
+  "MomoScreen",
 ];
 const Stack = createNativeStackNavigator();
 export const RootStackNavigator = () => {

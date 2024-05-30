@@ -22,9 +22,9 @@ export function InputEmail(props) {
       type: "email",
       email,
     });
-    if (res.success) {
-      props.setIndex((prev) => prev + 1);
+    if (res.isSuccess) {
       navigate.setParams({ email });
+      props.setIndex((prev) => prev + 1);
     }
   };
   return (

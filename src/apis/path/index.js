@@ -43,4 +43,7 @@ export const APIPaths = {
   History: `${ROOT_BE_URL}/v1/history`,
   HistoryDetails: `${ROOT_BE_URL}/v1/history/details`,
   HistoryActivityType: `${ROOT_BE_URL}/v1/history/activity-type`,
+
+  //payment
+  MomoRequestPayment: `${ROOT_BE_URL}/v1/payment/momo`,
 };

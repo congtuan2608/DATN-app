@@ -1,6 +1,6 @@
 import { useRoute } from "@react-navigation/native";
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { RestAPI } from "~apis";
 import { KCButton, KCContainer, KCInputOTP } from "~components";
@@ -19,7 +19,7 @@ export function InputOTP(props) {
       code: otp,
       email: navigateParams.params?.email,
     });
-    if (res.success) {
+    if (res.isSuccess) {
       props.setIndex((prev) => prev + 1);
     }
   };
@@ -71,6 +71,22 @@ export function InputOTP(props) {
                   </Text>
                 </View>
               )}
+            </View>
+            <View className="items-center justify-center">
+              <Text
+                className="text-base"
+                style={{ color: theme.primaryTextColor }}
+              >
+                You didn't receive the OTP code?
+              </Text>
+              <TouchableOpacity>
+                <Text
+                  className="text-base font-semibold"
+                  style={{ color: theme.highLightColor }}
+                >
+                  Re-send
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
           <View className="w-full flex-row justify-between" style={{ gap: 20 }}>

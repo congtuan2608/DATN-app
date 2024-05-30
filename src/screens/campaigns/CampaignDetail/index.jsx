@@ -8,6 +8,7 @@ import { AVATAR_URL } from "~constants";
 import { useAuth, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { ReportLocaionItem } from "~screens/history/HistoryDetail/components";
+import { ModalListsPayment } from "~screens/home/screens/Donate/components";
 import { getResponesive } from "~utils";
 
 export function CampaignDetailScreen(props) {
@@ -20,13 +21,13 @@ export function CampaignDetailScreen(props) {
   const Join = RestAPI.JoinCampaign();
   const Leave = RestAPI.LeaveCampaign();
   const navigate = useNavigation();
+  const [showPayModal, setShowPayModal] = React.useState(false);
 
   React.useEffect(() => {
     if (navigateParams.params?.id) {
       campaign.mutate({ id: navigateParams.params.id });
     }
   }, [navigateParams.params?.id]);
-
   React.useEffect(() => {
     setJoin(
       Boolean(
@@ -36,6 +37,7 @@ export function CampaignDetailScreen(props) {
       )
     );
   }, [campaign.data]);
+
   const disabledJoin = Boolean(
     Join.isPending ||
       Leave.isPending ||
@@ -86,19 +88,20 @@ export function CampaignDetailScreen(props) {
       campaign.data?.startDate &&
       dayjs().isBefore(dayjs(campaign.data.startDate))
     ) {
-      return "The campaign hasn't started yet";
+      return "Hasn't started yet";
     }
     if (
       campaign.data?.endDate &&
       dayjs().isAfter(dayjs(campaign.data.endDate))
     ) {
-      return "The campaign has ended";
+      return "Has ended";
     }
     if (campaign.data?.organizer?._id === userProfile?._id) return "Edit";
     if (join) return "Leave";
 
     return "Join";
   };
+
   return (
     <StackScreen headerTitle="Campaigns detail">
       <KCContainer
@@ -220,6 +223,28 @@ export function CampaignDetailScreen(props) {
                   "Unknown"}
               </Text>
             </View>
+            {campaign.data?.alowDonate && (
+              <View
+                className="flex-row justify-between items-center"
+                style={{ gap: 10 }}
+              >
+                <Text
+                  className="text-sm"
+                  style={{ color: theme.primaryTextColor }}
+                >
+                  Fund
+                </Text>
+                <Text
+                  className="text-sm"
+                  style={{ color: theme.primaryTextColor }}
+                >
+                  {(campaign.data?.fund ?? 0).toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: campaign.data?.currency || "VND",
+                  })}
+                </Text>
+              </View>
+            )}
             <View
               className="flex-row justify-between items-start flex-wrap"
               style={{ gap: 10 }}
@@ -244,7 +269,7 @@ export function CampaignDetailScreen(props) {
           <ReportLocaionItem {...campaign.data?.reference} />
         </ScrollView>
         <View
-          className="w-full flex-col justify-center pt-3 border-t "
+          className="w-full flex-row justify-between pt-3 border-t "
           style={{
             gap: 10,
             paddingBottom: getResponesive(safeAreaInsets, dimensions)
@@ -254,8 +279,17 @@ export function CampaignDetailScreen(props) {
           }}
         >
           <KCButton
+            variant="Outline"
+            styleContainer={{ ...renderStyle(), flex: 1 }}
+            isLoading={Join.isPending || Leave.isPending}
+            disabled={disabledJoin}
+            onPress={() => setShowPayModal(true)}
+          >
+            Donate
+          </KCButton>
+          <KCButton
             variant="Filled"
-            styleContainer={renderStyle()}
+            styleContainer={{ ...renderStyle(), flex: 1 }}
             isLoading={Join.isPending || Leave.isPending}
             disabled={disabledJoin}
             onPress={handleAction}
@@ -263,6 +297,28 @@ export function CampaignDetailScreen(props) {
             {renderTextJoin()}
           </KCButton>
         </View>
+        <ModalListsPayment
+          title="Payment methods"
+          // content="Thank you for reporting, do you want to report to another location?"
+          showModal={showPayModal}
+          buttons={[
+            {
+              text: "Cancel",
+              variant: "Outline",
+              onPress: ({ setVisible }) => {
+                setShowPayModal(false);
+              },
+            },
+            {
+              text: "Continue",
+              onPress: ({ setVisible }) => {
+                setShowPayModal(false);
+                navigate.navigate("MomoScreen");
+              },
+              disabled: ({ selectMethod }) => !selectMethod && true,
+            },
+          ]}
+        />
       </KCContainer>
     </StackScreen>
   );

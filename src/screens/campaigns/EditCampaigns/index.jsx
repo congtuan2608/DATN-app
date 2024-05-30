@@ -45,6 +45,7 @@ const validateSchema = {
   reference: {
     required: true,
   },
+  alowDonate: {},
 };
 
 const initialValues = {
@@ -54,7 +55,7 @@ const initialValues = {
   endDate: "",
   limit: 0,
   reference: undefined,
-  allowDonate: false,
+  allowDonate: true,
 };
 export function EditCampaignsScreen() {
   const { safeAreaInsets, dimensions } = useScreenUtils();

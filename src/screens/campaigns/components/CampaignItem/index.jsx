@@ -62,6 +62,9 @@ export function CampaignItem({ data, joinedCampaigns, setJoinedCampaigns }) {
   const renderTextJoin = () => {
     if (data?.organizer?._id === userProfile?._id) return "Organizer";
     if (join || joinedCampaigns.includes(data?._id)) return "Leave";
+    if (Dayjs().isAfter(Dayjs(data.endDate))) return "Has ended";
+    if (Dayjs().isBefore(Dayjs(data.startDate))) return "Hasn't started yet";
+    if (data?.participants.length >= data?.limit) return "Full";
 
     return "Join";
   };

@@ -1,5 +1,7 @@
 export * from "./AirPollution";
 export * from "./Camera";
+export * from "./Donate";
+export * from "./Donate/screens";
 export * from "./EnvironmentalGuidance";
 export * from "./GuidanceDetail";
 export * from "./LocationReport";
