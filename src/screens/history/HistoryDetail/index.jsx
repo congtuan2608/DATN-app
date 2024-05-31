@@ -5,7 +5,11 @@ import { RestAPI } from "~apis";
 import { KCContainer } from "~components";
 import { useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
-import { HistoryDetailHeader, ReportLocaionItem } from "./components";
+import {
+  HistoryDetailHeader,
+  MomoPayItem,
+  ReportLocaionItem,
+} from "./components";
 import { CampaignItem } from "./components/CampaignItem";
 
 export function HistoryDetailScreen() {
@@ -30,6 +34,12 @@ export function HistoryDetailScreen() {
             }}
           />
         );
+      }
+      case "payment": {
+        if (HistoryDetail.data?.details?.method === "momo") {
+          return <MomoPayItem {...HistoryDetail.data} />;
+        }
+        return <></>;
       }
 
       default:

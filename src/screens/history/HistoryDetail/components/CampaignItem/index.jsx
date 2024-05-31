@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import React from "react";
 import { Image, Text, View } from "react-native";
+import { RestAPI } from "~apis";
 import { AVATAR_URL } from "~constants";
 import { useScreenUtils, useTheme } from "~hooks";
 import { ReportLocaionItem } from "..";
@@ -8,12 +9,13 @@ import { ReportLocaionItem } from "..";
 export function CampaignItem(props) {
   const { theme } = useTheme();
   const { safeAreaInsets } = useScreenUtils();
-  const [visible, setIsVisible] = React.useState(false);
-  const [index, setIndex] = React.useState(0);
-  const openImageView = (idx) => {
-    setIsVisible(true);
-    setIndex(idx);
-  };
+  const campaignDetail = RestAPI.GetCampaignById();
+
+  React.useEffect(() => {
+    if (props?.campaignId) {
+      campaignDetail.mutate({ id: props?.campaignId });
+    }
+  }, [props?.campaignId]);
 
   return (
     <View className="w-full pb-2" style={{ gap: 10 }}>
@@ -35,14 +37,19 @@ export function CampaignItem(props) {
             <Image
               className="w-8 h-8 rounded-full"
               source={{
-                uri: props?.organizer?.avatar?.url || AVATAR_URL,
+                uri:
+                  (campaignDetail.data?.organizer?.avatar?.url ??
+                    props?.organizer?.avatar?.url) ||
+                  AVATAR_URL,
               }}
             />
             <Text
               className="text-sm font-medium"
               style={{ color: theme.primaryTextColor }}
             >
-              {props?.organizer?.fullName || "Unknown"}
+              {(campaignDetail.data?.organizer?.fullName ??
+                props?.organizer?.fullName) ||
+                "Unknown"}
             </Text>
           </View>
         </View>
@@ -57,7 +64,7 @@ export function CampaignItem(props) {
             className="text-sm font-medium"
             style={{ color: theme.primaryTextColor }}
           >
-            {props?.title || "Unknown"}
+            {(campaignDetail.data?.title ?? props?.title) || "Unknown"}
           </Text>
         </View>
 
@@ -72,7 +79,9 @@ export function CampaignItem(props) {
             className="text-sm font-medium"
             style={{ color: theme.primaryTextColor }}
           >
-            {dayjs(props?.startDate).format("a hh:mm DD/MM/YYYY")}
+            {dayjs(campaignDetail.data?.startDate ?? props?.startDate).format(
+              "a hh:mm DD/MM/YYYY"
+            )}
           </Text>
         </View>
         <View
@@ -86,7 +95,9 @@ export function CampaignItem(props) {
             className="text-sm font-medium"
             style={{ color: theme.primaryTextColor }}
           >
-            {dayjs(props?.endDate).format("a hh:mm DD/MM/YYYY")}
+            {dayjs(campaignDetail.data?.endDate ?? props?.endDate).format(
+              "a hh:mm DD/MM/YYYY"
+            )}
           </Text>
         </View>
         <View
@@ -100,8 +111,12 @@ export function CampaignItem(props) {
             className="text-sm font-medium"
             style={{ color: theme.primaryTextColor }}
           >
-            {`${(props?.participants ?? []).length + "/" + props?.limit}` ||
-              "Unknown"}
+            {`${
+              (campaignDetail.data?.participants ?? props?.participants ?? [])
+                .length +
+              "/" +
+              (campaignDetail.data?.limit ?? props?.limit)
+            }` || "Unknown"}
           </Text>
         </View>
         <View
@@ -115,7 +130,8 @@ export function CampaignItem(props) {
             className="text-sm font-medium"
             style={{ color: theme.primaryTextColor }}
           >
-            {props?.description || "Unknown"}
+            {(campaignDetail.data.description ?? props?.description) ||
+              "Unknown"}
           </Text>
         </View>
       </View>
@@ -123,10 +139,12 @@ export function CampaignItem(props) {
         className="w-full rounded-lg"
         style={{ backgroundColor: theme.secondBackgroundColor }}
       >
-        {props?.campaign && (
+        {(campaignDetail.data?.reference ?? props?.campaign) && (
           <Text className="font-medium text-lg text-center pt-2">Location</Text>
         )}
-        <ReportLocaionItem {...props?.campaign} />
+        <ReportLocaionItem
+          {...(campaignDetail.data?.reference ?? props?.campaign)}
+        />
       </View>
     </View>
   );

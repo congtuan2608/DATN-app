@@ -46,4 +46,5 @@ export const APIPaths = {
 
   //payment
   MomoRequestPayment: `${ROOT_BE_URL}/v1/payment/momo`,
+  MomoTransactionStatusPayment: `${ROOT_BE_URL}/v1/payment/momo/transaction-status`,
 };
