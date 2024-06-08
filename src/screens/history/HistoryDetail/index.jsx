@@ -36,7 +36,7 @@ export function HistoryDetailScreen() {
         );
       }
       case "payment": {
-        if (HistoryDetail.data?.details?.method === "momo") {
+        if (HistoryDetail.data?.details?.method === "MOMO") {
           return <MomoPayItem {...HistoryDetail.data} />;
         }
         return <></>;
@@ -62,7 +62,7 @@ export function HistoryDetailScreen() {
             flexGrow: 1,
             justifyContent: "start",
             alignItems: "center",
-            gap: 20,
+            gap: 10,
           }}
         >
           {HistoryDetail.data && (

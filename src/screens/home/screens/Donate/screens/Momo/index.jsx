@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import {
   ActivityIndicator,
@@ -13,16 +13,15 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { TabView } from "react-native-tab-view";
 import WebView from "react-native-webview";
 import { RestAPI } from "~apis";
-import { KCButton, KCContainer } from "~components";
+import { KCButton, KCContainer, KCModal } from "~components";
 import { useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { getResponesive } from "~utils";
-const URL =
-  "https://developers.momo.vn/v3/vi/docs/payment/onboarding/integration-process/#ch%E1%BB%A9ng-ch%E1%BB%89-b%E1%BA%A3o-m%E1%BA%ADt";
+
 export function MomoScreen() {
   const { safeAreaInsets, dimensions } = useScreenUtils();
   const [loading, setLoading] = React.useState(true);
-  const { theme } = useTheme();
+  const { theme, currentTheme } = useTheme();
   const ref = React.useRef(null);
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
@@ -33,13 +32,43 @@ export function MomoScreen() {
   const [values, setValues] = React.useState({ amount: 0, message: "" });
   const amountRef = React.useRef(null);
   const momo = RestAPI.MomoRequest();
+  const momoTransactionStatus = RestAPI.MomoTransactionStatus();
   const navigate = useNavigation();
+  const navigateParams = useRoute();
   const [configs, setConfigs] = React.useState({
     amount: {
       errorText: "",
     },
   });
+  const [showModal, setShowModal] = React.useState(false);
+  const [intervalTimeOut, setIntervalTimeOut] = React.useState(0);
+  const intervel = React.useRef(null);
 
+  React.useEffect(() => {
+    return () => {
+      intervel.current && clearInterval(intervel.current);
+      intervel.current = null;
+    };
+  }, []);
+  React.useEffect(() => {
+    if (intervalTimeOut >= 15) {
+      setShowModal(true);
+      clearInterval(intervel.current);
+    }
+  }, [intervalTimeOut, momo.data?.payUrl]);
+
+  React.useEffect(() => {
+    if (momo.data?.payUrl) {
+      if (loading) {
+        intervel.current = setInterval(() => {
+          setIntervalTimeOut((prev) => prev + 1);
+        }, 1000);
+      } else {
+        intervel.current && clearTimeout(intervel.current);
+        intervel.current = null;
+      }
+    }
+  }, [loading, momo.data?.payUrl]);
   const handleMomoRequest = async () => {
     if (values.amount === 0) {
       setConfigs({
@@ -59,13 +88,15 @@ export function MomoScreen() {
     }
     const res = await momo.mutateAsync({
       amount: values.amount,
-      orderInfo: values.message,
+      orderInfo: values.message, // message
+      ...(navigateParams.params && { otherInfo: navigateParams.params }),
     });
     console.log(res);
     if (res?.payUrl) {
       setIndex(index + 1);
     }
   };
+
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "inputInfo":
@@ -84,7 +115,11 @@ export function MomoScreen() {
               }}
             >
               <View
-                className="w-full relative rounded-xl shadow-md py-10 justify-center items-center shadow-slate-300"
+                className={`w-full relative rounded-xl shadow-md py-10 justify-center items-center ${
+                  currentTheme === "DarkTheme"
+                    ? "shadow-gray-900"
+                    : "shadow-slate-300"
+                }`}
                 style={{
                   backgroundColor: theme.secondBackgroundColor,
                   gap: 20,
@@ -136,7 +171,10 @@ export function MomoScreen() {
                     placeholderTextColor={theme.thirdTextColor}
                   />
 
-                  <Text className="text-3xl font-semibold">
+                  <Text
+                    className="text-3xl font-semibold"
+                    style={{ color: theme.primaryTextColor }}
+                  >
                     {Number(values.amount ?? 0).toLocaleString("de-DE", {
                       style: "currency",
                       currency: "VND",
@@ -200,12 +238,7 @@ export function MomoScreen() {
         const injectScript =
           " const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.head.appendChild(meta); ";
         return (
-          <KCContainer
-            className="flex-1 relative"
-            isLoading={false}
-            isEmpty={!momo.data?.payUrl}
-            pointerEvents="none"
-          >
+          <KCContainer className="flex-1 relative" isEmpty={!momo.data?.payUrl}>
             {loading && (
               <View className="absolute z-10 top-0 bottom-0 left-0 right-0 flex-1 justify-center items-center">
                 <ActivityIndicator size="large" />
@@ -213,8 +246,10 @@ export function MomoScreen() {
             )}
             <WebView
               ref={ref}
-              onLoad={() => setTimeout(() => setLoading(false), 300)}
-              source={{ uri: momo.data?.payUrl ?? "" }}
+              onLoad={() => setTimeout(() => setLoading(false), 600)}
+              source={{
+                uri: momo.data?.payUrl ?? "",
+              }}
               style={{ flex: 1 }}
               scalesPageToFit={false}
               javaScriptEnabled={true}
@@ -228,6 +263,9 @@ export function MomoScreen() {
                     "https://leading-inherently-toad.ngrok-free.app"
                   )
                 ) {
+                  momoTransactionStatus.mutate({
+                    orderId: momo.data?.orderId ?? "",
+                  });
                   navigate.goBack();
                 }
               }}
@@ -242,13 +280,34 @@ export function MomoScreen() {
 
   return (
     <StackScreen headerTitle="MoMo Payments">
+      <KCModal
+        title="Notification"
+        content="Please check your network connection again"
+        showModal={showModal}
+        buttons={[
+          {
+            text: "Go back",
+            variant: "Outline",
+            onPress: ({ setVisible }) => {
+              setShowModal(false);
+              navigate.goBack();
+            },
+          },
+          {
+            text: "Await",
+            onPress: ({ setVisible }) => {
+              setShowModal(false);
+            },
+          },
+        ]}
+      />
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
         renderTabBar={(props) => <></>}
-        //   swipeEnabled={false}
+        swipeEnabled={false}
       />
     </StackScreen>
   );

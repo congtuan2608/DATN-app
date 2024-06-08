@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
 import { RestAPI } from "~apis";
 import { KCButton, KCContainer } from "~components";
 import { AVATAR_URL } from "~constants";
@@ -129,7 +129,7 @@ export function CampaignDetailScreen(props) {
             >
               <Text
                 className="text-sm font-medium"
-                style={{ color: theme.primaryTextColor }}
+                style={{ color: theme.thirdTextColor }}
               >
                 Organizer
               </Text>
@@ -155,51 +155,31 @@ export function CampaignDetailScreen(props) {
               className="flex-row justify-between items-center"
               style={{ gap: 10 }}
             >
-              <Text
-                className="text-sm"
-                style={{ color: theme.primaryTextColor }}
-              >
+              <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
                 Participants
               </Text>
               <Text
-                className="text-sm"
+                className="text-sm font-medium"
                 style={{ color: theme.primaryTextColor }}
               >
                 {`${campaign.data?.participants.length}/${campaign.data?.limit}` ||
                   "Unknown"}
               </Text>
             </View>
-            {/* <View
-            className="flex-row justify-between items-center"
-            style={{ gap: 10 }}
-          >
-            <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
-              coordinates
-            </Text>
-            <Text
-              className="text-sm"
-              style={{ color: theme.primaryTextColor }}
-            >
-              {campaign.data?.ref?.coordinates || "Unknown"}
-            </Text>
-          </View> */}
             <View
               className="flex-row justify-between items-center"
               style={{ gap: 10 }}
             >
-              <Text
-                className="text-sm"
-                style={{ color: theme.primaryTextColor }}
-              >
+              <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
                 Start date
               </Text>
               <Text
-                className="text-sm"
+                className="text-sm font-medium"
                 style={{ color: theme.primaryTextColor }}
               >
                 {(campaign.data?.startDate &&
                   dayjs(campaign.data?.startDate).format(
-                    "A hh:mm DD/MM/YYYY"
+                    "HH:mm - DD/MM/YYYY"
                   )) ||
                   "Unknown"}
               </Text>
@@ -208,18 +188,15 @@ export function CampaignDetailScreen(props) {
               className="flex-row justify-between items-center"
               style={{ gap: 10 }}
             >
-              <Text
-                className="text-sm"
-                style={{ color: theme.primaryTextColor }}
-              >
+              <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
                 End date
               </Text>
               <Text
-                className="text-sm"
+                className="text-sm font-medium"
                 style={{ color: theme.primaryTextColor }}
               >
                 {(campaign.data?.endDate &&
-                  dayjs(campaign.data?.endDate).format("A hh:mm DD/MM/YYYY")) ||
+                  dayjs(campaign.data?.endDate).format("HH:mm - DD/MM/YYYY")) ||
                   "Unknown"}
               </Text>
             </View>
@@ -230,12 +207,12 @@ export function CampaignDetailScreen(props) {
               >
                 <Text
                   className="text-sm"
-                  style={{ color: theme.primaryTextColor }}
+                  style={{ color: theme.thirdTextColor }}
                 >
                   Fund
                 </Text>
                 <Text
-                  className="text-sm"
+                  className="text-sm font-medium"
                   style={{ color: theme.primaryTextColor }}
                 >
                   {(campaign.data?.fund ?? 0).toLocaleString("de-DE", {
@@ -249,15 +226,12 @@ export function CampaignDetailScreen(props) {
               className="flex-row justify-between items-start flex-wrap"
               style={{ gap: 10 }}
             >
-              <Text
-                className="text-sm"
-                style={{ color: theme.primaryTextColor }}
-              >
+              <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
                 Description
               </Text>
               <View className="flex-1 items-end">
                 <Text
-                  className="text-sm"
+                  className="text-sm font-medium"
                   style={{ color: theme.primaryTextColor }}
                 >
                   {campaign.data?.description || "Unknown"}
@@ -278,15 +252,17 @@ export function CampaignDetailScreen(props) {
             borderColor: theme.primaryBorderColor,
           }}
         >
-          <KCButton
-            variant="Outline"
-            styleContainer={{ ...renderStyle(), flex: 1 }}
-            isLoading={Join.isPending || Leave.isPending}
-            disabled={disabledJoin}
-            onPress={() => setShowPayModal(true)}
-          >
-            Donate
-          </KCButton>
+          {campaign.data?.alowDonate && (
+            <KCButton
+              variant="Outline"
+              styleContainer={{ ...renderStyle(), flex: 1 }}
+              isLoading={Join.isPending || Leave.isPending}
+              disabled={disabledJoin}
+              onPress={() => setShowPayModal(true)}
+            >
+              Donate
+            </KCButton>
+          )}
           <KCButton
             variant="Filled"
             styleContainer={{ ...renderStyle(), flex: 1 }}
@@ -311,9 +287,13 @@ export function CampaignDetailScreen(props) {
             },
             {
               text: "Continue",
-              onPress: ({ setVisible }) => {
+              onPress: ({ selectMethod, setVisible }) => {
+                if (selectMethod === "zalopay")
+                  return Alert.alert("ZaloPay", "Coming soon");
                 setShowPayModal(false);
-                navigate.navigate("MomoScreen");
+                navigate.navigate("MomoScreen", {
+                  campaignId: campaign.data?._id,
+                });
               },
               disabled: ({ selectMethod }) => !selectMethod && true,
             },

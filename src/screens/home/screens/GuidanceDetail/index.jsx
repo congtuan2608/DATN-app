@@ -86,7 +86,7 @@ export function GuidanceDetailScreen() {
                   className="italic font-light text-xs"
                   style={{ color: theme.primaryTextColor }}
                 >
-                  {dayjs(dataGuidance.createdAt).format("A hh:mm DD/MM/YYYY")}
+                  {dayjs(dataGuidance.createdAt).format("HH:mm DD/MM/YYYY")}
                 </Text>
               </View>
             </View>

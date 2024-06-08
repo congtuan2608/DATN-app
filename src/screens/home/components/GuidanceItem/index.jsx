@@ -51,7 +51,7 @@ export function GuidanceItem(props) {
             style={{ color: theme.primaryTextColor }}
           >
             {props?.createdAt &&
-              Dayjs(props.createdAt).format("A hh:mm DD/MM/YYYY")}
+              Dayjs(props.createdAt).format("HH:mm DD/MM/YYYY")}
           </Text>
         </View>
       </View>

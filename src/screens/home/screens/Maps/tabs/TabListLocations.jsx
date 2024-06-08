@@ -14,39 +14,53 @@ export function TabListLocations(props) {
   const navigate = useNavigation();
   const [locationSelected, setLocationSelected] = React.useState(null);
   React.useEffect(() => {
-    if (!props.searchCoord) {
-      return LocationNear.mutate({});
-    }
-    if (
-      props.searchCoord?.longitude !== 0 &&
-      props.searchCoord?.latitude !== 0
-    ) {
-      return LocationNear.mutate({
-        longitude: props.searchCoord?.longitude,
-        latitude: props.searchCoord?.latitude,
-        distance,
-      });
-    }
-    if (props.newPoint) {
-      return LocationNear.mutate({
-        longitude: props.newPoint.longitude,
-        latitude: props.newPoint.latitude,
-        distance,
-      });
-    }
-    if (props.selectMarker?.location) {
-      return LocationNear.mutate({
-        longitude: props.selectMarker.location.coordinates[0],
-        latitude: props.selectMarker.location.coordinates[1],
-        distance,
-      });
-    }
-    return LocationNear.mutate({
-      longitude: location.longitude,
-      latitude: location.latitude,
-      distance,
-    });
+    const findPoint = async () => {
+      let params = {};
+      if (!props.searchCoord) {
+        params = {};
+      } else if (
+        props.searchCoord?.longitude !== 0 &&
+        props.searchCoord?.latitude !== 0
+      ) {
+        params = {
+          longitude: props.searchCoord?.longitude,
+          latitude: props.searchCoord?.latitude,
+          distance,
+        };
+      } else if (props.newPoint) {
+        params = {
+          longitude: props.newPoint.longitude,
+          latitude: props.newPoint.latitude,
+          distance,
+        };
+      } else if (props.selectMarker?.location) {
+        params = {
+          longitude: props.selectMarker.location.coordinates[0],
+          latitude: props.selectMarker.location.coordinates[1],
+          distance,
+        };
+      } else {
+        params = {
+          longitude: location.longitude,
+          latitude: location.latitude,
+          distance,
+        };
+      }
+      const res = await LocationNear.mutateAsync(params);
+      if (res) {
+        props?.setMarkerList((prev) => {
+          const preMarker = prev.map((item) => item._id);
+          const newMarkerList = res.filter(
+            (item) => !preMarker.includes(item._id)
+          );
+          return [...prev, ...newMarkerList];
+        });
+      }
+      return res.data;
+    };
+    findPoint();
   }, [props.selectMarker, props.searchCoord, props.newPoint]);
+
   const renderStyle = (item) => {
     if (props.selectMarker && props.selectMarker?._id === item?._id) {
       return theme.highLightColor;
@@ -122,7 +136,7 @@ export function TabListLocations(props) {
               <View>
                 <Image
                   className="w-20 h-20 rounded-lg"
-                  source={{ uri: item.assets[0]?.url || "" }}
+                  source={{ uri: item?.assets[0]?.url || "" }}
                   resizeMode="cover"
                 />
               </View>

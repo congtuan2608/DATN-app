@@ -49,7 +49,10 @@ const validateSchema = {
     required: true,
     label: "Please select severity",
   },
-  assets: {},
+  assets: {
+    required: true,
+    type: "array",
+  },
   isAnonymous: {},
   location: {
     type: "object",
@@ -716,7 +719,6 @@ export function LocationReportScreen() {
           <KCButton
             variant="Filled"
             onPress={onSubmit}
-            // disabled={signUp.isPending}
             isLoading={formConfigs.submit.isLoading}
           >
             Submit

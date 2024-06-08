@@ -71,7 +71,7 @@ export function GuidanceItem(props) {
             className="italic font-light text-xs"
             style={{ color: theme.primaryTextColor }}
           >
-            {Dayjs(data.createdAt).format("A hh:mm DD/MM/YYYY")}
+            {Dayjs(data.createdAt).format("HH:mm DD/MM/YYYY")}
           </Text>
         </View>
       </View>
@@ -88,7 +88,7 @@ export function GuidanceItem(props) {
           numberOfLines={textShown ? undefined : NUMBER_OF_LINES}
           style={{ color: theme.primaryTextColor }}
         >
-          {data?.descriptsion ?? "<No data>"}
+          {data?.description ?? "<No data>"}
         </Text>
 
         {lengthMore ? (

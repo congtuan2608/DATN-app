@@ -34,11 +34,32 @@ export function MapScreen() {
   const initialSnapPoints = React.useMemo(() => ["15%", "50%", "95%"], []);
   const { safeAreaInsets } = useScreenUtils();
   const ReportLocation = RestAPI.GetReportLocation();
+  const LocationNear = RestAPI.GetReportLocationNear();
   const PollutionType = RestAPI.GetPollutedType();
   const [configs, setConfigs] = React.useState({
     bottomSheetIndex: 0,
   });
-
+  const [markerList, setMarkerList] = React.useState([]);
+  React.useEffect(() => {
+    if (location) {
+      (async () => {
+        const res = await LocationNear.mutateAsync({
+          longitude: location.longitude,
+          latitude: location.latitude,
+          distance: 5000,
+        });
+        if (res) {
+          setMarkerList((prev) => {
+            const preMarker = prev.map((item) => item._id);
+            const newMarkerList = res.filter(
+              (item) => !preMarker.includes(item._id)
+            );
+            return [...prev, ...newMarkerList];
+          });
+        }
+      })();
+    }
+  }, [location]);
   const handleSearch = useDebounce(async (text) => {
     if (text === "") {
       setNewPoint(null);
@@ -57,7 +78,6 @@ export function MapScreen() {
   const onFocusInput = () => {
     bottomSheetRef?.current?.snapToIndex(initialSnapPoints.length - 1);
   };
-
   const onMapPress = (point) => {
     if (bottomSheetRef?.current?.index === initialSnapPoints.length - 1)
       bottomSheetRef?.current?.snapToIndex(0);
@@ -98,13 +118,13 @@ export function MapScreen() {
   }, 0);
 
   // console.log(selectMarker);
-  const handleSheetChanges = React.useCallback((index) => {
+  const handleSheetChanges = (index) => {
     bottomSheetRef.current = { ...bottomSheetRef.current, index: index };
     setConfigs((prev) => ({ ...prev, bottomSheetIndex: index }));
     if (index <= 0) {
       Keyboard.dismiss();
     }
-  }, []);
+  };
 
   const currentMap = React.useMemo(() => {
     if (navigateParams.params?.location)
@@ -121,6 +141,7 @@ export function MapScreen() {
         latitude: location.latitude,
         longitude: location.longitude,
       });
+      setSelectMarker(null);
     }
   };
   const returnPosition = () => {
@@ -180,7 +201,7 @@ export function MapScreen() {
                 />
               </>
             )}
-            {(ReportLocation.data ?? []).map((item, idx) => {
+            {(markerList ?? []).map((item, idx) => {
               return (
                 <React.Fragment key={idx}>
                   <Marker
@@ -267,6 +288,7 @@ export function MapScreen() {
                 selectMarker={selectMarker}
                 setSelectMarker={setSelectMarker}
                 setNewPoint={setNewPoint}
+                setMarkerList={setMarkerList}
               />
             </KCContainer>
           </BottomSheetView>

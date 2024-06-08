@@ -65,12 +65,32 @@ export function EditCampaignsScreen() {
   const { theme } = useTheme();
   const CreateCampaign = RestAPI.CreateCampaign();
   const UpdateCampaign = RestAPI.UpdateCampaign();
+  const campaign = RestAPI.GetCampaignById();
   const [openDatePicker, setOpenDatePicker] = React.useState({
     startDate: false,
     endDate: false,
   });
 
-  console.log(form.values);
+  React.useEffect(() => {
+    if (navigateParams.params?.id) {
+      // Get campaign detail
+      (async () => {
+        const res = await campaign.mutateAsync({
+          id: navigateParams.params.id,
+        });
+        if (!res) return;
+        form.setInitialValues({
+          title: res.title,
+          description: res.description,
+          startDate: new Date(res.startDate),
+          endDate: new Date(res.endDate),
+          limit: res.limit,
+          reference: res.reference,
+          allowDonate: res.allowDonate,
+        });
+      })();
+    }
+  }, [navigateParams.params?.id]);
   const handleSubmit = async () => {
     const submit = form.handleSubmit();
 
@@ -78,10 +98,23 @@ export function EditCampaignsScreen() {
 
     if (navigateParams.params?.id) {
       // Update campaign
+      const entries = Object.entries(form.values);
+
+      const isChange = entries.filter((item) => {
+        return form.values[item[0]] !== campaign.data[item[0]];
+      });
+
+      const newData = isChange.reduce(
+        (acc, item) => ({ ...acc, [item[0]]: item[1] }),
+        {}
+      );
+      console.log("newData: ", newData);
+
       const res = await UpdateCampaign.mutateAsync({
-        ...submit.values,
-        reference: submit.values.reference._id,
-        limit: Number(submit.values.limit) || 30,
+        ...newData,
+        reference: newData?.reference?._id,
+        limit: Number(newData?.limit) || undefined,
+        id: navigateParams.params?.id,
       });
       console.log("UpdateCampaign: ", res);
     } else {
@@ -97,7 +130,9 @@ export function EditCampaignsScreen() {
 
   return (
     <StackScreen
-      headerTitle={navigateParams.params?.title || "Create campaign"}
+      headerTitle={
+        navigateParams.params?.id ? "Update campaign" : "Create campaign"
+      }
     >
       <KCModal
         title="Notification"

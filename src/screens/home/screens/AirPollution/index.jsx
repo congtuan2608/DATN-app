@@ -1,12 +1,19 @@
 import React from "react";
-import { ActivityIndicator, BackHandler, View } from "react-native";
+import {
+  ActivityIndicator,
+  BackHandler,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import WebView from "react-native-webview";
+import { KCIcon } from "~components";
 import { useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 
 // const URL = "https://maps.pamair.org/";
 // const URL = "https://map.purpleair.com/1/mAQI/a10/p604800/cC0#7.57/11.749/107.328";
-const URL = "https://www.breezometer.com/air-quality-map/";
+// const URL = "https://www.breezometer.com/air-quality-map/";
+const URL = "https://www.iqair.com/vietnam/ho-chi-minh-city";
 // const URL =
 //   "https://www.iqair.com/air-quality-map?lat=10.782773&lng=106.700035&zoomLevel=6";
 
@@ -74,6 +81,29 @@ export function AirPollutionScreen() {
           injectedJavaScriptBeforeContentLoaded={removeAdsScript}
           javaScriptEnabledAndroid={true}
         />
+      </View>
+      <View
+        className=" py-2 pb-4 flex-row justify-center items-center"
+        style={{ gap: 20 }}
+      >
+        <TouchableOpacity className="px-[12px]" onPress={handleBackButtonPress}>
+          <KCIcon
+            family="Entypo"
+            name="chevron-small-left"
+            className="pt-[2px]"
+            size={30}
+            color={theme.primaryTextColor}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity className="px-[12px]">
+          <KCIcon
+            family="Entypo"
+            name="chevron-small-right"
+            className="pt-[2px]"
+            size={30}
+            color={theme.thirdTextColor}
+          />
+        </TouchableOpacity>
       </View>
     </StackScreen>
   );

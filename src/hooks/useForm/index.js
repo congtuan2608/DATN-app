@@ -74,6 +74,7 @@ export function useForm({ initialValues = {}, validateSchema = {} }) {
   }, []);
   return {
     values,
+    initialValues,
     errors,
     setErrors,
     removeError,

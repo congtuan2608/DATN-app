@@ -6,8 +6,8 @@ export const getImageIcon = (activityType) => {
     case "report-location": {
       return require("~assets/images/add_location2.png");
     }
-    case "donate": {
-      return require("~assets/images/donate.png");
+    case "payment": {
+      return require("~assets/images/payment-method-icon.png");
     }
     case "detect": {
       return require("~assets/images/detect-images-icon.png");

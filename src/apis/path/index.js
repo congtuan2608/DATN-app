@@ -18,6 +18,7 @@ export const APIPaths = {
   RecyclingType: `${ROOT_BE_URL}/v1/recycling/recycling-type`,
   //guide
   RecyclingGuide: `${ROOT_BE_URL}/v1/recycling/recycling-guide`,
+  SearchRecyclingGuide: `${ROOT_BE_URL}/v1/recycling/recycling-search`,
 
   //contaminated type
   ContaminatedType: `${ROOT_BE_URL}/v1/polluted/contaminated-type`,

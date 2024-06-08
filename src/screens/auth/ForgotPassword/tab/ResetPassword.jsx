@@ -31,7 +31,6 @@ export function ResetPassword(props) {
       navigate.navigate("Login");
     }
   };
-  const handlerResetPassword = async () => {};
   return (
     <KeyboardAwareScrollView
       extraScrollHeight={150}

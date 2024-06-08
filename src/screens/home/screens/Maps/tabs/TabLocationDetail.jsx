@@ -106,7 +106,7 @@ export function TabLocationDetail(props) {
           >
             Time report:
           </Text>
-          {dayjs(props?.createdAt).format(" A hh:mm:ss DD/MM/YYYY")}
+          {dayjs(props?.createdAt).format("HH:mm:ss DD/MM/YYYY")}
         </Text>
 
         <View className="w-full py-2">

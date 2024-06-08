@@ -20,7 +20,13 @@ export function ReportLocaionItem(props) {
     setIndex(idx);
   };
   if (!props?._id)
-    return <KCContainer isEmpty={true} textEmpty="This location not found" />;
+    return (
+      <KCContainer
+        isEmpty={true}
+        textEmpty="This location not found"
+        className="flex-1"
+      />
+    );
   return (
     <View
       className="w-full rounded-lg p-3 shadow-sm"
@@ -30,11 +36,14 @@ export function ReportLocaionItem(props) {
         className="flex-row justify-between items-start flex-wrap"
         style={{ gap: 20 }}
       >
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+        <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
           Address
         </Text>
         <View className="flex-1 items-end">
-          <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+          <Text
+            className="text-sm font-medium"
+            style={{ color: theme.primaryTextColor }}
+          >
             {props?.address || "Unknown"}
           </Text>
         </View>
@@ -43,10 +52,13 @@ export function ReportLocaionItem(props) {
         className="flex-row justify-between items-center"
         style={{ gap: 10 }}
       >
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+        <Text className="text-sm " style={{ color: theme.thirdTextColor }}>
           Contaminated type
         </Text>
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+        <Text
+          className="text-sm font-medium"
+          style={{ color: theme.primaryTextColor }}
+        >
           {(props?.contaminatedType ?? []).map(
             (item) => item.contaminatedName
           ) || "Unknown"}
@@ -56,27 +68,40 @@ export function ReportLocaionItem(props) {
         className="flex-row justify-between items-center"
         style={{ gap: 10 }}
       >
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+        <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
           Coordinates
         </Text>
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
-          {(props.location && props.location.coordinates.join(", ")) ||
-            "Unknown"}
-        </Text>
+
+        {props.location ? (
+          <View className="items-end">
+            <Text
+              className="text-sm font-medium"
+              style={{ color: theme.primaryTextColor }}
+            >
+              {props.location.coordinates[0]}
+            </Text>
+            <Text
+              className="text-sm font-medium"
+              style={{ color: theme.primaryTextColor }}
+            >
+              {props.location.coordinates[1]}
+            </Text>
+          </View>
+        ) : (
+          "Unknown"
+        )}
       </View>
       <View
         className="flex-row justify-between items-center"
         style={{ gap: 10 }}
       >
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+        <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
           Report by
         </Text>
         <Text
-          className="text-sm"
+          className="text-sm font-medium"
           style={{
-            color: props?.isAnonymous
-              ? theme.thirdTextColor
-              : theme.primaryTextColor,
+            color: theme.primaryTextColor,
           }}
         >
           {props?.isAnonymous
@@ -88,10 +113,13 @@ export function ReportLocaionItem(props) {
         className="flex-row justify-between items-center"
         style={{ gap: 10 }}
       >
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+        <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
           Severity
         </Text>
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+        <Text
+          className="text-sm font-medium"
+          style={{ color: theme.primaryTextColor }}
+        >
           {props?.severity || "Unknown"}
         </Text>
       </View>
@@ -99,10 +127,13 @@ export function ReportLocaionItem(props) {
         className="flex-row justify-between items-start flex-wrap"
         style={{ gap: 10 }}
       >
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+        <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
           Description
         </Text>
-        <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+        <Text
+          className="text-sm font-medium"
+          style={{ color: theme.primaryTextColor }}
+        >
           {props?.description || "Unknown"}
         </Text>
       </View>

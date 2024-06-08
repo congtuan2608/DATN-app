@@ -1,14 +1,17 @@
 import React from "react";
 import {
   Alert,
+  Image,
+  Platform,
   RefreshControl,
   ScrollView,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { RestAPI } from "~apis";
 import { KCContainer, KCFlatList, KCIcon } from "~components";
-import { useTheme } from "~hooks";
+import { useDebounce, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { GuidanceItem } from "./components";
 
@@ -19,8 +22,9 @@ export function EnvironmentalGuidanceScreen() {
   const [params, setParams] = React.useState({
     page: 0,
     tagId: undefined,
-    //  limit = 10
+    limit: 10,
   });
+  const [search, setSearch] = React.useState("");
   React.useEffect(() => {
     if ((RecyclingTypes.getRecyclingType?.data ?? []).length !== 0) {
       setParams((prev) => ({
@@ -32,9 +36,12 @@ export function EnvironmentalGuidanceScreen() {
 
   React.useEffect(() => {
     // (async () => RecyclingGuide.getRecyclingGuide.mutateAsync(params))();
-    RecyclingGuide.getRecyclingGuide.mutate(params);
+    RecyclingGuide.searchRecyclingGuide.mutate(params);
   }, [params]);
 
+  const handleSearch = useDebounce(async (text) => {
+    RecyclingGuide.searchRecyclingGuide.mutate({ ...params, q: text });
+  }, 250);
   //=================================================================
   const onPressItem = (item) => {
     if (params.tagId === item._id) return;
@@ -86,6 +93,36 @@ export function EnvironmentalGuidanceScreen() {
         className="flex-1 px-2"
         style={{ backgroundColor: theme.primaryBackgroundColor }}
       >
+        <View className="relative">
+          <TextInput
+            autoComplete="name-given"
+            className={`shadow-sm rounded-xl px-5 pr-14 ${
+              Platform.OS === "ios" ? "py-4" : "py-3"
+            }`}
+            placeholder="Search on history"
+            style={{
+              backgroundColor: theme.secondBackgroundColor,
+              color: theme.primaryTextColor,
+            }}
+            value={search}
+            onChangeText={(value) => {
+              setSearch(value);
+              handleSearch(value);
+            }}
+            placeholderTextColor={theme.thirdTextColor}
+          />
+          <View
+            className="absolute right-0 h-full flex-row items-center justify-center mr-3"
+            style={{ gap: 10 }}
+          >
+            <TouchableOpacity className="opacity-80">
+              <Image
+                source={require("~assets/images/history-search-icon.png")}
+                className="h-8 w-8"
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
         <KCFlatList
           initialNumToRender={5}
           data={RecyclingTypes.getRecyclingType?.data ?? []}

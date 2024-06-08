@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { RestAPI } from "~apis";
+import { KCContainer } from "~components";
 import { AVATAR_URL } from "~constants";
 import { useScreenUtils, useTheme } from "~hooks";
 import { ReportLocaionItem } from "..";
@@ -18,16 +19,20 @@ export function CampaignItem(props) {
   }, [props?.campaignId]);
 
   return (
-    <View className="w-full pb-2" style={{ gap: 10 }}>
+    <KCContainer
+      isLoading={campaignDetail.isPending}
+      className="w-full pb-2"
+      style={{ gap: 10 }}
+    >
       <View
         className="rounded-lg p-3 shadow-sm"
-        style={{ backgroundColor: theme.secondBackgroundColor, gap: 20 }}
+        style={{ backgroundColor: theme.secondBackgroundColor, gap: 15 }}
       >
         <View
           className="flex-row justify-between items-center"
           style={{ gap: 10 }}
         >
-          <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+          <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
             Organizer
           </Text>
           <View
@@ -57,7 +62,7 @@ export function CampaignItem(props) {
           className="flex-row justify-between items-start flex-wrap"
           style={{ gap: 10 }}
         >
-          <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+          <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
             Title
           </Text>
           <Text
@@ -72,7 +77,7 @@ export function CampaignItem(props) {
           className="flex-row justify-between items-start flex-wrap"
           style={{ gap: 10 }}
         >
-          <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+          <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
             Start date
           </Text>
           <Text
@@ -80,7 +85,7 @@ export function CampaignItem(props) {
             style={{ color: theme.primaryTextColor }}
           >
             {dayjs(campaignDetail.data?.startDate ?? props?.startDate).format(
-              "a hh:mm DD/MM/YYYY"
+              "HH:mm - DD/MM/YYYY"
             )}
           </Text>
         </View>
@@ -88,7 +93,7 @@ export function CampaignItem(props) {
           className="flex-row justify-between items-start flex-wrap"
           style={{ gap: 10 }}
         >
-          <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+          <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
             End date
           </Text>
           <Text
@@ -96,7 +101,7 @@ export function CampaignItem(props) {
             style={{ color: theme.primaryTextColor }}
           >
             {dayjs(campaignDetail.data?.endDate ?? props?.endDate).format(
-              "a hh:mm DD/MM/YYYY"
+              "HH:mm - DD/MM/YYYY"
             )}
           </Text>
         </View>
@@ -104,48 +109,78 @@ export function CampaignItem(props) {
           className="flex-row justify-between items-start flex-wrap"
           style={{ gap: 10 }}
         >
-          <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+          <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
             Limit
           </Text>
           <Text
             className="text-sm font-medium"
             style={{ color: theme.primaryTextColor }}
           >
-            {`${
-              (campaignDetail.data?.participants ?? props?.participants ?? [])
-                .length +
-              "/" +
-              (campaignDetail.data?.limit ?? props?.limit)
-            }` || "Unknown"}
+            {((campaignDetail.data?.participants ?? props?.participants) &&
+              `${
+                (campaignDetail.data?.participants ?? props?.participants ?? [])
+                  .length +
+                "/" +
+                (campaignDetail.data?.limit ?? props?.limit)
+              }`) ||
+              "Unknown"}
           </Text>
         </View>
+        {(campaignDetail.data?.alowDonate ?? props?.alowDonate) && (
+          <View
+            className="flex-row justify-between items-center"
+            style={{ gap: 10 }}
+          >
+            <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
+              Fund
+            </Text>
+            <Text
+              className="text-sm font-medium"
+              style={{ color: theme.primaryTextColor }}
+            >
+              {(campaignDetail.data?.fund ?? props?.fund ?? 0).toLocaleString(
+                "de-DE",
+                {
+                  style: "currency",
+                  currency:
+                    (campaignDetail.data?.currency ?? props?.currency) || "VND",
+                }
+              )}
+            </Text>
+          </View>
+        )}
         <View
           className="flex-row justify-between items-start flex-wrap"
           style={{ gap: 10 }}
         >
-          <Text className="text-sm" style={{ color: theme.primaryTextColor }}>
+          <Text className="text-sm" style={{ color: theme.thirdTextColor }}>
             Description
           </Text>
           <Text
             className="text-sm font-medium"
             style={{ color: theme.primaryTextColor }}
           >
-            {(campaignDetail.data.description ?? props?.description) ||
+            {(campaignDetail.data?.description ?? props?.description) ||
               "Unknown"}
           </Text>
         </View>
       </View>
       <View
-        className="w-full rounded-lg"
+        className="flex-1 w-full rounded-lg"
         style={{ backgroundColor: theme.secondBackgroundColor }}
       >
         {(campaignDetail.data?.reference ?? props?.campaign) && (
-          <Text className="font-medium text-lg text-center pt-2">Location</Text>
+          <Text
+            className="font-medium text-lg text-center pt-2"
+            style={{ color: theme.primaryTextColor }}
+          >
+            Location
+          </Text>
         )}
         <ReportLocaionItem
           {...(campaignDetail.data?.reference ?? props?.campaign)}
         />
       </View>
-    </View>
+    </KCContainer>
   );
 }

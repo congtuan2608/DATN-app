@@ -95,8 +95,8 @@ export function CampaignItem({ data, joinedCampaigns, setJoinedCampaigns }) {
         </Text>
         <Text style={{ color: theme.primaryTextColor }}>
           <Text className="font-medium">Participation deadline: </Text>
-          {Dayjs(data.startDate).format("A hh:mm DD/MM/YYYY")} -{" "}
-          {Dayjs(data.endDate).format("A hh:mm DD/MM/YYYY")}
+          {Dayjs(data.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
+          {Dayjs(data.endDate).format("HH:mm DD/MM/YYYY")}
         </Text>
         <Text style={{ color: theme.primaryTextColor }}>
           <Text className="font-medium">Number of participants: </Text>

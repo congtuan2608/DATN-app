@@ -7,13 +7,13 @@ import { StackScreen } from "~layouts";
 import { getResponesive } from "~utils";
 
 const DATA_ITEMS = [
-  {
-    type: "google-vision",
-    path: require("~assets/images/detect-object-icon.png"),
-    title: "Detect objects",
-    description:
-      "Extract information about objects, faces, and text within images",
-  },
+  // {
+  //   type: "google-vision",
+  //   path: require("~assets/images/detect-object-icon.png"),
+  //   title: "Detect objects",
+  //   description:
+  //     "Extract information about objects, faces, and text within images",
+  // },
   {
     type: "roboflow",
     path: require("~assets/images/detect-trash-icon.png"),

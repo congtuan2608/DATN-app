@@ -28,7 +28,7 @@ export function InterestedItem(props) {
     >
       <Image
         className="rounded-t-xl h-48"
-        source={{ uri: props?.reference?.assets?.[2]?.url }}
+        source={{ uri: props?.reference?.assets?.[0]?.url }}
         style={{
           resizeMode: "cover",
           width: width - 100,
@@ -57,7 +57,7 @@ export function InterestedItem(props) {
         >
           Deadline:{" "}
           {(props?.endDate &&
-            dayjs(props?.endDate).format("a hh:mm DD/MM/YYYY")) ||
+            dayjs(props?.endDate).format("HH:mm DD/MM/YYYY")) ||
             "undefined"}
         </Text>
         <Text

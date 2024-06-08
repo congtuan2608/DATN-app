@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { useTheme } from "~hooks";
 import { CampaignItem } from "../CampaignItem";
 
@@ -10,20 +10,20 @@ export function MomoPayItem(props) {
     switch (props?.details?.status) {
       case "success":
         return (
-          <View className="px-1 bg-lime-200">
+          <View className="px-2 bg-lime-200 rounded-lg ">
             <Text className="font-medium text-lime-500">Success</Text>
           </View>
         );
       case "rejected":
         return (
-          <View className="px-1 bg-red-200">
-            <Text className="font-medium text-red-500">Success</Text>
+          <View className="px-2 rounded-lg bg-red-200">
+            <Text className="font-medium text-red-500">Rejected</Text>
           </View>
         );
       case "failed":
         return (
-          <View className="px-1 bg-red-200">
-            <Text className="font-medium text-red-500">Success</Text>
+          <View className="px-2 rounded-lg bg-red-200">
+            <Text className="font-medium text-red-500">Failed</Text>
           </View>
         );
 
@@ -32,54 +32,92 @@ export function MomoPayItem(props) {
     }
   };
   return (
-    <View className="flex-1 px-2">
+    <View className="flex-1 w-full" style={{ gap: 10 }}>
       <View
-        className="rounded-lg shadow-sm py-2"
-        style={{ backgroundColor: theme.primaryBackgroundColor }}
+        className="rounded-lg shadow-sm p-3"
+        style={{ backgroundColor: theme.secondBackgroundColor }}
       >
-        <View className="">
-          <Text
-            className="text-xl font-medium"
-            style={{ color: theme.thirdTextColor }}
-          >
-            MOMO PAYMENT
-          </Text>
-          <Text className="text-3xl font-semibold">
-            {Number(props.details.amount ?? 0).toLocaleString("de-DE", {
-              style: "currency",
-              currency: "VND",
-            })}
-          </Text>
+        <View className="flex-row items-center mb-2" style={{ gap: 10 }}>
+          <View>
+            <Image
+              className="w-16 h-16"
+              source={{
+                uri: "https://test-payment.momo.vn/v2/gateway/images/logo-momo.png",
+              }}
+            />
+          </View>
+          <View className="justify-center flex-1">
+            <Text
+              className="text-xl font-medium"
+              style={{ color: theme.thirdTextColor }}
+            >
+              Donations for campaign
+            </Text>
+            <Text
+              className="text-3xl font-semibold"
+              style={{ color: theme.primaryTextColor }}
+            >
+              {Number(props.details.amount * -1 ?? 0).toLocaleString("de-DE", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </Text>
+          </View>
         </View>
         <View className="" style={{ gap: 10 }}>
           <View className="flex-row items-center justify-between">
             <Text style={{ color: theme.thirdTextColor }}>Status</Text>
-            {status("success")}
+            {status(props?.status)}
           </View>
 
           <View className="flex-row items-center justify-between">
             <Text style={{ color: theme.thirdTextColor }}>Time</Text>
-            <Text>{dayjs(props.createdAt).format("hh:mm - DD/MM/YYYY")}</Text>
+            <Text
+              className="font-medium"
+              style={{ color: theme.primaryTextColor }}
+            >
+              {dayjs(props.createdAt).format("HH:mm - DD/MM/YYYY")}
+            </Text>
           </View>
 
           <View className="flex-row items-center justify-between">
             <Text style={{ color: theme.thirdTextColor }}>Trading code</Text>
-            <Text>{props.details.orderId}</Text>
+            <Text
+              className="font-medium"
+              style={{ color: theme.primaryTextColor }}
+            >
+              {props.details.orderId}
+            </Text>
           </View>
 
           <View className="flex-row items-center justify-between">
             <Text style={{ color: theme.thirdTextColor }}>Account/Card</Text>
-            <Text>{"momo_wallet"}</Text>
+            <Text
+              className="font-medium"
+              style={{ color: theme.primaryTextColor }}
+            >
+              {"momo_wallet"}
+            </Text>
           </View>
 
           <View className="flex-row items-center justify-between">
             <Text style={{ color: theme.thirdTextColor }}>Expense</Text>
-            <Text>Free</Text>
+            <Text
+              className="font-medium"
+              style={{ color: theme.primaryTextColor }}
+            >
+              Free
+            </Text>
           </View>
 
-          <View className="items-center justify-between">
+          <View className="justify-between gap-y-1">
             <Text style={{ color: theme.thirdTextColor }}>Message</Text>
-            <Text>{props.details?.orderInfo}</Text>
+            <Text
+              className="font-medium"
+              style={{ color: theme.primaryTextColor }}
+            >
+              {props.details?.orderInfo}
+            </Text>
           </View>
         </View>
       </View>

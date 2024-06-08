@@ -35,7 +35,7 @@ export function HistoryItem(props) {
               {props.title ?? "<Empty>"}
             </Text>
             <Text style={{ color: theme.thirdTextColor }}>
-              {Dayjs(props.createdAt).format("a hh:mm DD/MM/YYYY")}
+              {Dayjs(props.createdAt).format("HH:mm DD/MM/YYYY")}
             </Text>
           </View>
         </TouchableOpacity>
@@ -63,7 +63,7 @@ export function HistoryItem(props) {
               {props.title}
             </Text>
             <Text style={{ color: theme.thirdTextColor }}>
-              {Dayjs(props.createdAt).format("hh:mm DD/MM/YYYY")}
+              {Dayjs(props.createdAt).format("HH:mm DD/MM/YYYY")}
             </Text>
           </View>
         </TouchableOpacity>
