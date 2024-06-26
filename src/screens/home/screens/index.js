@@ -1,4 +1,5 @@
 export * from "./AirPollution";
+export * from "./AirPrediction";
 export * from "./Camera";
 export * from "./Donate";
 export * from "./Donate/screens";
@@ -8,3 +9,4 @@ export * from "./LocationReport";
 export * from "./Main";
 export * from "./Maps";
 export * from "./Maps/PointDetail";
+export * from "./Statistical";

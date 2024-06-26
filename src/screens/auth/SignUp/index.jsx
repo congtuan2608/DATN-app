@@ -113,7 +113,7 @@ export const SignUpScreens = () => {
     const formValues = handleSubmit();
 
     if (!formValues.isSuccess) return;
-
+    console.log(formValues);
     const res = await signUp.mutateAsync(formValues.values);
     if (res) {
       navigate.navigate("Login", res);

@@ -35,6 +35,12 @@ export const SCREENS = {
   GuidanceDetailScreen: {
     component: ScreenComponents.HomeScreens.GuidanceDetailScreen,
   },
+  AirPredictionScreen: {
+    component: ScreenComponents.HomeScreens.AirPredictionScreen,
+  },
+  StatisticalScreen: {
+    component: ScreenComponents.HomeScreens.StatisticalScreen,
+  },
   // donate
   MomoScreen: {
     component: ScreenComponents.HomeScreens.MomoScreen,
@@ -62,6 +68,10 @@ export const SCREENS = {
   },
   SelectLocation: {
     component: ScreenComponents.SelectLocation,
+  },
+  AuthInfoScreen: {
+    component: ScreenComponents.AuthInfoScreen,
+    options: { presentation: "fullScreenModal" },
   },
   // history
   HistoryScreen: {
@@ -94,5 +104,8 @@ export const SCREENS = {
   },
   MyProfileScreen: {
     component: ScreenComponents.AccountScreens.MyProfileScreen,
+  },
+  PasswordScreen: {
+    component: ScreenComponents.AccountScreens.PasswordScreen,
   },
 };

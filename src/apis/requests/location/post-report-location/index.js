@@ -28,7 +28,7 @@ export function CreateReportLocation() {
         formData.append("assets", {
           uri: asset.uri || "",
           type: asset?.mimeType || "image/jpeg",
-          name: asset?.fileName || String(Date.now()),
+          name: asset?.fileName || `${String(Date.now())}.jpeg`,
         });
       });
 

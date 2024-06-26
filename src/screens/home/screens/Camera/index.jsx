@@ -46,9 +46,9 @@ export const CameraScreen = () => {
     }
     if (cameraRef.current) {
       try {
-        const data = await cameraRef.current.takePictureAsync();
-        // await MediaLibrary.createAssetAsync(data?.uri);
-
+        const data = await cameraRef.current.takePictureAsync({ quality: 0.4 });
+        // const imageURI = await MediaLibrary.createAssetAsync(data?.uri);
+        console.log(data);
         setImagePreview(data);
         setImageList((prev) => [...prev, data]);
       } catch (error) {

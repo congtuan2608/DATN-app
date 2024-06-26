@@ -2,7 +2,6 @@ import { ScrollView } from "react-native";
 import { KCContainer } from "~components";
 import { useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
-import { KCButton } from "./../../../../../../components/Button/index";
 import { CardPayments } from "./components";
 
 const listCards = [
@@ -12,6 +11,7 @@ const listCards = [
     type: "phone",
     color: "bg-pink-600",
     phone: "0377969735",
+    image: "https://test-payment.momo.vn/v2/gateway/images/logo-momo.png",
   },
   {
     nameCard: "ZaloPay",
@@ -19,6 +19,8 @@ const listCards = [
     type: "phone",
     color: "bg-blue-500",
     phone: "0377969735",
+    image:
+      "https://res.cloudinary.com/dudwjr0ux/image/upload/v1717074196/public/1622682588188_zalopay_yx8evw.png",
   },
 ];
 export const MethodPaymentScreen = () => {
@@ -42,9 +44,9 @@ export const MethodPaymentScreen = () => {
           {listCards.map((item, index) => (
             <CardPayments key={index} {...item} />
           ))}
-          <KCButton variant="Outline" styleContainer={{ paddingVertical: 20 }}>
+          {/* <KCButton variant="Outline" styleContainer={{ paddingVertical: 20 }}>
             Add the new card
-          </KCButton>
+          </KCButton> */}
         </ScrollView>
       </KCContainer>
     </StackScreen>

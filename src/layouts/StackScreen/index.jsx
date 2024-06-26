@@ -7,6 +7,7 @@ export const StackScreen = (props) => {
   const screenUtils = useScreenUtils();
   const navigate = useNavigation();
   const onGoBack = () => {
+    if (props.before) props.before();
     navigate.goBack();
   };
 

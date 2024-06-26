@@ -16,22 +16,28 @@ export const serviceList = [
     navigate: "CampaignsScreen",
     params: { headerShown: true },
   },
-  {
-    title: "Donate",
-    image_url: require("~assets/images/donate.png"),
-  },
+  // {
+  //   title: "Donate",
+  //   image_url: require("~assets/images/donate.png"),
+  // },
   {
     title: "Report location",
     image_url: require("~assets/images/add_location2.png"),
     navigate: "LocationReportScreen",
   },
   {
-    title: "Statistical",
+    title: "Air prediction",
     image_url: require("~assets/images/statistics.png"),
+    navigate: "AirPredictionScreen",
   },
   {
     title: "Environmental guidance",
     image_url: require("~assets/images/instruct.png"),
     navigate: "EnvironmentalGuidanceScreen",
+  },
+  {
+    title: "Statistical",
+    image_url: require("~assets/images/index.png"),
+    navigate: "StatisticalScreen",
   },
 ];

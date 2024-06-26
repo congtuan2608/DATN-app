@@ -179,7 +179,7 @@ export const HomeScreen = () => {
                 <KCContainer
                   className={
                     !(location && (nearbyCampaigns.data ?? []).length !== 0)
-                      ? "mt-3"
+                      ? ""
                       : ""
                   }
                   isLoading={!location || nearbyCampaigns.isPending}

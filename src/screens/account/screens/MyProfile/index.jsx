@@ -82,6 +82,7 @@ export function MyProfileScreen() {
       (acc, item) => ({ ...acc, [item[0]]: item[1] }),
       {}
     );
+    console.log(newData);
     await UpdateUserProfile.mutateAsync({
       ...newData,
       ...("avatar" in newData &&

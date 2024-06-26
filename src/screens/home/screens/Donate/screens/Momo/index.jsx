@@ -2,6 +2,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import {
   ActivityIndicator,
+  AppState,
   Platform,
   Text,
   TextInput,
@@ -43,6 +44,32 @@ export function MomoScreen() {
   const [showModal, setShowModal] = React.useState(false);
   const [intervalTimeOut, setIntervalTimeOut] = React.useState(0);
   const intervel = React.useRef(null);
+  const [appState, setAppState] = React.useState(AppState.currentState);
+
+  const handleAppStateChange = async (nextAppState) => {
+    if (nextAppState === "active") {
+      console.log("The user has returned to the application!");
+      if (momo.data?.orderId) {
+        const res = await momoTransactionStatus.mutateAsync({
+          orderId: momo.data?.orderId ?? "",
+        });
+        if (res?.resultCode === 0) {
+          navigate.goBack();
+        }
+      }
+    }
+    if (appState === "active" && nextAppState.match(/inactive|background/)) {
+      console.log("App has come to the background!");
+    }
+    setAppState(nextAppState);
+  };
+
+  React.useEffect(() => {
+    const appStatus = AppState.addEventListener("change", handleAppStateChange);
+    return () => {
+      appStatus.remove();
+    };
+  }, [momo.data?.orderId]);
 
   React.useEffect(() => {
     return () => {
@@ -258,11 +285,7 @@ export function MomoScreen() {
               injectedJavaScript={injectScript}
               onNavigationStateChange={(navState) => {
                 console.log(navState.url);
-                if (
-                  navState.url.includes(
-                    "https://leading-inherently-toad.ngrok-free.app"
-                  )
-                ) {
+                if (navState.url.includes("exp://192.168.1.182:8081")) {
                   momoTransactionStatus.mutate({
                     orderId: momo.data?.orderId ?? "",
                   });

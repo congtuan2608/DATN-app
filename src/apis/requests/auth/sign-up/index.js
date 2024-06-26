@@ -6,7 +6,7 @@ export function SignUp() {
     request: (params) => {
       const formData = new FormData();
       Object.entries(params).map(([key, value], index) => {
-        if (uri in value) {
+        if (typeof value === "object" && "uri" in value) {
           return formData.append(key, {
             uri: value.uri || "",
             type: value?.mimeType || "image/jpeg",

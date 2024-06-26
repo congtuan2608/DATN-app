@@ -134,13 +134,17 @@ export function MapScreen() {
     }
   }, [location, navigateParams.params?.location]);
 
+  const scrollToRegion = ({ latitude, longitude }) => {
+    mapRef.current.animateToRegion({
+      latitude,
+      longitude,
+    });
+  };
   const backCurrentLocation = () => {
     if (location && mapRef.current) {
       setNewPoint(null);
-      mapRef.current.animateToRegion({
-        latitude: location.latitude,
-        longitude: location.longitude,
-      });
+      scrollToRegion(location);
+
       setSelectMarker(null);
     }
   };
@@ -289,6 +293,7 @@ export function MapScreen() {
                 setSelectMarker={setSelectMarker}
                 setNewPoint={setNewPoint}
                 setMarkerList={setMarkerList}
+                scrollToRegion={scrollToRegion}
               />
             </KCContainer>
           </BottomSheetView>

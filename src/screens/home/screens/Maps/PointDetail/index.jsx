@@ -48,7 +48,9 @@ export function PointDetailScreen() {
     (await Linking.canOpenURL(url)) && (await Linking.openURL(url));
   };
   return (
-    <StackScreen headerTitle="Point detail">
+    <StackScreen
+      headerTitle={navigateParams.params?.headerTitle || "Point detail"}
+    >
       <KCContainer
         isEmpty={!LocationInfo.data}
         isLoading={LocationInfo.isPending}

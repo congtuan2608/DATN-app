@@ -37,6 +37,10 @@ const RootScreens = [
   "AirPollutionScreen",
   "MethodPaymentScreen",
   "MomoScreen",
+  "AuthInfoScreen",
+  "AirPredictionScreen",
+  "PasswordScreen",
+  "StatisticalScreen",
 ];
 const Stack = createNativeStackNavigator();
 export const RootStackNavigator = () => {

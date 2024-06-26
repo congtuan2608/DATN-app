@@ -14,7 +14,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { DatePickerModal } from "react-native-paper-dates";
 import { RestAPI } from "~apis";
 import { KCButton, KCContainer, KCIcon, KCModal } from "~components";
-import { useForm, useScreenUtils, useTheme } from "~hooks";
+import { useAuth, useForm, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { ReportLocaionItem } from "~screens/history/HistoryDetail/components";
 import { getResponesive } from "~utils";
@@ -45,7 +45,7 @@ const validateSchema = {
   reference: {
     required: true,
   },
-  alowDonate: {},
+  allowDonate: {},
 };
 
 const initialValues = {
@@ -55,10 +55,11 @@ const initialValues = {
   endDate: "",
   limit: 0,
   reference: undefined,
-  allowDonate: true,
+  allowDonate: false,
 };
 export function EditCampaignsScreen() {
   const { safeAreaInsets, dimensions } = useScreenUtils();
+  const { userProfile } = useAuth();
   const form = useForm({ initialValues, validateSchema });
   const navigateParams = useRoute();
   const navigate = useNavigation();
@@ -108,15 +109,12 @@ export function EditCampaignsScreen() {
         (acc, item) => ({ ...acc, [item[0]]: item[1] }),
         {}
       );
-      console.log("newData: ", newData);
-
       const res = await UpdateCampaign.mutateAsync({
         ...newData,
         reference: newData?.reference?._id,
         limit: Number(newData?.limit) || undefined,
         id: navigateParams.params?.id,
       });
-      console.log("UpdateCampaign: ", res);
     } else {
       // Create campaign
       const res = await CreateCampaign.mutateAsync({
@@ -124,7 +122,6 @@ export function EditCampaignsScreen() {
         reference: submit.values.reference._id,
         limit: Number(submit.values.limit) || 30,
       });
-      console.log("CreateCampaign: ", res);
     }
   };
 
@@ -486,9 +483,11 @@ export function EditCampaignsScreen() {
                   style={{
                     backgroundColor: theme.secondBackgroundColor,
                   }}
-                  onPress={() =>
-                    form.handleChange("allowDonate", !form.values.allowDonate)
-                  }
+                  onPress={() => {
+                    if (userProfile.role !== "organization")
+                      return navigate.navigate("AuthInfoScreen");
+                    form.handleChange("allowDonate", !form.values.allowDonate);
+                  }}
                 >
                   <Text style={{ color: theme.primaryTextColor }}>
                     Allow donate

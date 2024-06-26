@@ -1,7 +1,14 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React from "react";
-import { Alert, Image, ScrollView, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { RestAPI } from "~apis";
 import { KCButton, KCContainer } from "~components";
 import { AVATAR_URL } from "~constants";
@@ -28,6 +35,7 @@ export function CampaignDetailScreen(props) {
       campaign.mutate({ id: navigateParams.params.id });
     }
   }, [navigateParams.params?.id]);
+
   React.useEffect(() => {
     setJoin(
       Boolean(
@@ -49,25 +57,30 @@ export function CampaignDetailScreen(props) {
 
   const handleAction = () => {
     if (campaign.data?.organizer?._id === userProfile?._id) {
-      navigate.navigate("EditCampaignsScreen", { id: campaign.data?._id });
+      navigate.navigate("EditCampaignsScreen", {
+        id: campaign.data?._id,
+        onRefresh,
+      });
       return;
     }
     if (join) {
       Leave.mutate({ id: campaign.data?._id });
-      navigateParams.params?.setJoinedCampaigns((prev) =>
-        prev.filter((item) => item !== campaign.data?._id)
-      );
+      if (navigateParams.params?.setJoinedCampaigns)
+        navigateParams.params?.setJoinedCampaigns((prev) =>
+          prev.filter((item) => item !== campaign.data?._id)
+        );
     } else {
       Join.mutate({ id: campaign.data?._id });
-      navigateParams.params?.setJoinedCampaigns((prev) => [
-        ...prev,
-        campaign.data?._id,
-      ]);
+      if (navigateParams.params?.setJoinedCampaigns)
+        navigateParams.params?.setJoinedCampaigns((prev) => [
+          ...prev,
+          campaign.data?._id,
+        ]);
     }
     setJoin(!join);
     return;
   };
-  const renderStyle = () => {
+  const renderStyle = (type = "default") => {
     if (
       campaign.data?.organizer?._id === userProfile?._id ||
       (campaign.data?.startDate &&
@@ -76,7 +89,7 @@ export function CampaignDetailScreen(props) {
     ) {
       return {};
     }
-    if (join) {
+    if (join && type !== "donate") {
       return {
         backgroundColor: "#F87171",
         borderColor: "#F87171",
@@ -102,6 +115,11 @@ export function CampaignDetailScreen(props) {
     return "Join";
   };
 
+  async function onRefresh(props) {
+    if (props || navigateParams.params.id)
+      await campaign.mutateAsync({ id: navigateParams.params.id });
+  }
+
   return (
     <StackScreen headerTitle="Campaigns detail">
       <KCContainer
@@ -118,6 +136,9 @@ export function CampaignDetailScreen(props) {
             gap: 10,
             paddingBottom: 10,
           }}
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={onRefresh} />
+          }
         >
           <View
             className="w-full rounded-lg p-3 shadow-sm"
@@ -200,7 +221,7 @@ export function CampaignDetailScreen(props) {
                   "Unknown"}
               </Text>
             </View>
-            {campaign.data?.alowDonate && (
+            {campaign.data?.allowDonate && (
               <View
                 className="flex-row justify-between items-center"
                 style={{ gap: 10 }}
@@ -252,10 +273,10 @@ export function CampaignDetailScreen(props) {
             borderColor: theme.primaryBorderColor,
           }}
         >
-          {campaign.data?.alowDonate && (
+          {campaign.data?.allowDonate && (
             <KCButton
               variant="Outline"
-              styleContainer={{ ...renderStyle(), flex: 1 }}
+              styleContainer={{ ...renderStyle("donate"), flex: 1 }}
               isLoading={Join.isPending || Leave.isPending}
               disabled={disabledJoin}
               onPress={() => setShowPayModal(true)}

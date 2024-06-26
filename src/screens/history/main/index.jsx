@@ -1,12 +1,8 @@
 import React from "react";
 import {
   ActivityIndicator,
-  Image,
-  Platform,
   RefreshControl,
   ScrollView,
-  TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { RestAPI } from "~apis";
@@ -63,7 +59,7 @@ export const HistoryScreen = () => {
         className="flex-1 px-2 pt-2"
         style={{ backgroundColor: theme.primaryBackgroundColor }}
       >
-        <View className="relative">
+        {/* <View className="relative">
           <TextInput
             autoComplete="name-given"
             className={`shadow-sm rounded-xl px-5 pr-14 ${
@@ -89,7 +85,7 @@ export const HistoryScreen = () => {
               />
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
         <KCFlatList
           data={[
             { activityName: "All", activityType: "all" },

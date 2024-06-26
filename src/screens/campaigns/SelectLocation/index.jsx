@@ -1,11 +1,6 @@
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import {
-  Image,
   Platform,
   RefreshControl,
   ScrollView,
@@ -15,7 +10,7 @@ import {
 } from "react-native";
 import { RestAPI } from "~apis";
 import { KCContainer, KCIcon } from "~components";
-import { useTheme } from "~hooks";
+import { useDebounce, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { LocationItem } from "../components";
 
@@ -24,14 +19,38 @@ export function SelectLocation() {
   const navigate = useNavigation();
   const navigateParams = useRoute();
   const ReportLocation = RestAPI.GetReportLocation();
+  const [search, setSearch] = React.useState("");
+  const [params, setParams] = React.useState({ page: 0, limit: 10 });
+  const [listLocations, setListLocations] = React.useState([]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      ReportLocation.refetch();
-    }, [])
-  );
+  React.useEffect(() => {
+    (async () => {
+      const res = await ReportLocation.mutateAsync({ ...params, q: search });
+      if (res) {
+        if (params.page === 0) setListLocations(res ?? []);
+        else setListLocations((prev) => [...prev, ...res]);
+      }
+    })();
+  }, [params]);
+
   const onRefresh = () => {
-    ReportLocation.refetch();
+    setParams((p) => ({ ...p, page: 0 }));
+  };
+
+  const handleSearch = useDebounce(async (text) => {
+    setParams((p) => ({ ...p, page: 0 }));
+    const res = await ReportLocation.mutateAsync({
+      ...params,
+      page: 0,
+      q: text,
+    });
+    setListLocations(res ?? []);
+  }, 250);
+
+  const handleLoadMore = () => {
+    if ((ReportLocation.data ?? []).length) {
+      setParams((prev) => ({ ...prev, page: prev.page + 1 }));
+    }
   };
   return (
     <StackScreen
@@ -62,21 +81,33 @@ export function SelectLocation() {
               backgroundColor: theme.secondBackgroundColor,
               color: theme.primaryTextColor,
             }}
-            // value=""
-            // onChangeText={(value) => {}}
+            value={search}
+            onChangeText={(value) => {
+              setSearch(value);
+              handleSearch(value);
+            }}
             placeholderTextColor={theme.thirdTextColor}
           />
-          <View
-            className="absolute right-0 h-full flex-row items-center justify-center mr-3 "
-            style={{ gap: 10 }}
-          >
-            <TouchableOpacity className="opacity-80">
-              <Image
-                source={require("~assets/images/search-icon.png")}
-                className="h-8 w-8"
-              />
-            </TouchableOpacity>
-          </View>
+          {search && (
+            <View
+              className="absolute right-0 h-full flex-row items-center justify-center mr-3"
+              style={{ gap: 10 }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setSearch("");
+                  handleSearch("");
+                }}
+              >
+                <KCIcon
+                  family="Ionicons"
+                  name="close-circle-outline"
+                  size={30}
+                  color={theme.primaryIconColor}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
 
@@ -91,14 +122,15 @@ export function SelectLocation() {
         refreshControl={
           <RefreshControl refreshing={false} onRefresh={onRefresh} />
         }
+        onScrollEndDrag={handleLoadMore}
       >
         <KCContainer
           className="pt-2"
-          isLoading={ReportLocation.isFetching}
-          isEmpty={ReportLocation.data?.length === 0}
+          isLoading={ReportLocation.isPending && params.page === 0}
+          isEmpty={listLocations?.length === 0}
           style={{ backgroundColor: theme.primaryBackgroundColor, gap: 15 }}
         >
-          {(ReportLocation.data ?? []).map((item, idx) => (
+          {(listLocations ?? []).map((item, idx) => (
             <LocationItem
               key={idx}
               {...{ ...item, ...navigateParams.params }}

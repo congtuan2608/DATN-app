@@ -87,6 +87,10 @@ export function TabListLocations(props) {
       // setLocationSelected(coordinate);
       props.setNewPoint(coordinate);
       props.setSelectMarker(item);
+      props.scrollToRegion({
+        longitude: item.location.coordinates[0],
+        latitude: item.location.coordinates[1],
+      });
     }
   };
   const handleSeeDetail = (item) => {

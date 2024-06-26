@@ -68,7 +68,7 @@ export function GuidanceItem(props) {
           numberOfLines={2}
           style={{ color: theme.primaryTextColor }}
         >
-          {props?.descriptsion ?? "<No data>"}
+          {props?.description ?? "<No data>"}
         </Text>
         {props?.assets.length && (
           <View className="flex-row flex-wrap justify-evenly items-center">

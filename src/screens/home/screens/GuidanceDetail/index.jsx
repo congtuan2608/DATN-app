@@ -101,7 +101,7 @@ export function GuidanceDetailScreen() {
                 className="text-sm text-clip"
                 style={{ color: theme.primaryTextColor }}
               >
-                {dataGuidance?.descriptsion ?? "<No data>"}
+                {dataGuidance?.description ?? "<No data>"}
               </Text>
 
               {assets && (

@@ -168,6 +168,7 @@ export function LocationReportScreen() {
       allowsMultipleSelection: true,
       selectionLimit: limit,
     });
+    console.log(result);
     setFormConfigs((prev) => ({
       ...prev,
       library: { ...prev.library, isLoading: false },

@@ -1,29 +1,32 @@
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { Image, Text, View, useWindowDimensions } from "react-native";
 
 export const OnboardingItem = (props) => {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   return (
     <View
-      className="flex-1 flex-col items-center justify-center relative z-10"
+      className="flex-1 items-center justify-center relative z-10"
       style={{ gap: 40 }}
     >
       <View>
         <Image
           source={props.img_url}
-          style={{ resizeMode: "contain", width }}
+          style={{
+            resizeMode: "contain",
+            width: width - 30,
+            height: height / 2.3,
+          }}
         />
       </View>
 
       <View className="flex-col" style={{ gap: 30 }}>
-        <Text className="text-center text-3xl font-medium">{props.title}</Text>
-        <Text className="text-center text-lg px-7" style={{ width }}>
+        <Text
+          className="text-center text-lg px-7 font-normal"
+          style={{ width }}
+        >
           {props.content}
+        </Text>
+        <Text className="text-center text-3xl font-semibold">
+          {props.title}
         </Text>
       </View>
     </View>

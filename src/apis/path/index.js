@@ -24,7 +24,10 @@ export const APIPaths = {
   ContaminatedType: `${ROOT_BE_URL}/v1/polluted/contaminated-type`,
   //contaminated location
   ContaminatedLocation: `${ROOT_BE_URL}/v1/polluted/contaminated-location`,
+  ContaminatedLocationByUser: `${ROOT_BE_URL}/v1/polluted/contaminated-location-by-user`,
+  SearchContaminatedLocation: `${ROOT_BE_URL}/v1/polluted/contaminated-location-search`,
   ContaminatedLocationNear: `${ROOT_BE_URL}/v1/polluted/contaminated-location-nearby`,
+  LocationStatistical: `${ROOT_BE_URL}/v1/polluted/statistical`,
 
   // detect images
   TensorflowDetectImages: `${ROOT_BE_URL}/v1/detect/tensorflow`,
@@ -39,6 +42,7 @@ export const APIPaths = {
   JoinCampaign: `${ROOT_BE_URL}/v1/campaign/join-campaign`,
   LeaveCampaign: `${ROOT_BE_URL}/v1/campaign/leave-campaign`,
   NearbyCampaign: `${ROOT_BE_URL}/v1/campaign/nearby`,
+  SearchCampaign: `${ROOT_BE_URL}/v1/campaign/search`,
 
   // history
   History: `${ROOT_BE_URL}/v1/history`,
@@ -48,4 +52,7 @@ export const APIPaths = {
   //payment
   MomoRequestPayment: `${ROOT_BE_URL}/v1/payment/momo`,
   MomoTransactionStatusPayment: `${ROOT_BE_URL}/v1/payment/momo/transaction-status`,
+
+  //prediction
+  GetAirPrediction: `${ROOT_BE_URL}/v1/prediction/air`,
 };

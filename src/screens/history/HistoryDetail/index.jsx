@@ -36,10 +36,10 @@ export function HistoryDetailScreen() {
         );
       }
       case "payment": {
-        if (HistoryDetail.data?.details?.method === "MOMO") {
-          return <MomoPayItem {...HistoryDetail.data} />;
-        }
-        return <></>;
+        // if (HistoryDetail.data?.details?.method === "MOMO") {
+        return <MomoPayItem {...HistoryDetail.data} />;
+        // }
+        // return <></>;
       }
 
       default:

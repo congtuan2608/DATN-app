@@ -12,6 +12,13 @@ export const generateMenuGroups = ({ auth, navigate }) => {
             navigate.navigate("MyProfileScreen");
           },
         },
+        {
+          text: "Change password",
+          image: require("~assets/images/change-pw.png"),
+          onPress: async () => {
+            navigate.navigate("PasswordScreen");
+          },
+        },
       ],
     },
 

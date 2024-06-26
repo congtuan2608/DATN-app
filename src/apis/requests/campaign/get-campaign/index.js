@@ -1,12 +1,11 @@
 import { APIPaths } from "~apis/path";
-import { HTTPMethod, useRestAPIQuery } from "~hooks/useRestAPI";
+import { HTTPMethod, useRestAPIMutation } from "~hooks/useRestAPI";
 
 export function GetCampaigns() {
-  return useRestAPIQuery({
+  return useRestAPIMutation({
     request: (params) => ({
       method: HTTPMethod.GET,
-      configs: [APIPaths.GetCampaign, params],
+      configs: [APIPaths.SearchCampaign, { params }],
     }),
-    queryKey: ["GetCampaign"],
   });
 }

@@ -3,6 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import React from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Platform,
   ScrollView,
@@ -49,7 +50,10 @@ export function DetectResultsScreen() {
           setLoading({ ...loading, detect: true });
 
           const res = await roboflow.mutateAsync({ images });
-          console.log("roboflow ", res[0]);
+          // console.log("roboflow ", res[0]);
+          if (!res) {
+            setImages([]);
+          }
           setLoading({ ...loading, detect: false });
           return;
         }
@@ -66,6 +70,15 @@ export function DetectResultsScreen() {
       allowsMultipleSelection: true,
       selectionLimit: LIMIT_IMAGE,
     });
+    if (result.assets[0].mimeType === "image/webp") {
+      Alert.alert(
+        "Error",
+        "Please choose another image format (PNG, JPEG, JPG)",
+        [{ text: "OK", style: "default" }]
+      );
+      setLoading({ ...loading, upload: false });
+      return;
+    }
     setLoading({ ...loading, upload: false });
     if (result.canceled) return;
     setImages((prev) => [result.assets[0]]);

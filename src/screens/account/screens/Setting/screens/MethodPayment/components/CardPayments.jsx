@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useTheme } from "~hooks";
 
 export const CardPayments = (props) => {
@@ -35,12 +35,19 @@ export const CardPayments = (props) => {
             className={`${props.color} p-3 py-5 rounded-lg shadow-sm`}
             style={{ gap: 5 }}
           >
-            <Text
-              className="text-lg font-semibold"
-              style={{ color: theme.primaryFocusedColor }}
-            >
-              {props.nameCard}
-            </Text>
+            <View className="relative flex-row items-center justify-between">
+              <Text
+                className="text-lg font-semibold"
+                style={{ color: theme.primaryFocusedColor }}
+              >
+                {props.nameCard}
+              </Text>
+              <Image
+                source={{ uri: props?.image ?? "" }}
+                className="w-10 h-10 absolute right-0 "
+                resizeMode="contain"
+              />
+            </View>
             <Text
               className="text-base font-semibold"
               style={{ color: theme.primaryFocusedColor }}
@@ -59,7 +66,7 @@ export const CardPayments = (props) => {
                       color: theme.primaryTextColor,
                       maxHeight: 170,
                     }}
-                    placeholder={"Phone number"}
+                    placeholder={"Add phone number"}
                     value={phoneCard.phone}
                     onChangeText={(value) =>
                       setPhoneCard({ ...phoneCard, phone: value })
@@ -88,7 +95,7 @@ export const CardPayments = (props) => {
                     className="font-semibold text-base"
                     style={{ color: theme.primaryFocusedColor }}
                   >
-                    Phone number: {phoneCard.phone || "<Undefined>"}
+                    Phone number: {phoneCard.phone || "Add phone number"}
                   </Text>
                   <TouchableOpacity
                     onPress={() =>
