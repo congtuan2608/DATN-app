@@ -4,6 +4,8 @@ import React from "react";
 import {
   Alert,
   Image,
+  Linking,
+  Platform,
   RefreshControl,
   ScrollView,
   Text,
@@ -12,7 +14,7 @@ import {
 import { RestAPI } from "~apis";
 import { KCButton, KCContainer } from "~components";
 import { AVATAR_URL } from "~constants";
-import { useAuth, useScreenUtils, useTheme } from "~hooks";
+import { useAuth, useLocation, useScreenUtils, useTheme } from "~hooks";
 import { StackScreen } from "~layouts";
 import { ReportLocaionItem } from "~screens/history/HistoryDetail/components";
 import { ModalListsPayment } from "~screens/home/screens/Donate/components";
@@ -29,7 +31,7 @@ export function CampaignDetailScreen(props) {
   const Leave = RestAPI.LeaveCampaign();
   const navigate = useNavigation();
   const [showPayModal, setShowPayModal] = React.useState(false);
-
+  const { location } = useLocation();
   React.useEffect(() => {
     if (navigateParams.params?.id) {
       campaign.mutate({ id: navigateParams.params.id });
@@ -45,6 +47,18 @@ export function CampaignDetailScreen(props) {
       )
     );
   }, [campaign.data]);
+  const handleOpenGoogleMap = async () => {
+    if (!campaign.data?.reference && !location) return;
+
+    const coordinates = campaign.data?.reference?.location?.coordinates || [];
+
+    const url = Platform.select({
+      ios: `maps://app?saddr=${location.latitude}+${location.longitude}&daddr=${coordinates[1]}+${coordinates[0]}`,
+      android: `geo:${coordinates[1]},${coordinates[0]}`,
+    });
+
+    (await Linking.canOpenURL(url)) && (await Linking.openURL(url));
+  };
 
   const disabledJoin = Boolean(
     Join.isPending ||
@@ -260,8 +274,14 @@ export function CampaignDetailScreen(props) {
               </View>
             </View>
           </View>
-
-          <ReportLocaionItem {...campaign.data?.reference} />
+          <View style={{ gap: 10 }}>
+            <ReportLocaionItem {...campaign.data?.reference} />
+            <KCButton variant="Filled" onPress={handleOpenGoogleMap}>
+              {`Open directions in ${
+                Platform.OS === "ios" ? "Apple" : "Google"
+              } Map`}
+            </KCButton>
+          </View>
         </ScrollView>
         <View
           className="w-full flex-row justify-between pt-3 border-t "

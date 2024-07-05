@@ -2,6 +2,7 @@ import { Dimensions, ScrollView, Text } from "react-native";
 import { View } from "react-native-animatable";
 import { LineChart } from "react-native-chart-kit";
 import { KCContainer } from "~components";
+import { useTheme } from "~hooks";
 
 const month = [
   "January",
@@ -21,7 +22,7 @@ export function AirPrediction(props) {
   // const handleRefresh = async () => {
   //   airPrediction.refetch();
   // };
-
+  const { theme } = useTheme();
   return (
     <KCContainer
       className="flex-1 px-2 my-2 items-center"
