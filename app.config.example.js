@@ -18,15 +18,13 @@ module.exports = {
       supportsTablet: true,
       bundleIdentifier: "com.lctuan.go-green",
       config: {
-        googleMapsApiKey: "AIzaSyDnF0vmggyu_Gg7Q1Vhv45b8t_3vp1meOM",
+        googleMapsApiKey: "YOUR API KEY GOOGLE MAPS",
       },
-      googleServicesFile: "./GoogleService-Info.plist",
+      googleServicesFile: "YOUR GOOGLE SERVICE ./GoogleService-Info.plist",
       infoPlist: {
         CFBundleURLTypes: [
           {
-            CFBundleURLSchemes: [
-              "com.googleusercontent.apps.238091618534-p40rbdcdpkd2f3591jrb2tfiff7gsacf",
-            ],
+            CFBundleURLSchemes: ["YOUR googleusercontent"],
           },
         ],
         LSApplicationQueriesSchemes: [
@@ -85,10 +83,10 @@ module.exports = {
       ],
       config: {
         googleMaps: {
-          apiKey: "AIzaSyBxa95u7zKlOpGmuAGKxvDdhri3KDg3pjw",
+          apiKey: "YOUR API KEY GOOGLE MAPS",
         },
       },
-      googleServicesFile: "./google-services.json",
+      googleServicesFile: "YOUR GOOGLE SERVICE ./google-services.json",
     },
     web: {
       favicon: "./assets/favicon.png",
@@ -96,7 +94,7 @@ module.exports = {
     extra: {
       clerkPublishableKey: process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
       eas: {
-        projectId: "92b16408-c49c-4ead-8b1e-2001b7a3c7fd",
+        projectId: "YOUR PROJECT ID EAS",
       },
     },
     plugins: [
