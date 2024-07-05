@@ -43,3 +43,4 @@ GoogleService-Info.plist
 credentials.json
 firebaseConfig.js
 app.config.js
+eas.json

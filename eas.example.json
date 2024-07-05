@@ -32,9 +32,9 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "admin@fikaielts.com",
-        "ascAppId": "6499224174",
-        "appleTeamId": "P7N3D8U63N"
+        "appleId": "YOUR APPLE ID HERE",
+        "ascAppId": "YOUR ASC APP ID HERE",
+        "appleTeamId": "YOUR APPLE TEAM ID HERE"
       }
     }
   }
