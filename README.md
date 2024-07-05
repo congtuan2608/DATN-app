@@ -1,6 +1,8 @@
 # Getting Started
 
 > **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+> 
+> **Note**: Change the secret keys to match your application before running and download service files from firebase (app.config.js and .env).
 
 ## Step 1: Start the Metro Server
 
